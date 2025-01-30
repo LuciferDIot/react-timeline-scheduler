@@ -1,50 +1,77 @@
-# React + TypeScript + Vite
+# Weekly Task Scheduler
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Weekly Task Scheduler](https://img.shields.io/npm/v/weekly-task-scheduler?style=flat-square)
+![License](https://img.shields.io/npm/l/weekly-task-scheduler?style=flat-square)
 
-Currently, two official plugins are available:
+A **React-based** task scheduling and planning component for managing weekly tasks efficiently. This package provides an intuitive UI for drag-and-drop scheduling, task tracking, and progress visualization.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- 📆 Weekly Task Management
+- 🎯 Drag-and-Drop Support
+- 📊 Progress Tracking
+- ⚡ Interactive UI with Context Menu
+- 🎨 Fully Customizable Components
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Installation
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```sh
+npm install weekly-task-scheduler
+# or
+yarn add weekly-task-scheduler
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Usage
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+```tsx
+import { WeeklyPlan } from "weekly-task-scheduler";
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
+const tasks = [
+  {
+    id: "task-1",
+    name: "Design UI",
+    startDate: "2024-02-01",
+    endDate: "2024-02-03",
   },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
+  {
+    id: "task-2",
+    name: "Develop Backend",
+    startDate: "2024-02-04",
+    endDate: "2024-02-07",
   },
-})
+];
+
+const App = () => {
+  return <WeeklyPlan tasks={tasks} />;
+};
+
+export default App;
 ```
+
+## Components
+
+- **`<WeeklyPlan />`** - The main component for rendering the weekly task planner.
+- **`<Task />`** - Represents an individual task.
+- **`<Progressbar />`** - Displays task progress.
+- **`<RightClickUI />`** - Provides a right-click context menu.
+- **`<ExtendedTaskSection />`** - Expands tasks with more details.
+
+## Props
+
+| Prop           | Type                                                                       | Description                           |
+| -------------- | -------------------------------------------------------------------------- | ------------------------------------- |
+| `tasks`        | `Array<{ id: string; name: string; startDate: string; endDate: string; }>` | List of tasks to display              |
+| `onTaskUpdate` | `(updatedTask) => void`                                                    | Callback when a task is updated       |
+| `customStyles` | `object`                                                                   | Custom styles for styling the planner |
+
+## License
+
+This project is licensed under the **MIT License**.
+
+## Contribution
+
+Contributions are welcome! Feel free to open an issue or submit a pull request.
+
+## Support
+
+For issues and feature requests, open an [issue](https://github.com/yourusername/weekly-task-scheduler/issues).
