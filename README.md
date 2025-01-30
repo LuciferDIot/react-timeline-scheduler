@@ -78,7 +78,7 @@ export default MyComponent;
 
 | Prop Name      | Type                                    | Description                                 |
 | -------------- | --------------------------------------- | ------------------------------------------- |
-| `tasks`        | `ProductionTask[]`                      | Array of tasks to display in the scheduler. |
+| `data`         | `ProductionTask[]`                      | Array of tasks to display in the scheduler. |
 | `startDate`    | `Date`                                  | The start date of the scheduler.            |
 | `endDate`      | `Date`                                  | The end date of the scheduler.              |
 | `onTaskClick`  | `(task: ProductionTask) => void`        | Callback when a task is clicked.            |
