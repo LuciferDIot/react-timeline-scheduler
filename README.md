@@ -72,7 +72,7 @@ const MyComponent = () => {
 export default MyComponent;
 ```
 
-## Props
+## 📌 Props
 
 ### `WeeklyPlan`
 
@@ -100,10 +100,6 @@ export default MyComponent;
 | `bgColorKey`        | `string?`                                   | Key for background color theme.                 |
 | `extendedStyles`    | `Omit<React.CSSProperties, "width">?`       | Custom styles for the task.                     |
 | `tooltipComponent`  | `(task: ProductionTask) => React.ReactNode` | Custom tooltip rendering function.              |
-
----
-
-## 📌 Props
 
 ### `<WeeklyPlan config={{data: []}} />`
 
