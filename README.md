@@ -105,11 +105,11 @@ export default MyComponent;
 
 ## 📌 Props
 
-### `<WeeklyPlan config={{tasks: []}} />`
+### `<WeeklyPlan config={{data: []}} />`
 
-| Prop    | Type               | Required | Description                                |
-| ------- | ------------------ | -------- | ------------------------------------------ |
-| `tasks` | `ProductionTask[]` | ✅       | List of tasks to display in the scheduler. |
+| Prop   | Type               | Required | Description                                |
+| ------ | ------------------ | -------- | ------------------------------------------ |
+| `data` | `ProductionTask[]` | ✅       | List of tasks to display in the scheduler. |
 
 ### `ProductionTask`
 
