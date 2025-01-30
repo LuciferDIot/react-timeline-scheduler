@@ -33,9 +33,13 @@ export interface WeeklyPlanProps {
   tooltipComponent?: (task: ProductionTask) => React.ReactNode;
 }
 
+const borderColor = "border-gray-200";
+const additionalStickyLeft = 10;
+
 export const WeeklyPlan: React.FC<WeeklyPlanProps> = React.memo(
   ({
     config: {
+      topic,
       startOffsetDays = 0,
       endOffsetDays = 0,
       data = [],
@@ -173,18 +177,21 @@ export const WeeklyPlan: React.FC<WeeklyPlanProps> = React.memo(
               ref={containerRef}
               className="relative max-w-[90vw] max-h-[75vh] w-fit h-fit
           scrollbar-track-white dark:scrollbar-track-black scrollbar-thumb-black/20
-          scrollbar-thin overflow-x-scroll horizontal-scroll border-black/50"
+          scrollbar-thin overflow-x-scroll horizontal-scroll"
               onMouseMove={handleMouseMove}
             >
               <div className="w-fit text-sm">
                 <Header
                   lockOperations={lockOperations}
                   dates={dates}
+                  topic={topic}
                   daybgColor={daybgColor}
                   containerRef={containerRef}
                   cellWidthPX={mergedStyles.customCellWidthPX}
                   scrollIntoToday={scrollIntoToday}
+                  borderColor={borderColor}
                   labelConfig={{
+                    additionalStickyLeft,
                     labelMaxWidth,
                     setLabelMaxWidth,
                   }}
@@ -212,7 +219,9 @@ export const WeeklyPlan: React.FC<WeeklyPlanProps> = React.memo(
                           groupedTasks={groupedTasks}
                           taskRowIndex={taskRowIndex}
                           taskbgColorFormat={mergedStyles.taskbgColorFormat}
+                          borderColor={borderColor}
                           labelConfig={{
+                            additionalStickyLeft,
                             labelMaxWidth,
                             setLabelMaxWidth,
                           }}

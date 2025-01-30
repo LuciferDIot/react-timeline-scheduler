@@ -1,6 +1,7 @@
 import { ProductionTask, WeeklyPlanConfig } from "../../types";
 
 export const demoSchedulerData: WeeklyPlanConfig = {
+  topic: "Production Schedule",
   data: [
     {
       id: "task1",

@@ -12,6 +12,8 @@ interface TaskProps {
   percentage?: number;
   taskbgColorFormat?: { [key: string]: string };
   lockOperations: boolean;
+  borderColor: string;
+  textStickyLeftPX?: number;
 
   setrightClickUI: React.Dispatch<React.SetStateAction<ProductionTask | null>>;
   setTooltipVisible: React.Dispatch<React.SetStateAction<React.ReactNode>>;
@@ -39,6 +41,8 @@ export const Task: React.FC<TaskProps> = React.memo(
     cellWidthPX,
     taskbgColorFormat,
     lockOperations,
+    borderColor,
+    textStickyLeftPX,
 
     setrightClickUI,
     setTooltipVisible,
@@ -129,7 +133,7 @@ export const Task: React.FC<TaskProps> = React.memo(
     return (
       <motion.div
         key={`${task.id}-${taskWidth}-${task.startDate}-${task.endDate}`}
-        className={`z-0 min-h-10 h-full p-0.5 border text-center text-nowrap ${
+        className={`z-0 min-h-10 h-full p-0.5 border text-center text-nowrap ${borderColor} ${
           lockOperations ? "cursor-default" : "cursor-pointer hover:opacity-80"
         }`}
         style={{
@@ -151,6 +155,7 @@ export const Task: React.FC<TaskProps> = React.memo(
             taskBackgroundColor={taskBackgroundColor}
             lockOperations={lockOperations}
             cellWidthPX={cellWidthPX}
+            textStickyLeftPX={textStickyLeftPX}
             handleVisibleTooltip={handleVisibleTooltip}
             handleExpand={handleExpand}
             handleShrink={handleShrink}

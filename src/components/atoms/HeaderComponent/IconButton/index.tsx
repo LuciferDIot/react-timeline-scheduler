@@ -10,6 +10,7 @@ interface IconButtonProps {
   isActive: boolean;
   iconType: "lock" | "location";
   tooltipText: string;
+  borderColor: string;
   setTooltipVisible: React.Dispatch<React.SetStateAction<React.ReactNode>>;
 }
 
@@ -18,6 +19,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
   isActive,
   iconType,
   tooltipText,
+  borderColor,
   setTooltipVisible,
 }) => {
   const Icon =
@@ -32,7 +34,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`w-full h-full flex justify-center items-center focus:outline-none border p-2 ${
+      className={`w-full h-full flex justify-center items-center focus:outline-none border p-2 ${borderColor} ${
         isActive && "text-white"
       }`}
       style={{

@@ -30,6 +30,7 @@ export interface WeeklyPlanConfigStyles {
 }
 
 export interface WeeklyPlanConfig {
+  topic: string;
   data: ProductionTask[];
   startOffsetDays?: number;
   endOffsetDays?: number;

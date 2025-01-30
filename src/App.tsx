@@ -4,7 +4,7 @@ import { demoSchedulerData } from "./data/demo";
 
 function App() {
   return (
-    <div className="w-screen h-screen flex items-center justify-center">
+    <div className="w-screen h-screen flex items-center justify-center ">
       <WeeklyPlan config={demoSchedulerData} scrollIntoToday />
     </div>
   );

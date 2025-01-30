@@ -3,7 +3,6 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { TaskColors } from "../../../data";
 import { ProductionTask } from "../../../types";
 import { calculatePercentage } from "../../../util/date.util";
-import { Icon } from "../../atoms";
 import EmptyCell from "../../molecules/EmptyCell";
 import { Task } from "../Task";
 
@@ -20,9 +19,11 @@ interface RowProps {
   lockOperations: boolean;
   taskbgColorFormat?: { [key: string]: string };
   labelConfig: {
+    additionalStickyLeft: number;
     labelMaxWidth: number;
     setLabelMaxWidth: React.Dispatch<React.SetStateAction<number>>;
   };
+  borderColor: string;
 
   setrightClickUI: React.Dispatch<React.SetStateAction<ProductionTask | null>>;
   setTooltipVisible: React.Dispatch<React.SetStateAction<React.ReactNode>>;
@@ -51,11 +52,12 @@ const Row: React.FC<RowProps> = React.memo(
     rowIndex,
     groupedTasks,
     taskRowIndex,
+    borderColor,
     cellWidthPX,
     cellHeightPX,
     taskbgColorFormat,
     lockOperations,
-    labelConfig: { labelMaxWidth, setLabelMaxWidth },
+    labelConfig: { additionalStickyLeft, labelMaxWidth, setLabelMaxWidth },
 
     setrightClickUI,
     setTooltipVisible,
@@ -87,6 +89,7 @@ const Row: React.FC<RowProps> = React.memo(
             return (
               <EmptyCell
                 key={`${line}-${date}`}
+                borderColor={borderColor}
                 cellHeightPX={cellHeightPX}
                 cellWidthPX={cellWidthPX}
                 rowIndex={rowIndex}
@@ -113,14 +116,16 @@ const Row: React.FC<RowProps> = React.memo(
             const percentage = calculatePercentage(task);
             return (
               <Task
-                key={task.id}
+                key={`${task.id}-${labelMaxWidth}`}
                 cellWidthPX={cellWidthPX}
                 task={task}
                 span={span}
                 rowIndex={rowIndex}
                 percentage={percentage}
+                textStickyLeftPX={labelMaxWidth + additionalStickyLeft}
                 taskbgColorFormat={taskbgColorFormat}
                 lockOperations={lockOperations}
+                borderColor={borderColor}
                 setrightClickUI={setrightClickUI}
                 setTooltipVisible={setTooltipVisible}
                 setSchedulerTasks={setSchedulerTasks}
@@ -134,14 +139,14 @@ const Row: React.FC<RowProps> = React.memo(
 
           return null;
         }),
-      [row, lockOperations]
+      [row, lockOperations, labelMaxWidth]
     );
 
     return (
-      <div key={line} className="flex flex-row">
-        <div
+      <div key={line} className="flex flex-row gap-2">
+        <motion.div
           ref={labelRef}
-          className={`z-[2] sticky left-0 min-w-48 p-2 border-x-2 ${
+          className={` z-[2] sticky left-0 min-w-48 p-2 border-x-1 ${borderColor} ${
             groupedTasks[line].length > 1
               ? taskRowIndex === 0
                 ? "border-t-[0.1px]"
@@ -150,26 +155,32 @@ const Row: React.FC<RowProps> = React.memo(
                 : "border-y-0"
               : "border"
           }`}
-          style={{ backgroundColor: TaskColors.ROW_ODD, width: labelMaxWidth }}
+          style={{ backgroundColor: TaskColors.ROW_ODD }}
+          initial={{ width: 0 }}
+          animate={{ width: labelMaxWidth }}
+          exit={{ width: 0 }}
         >
           {taskRowIndex === 0 && (
-            <div className="flex items-center justify-between gap-2">
+            <div
+              className="flex items-center justify-between gap-2"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (onRowLabelClick) onRowLabelClick(line);
+              }}
+            >
               <label className="text-nowrap">{line}</label>
-              <motion.button
-                className="w-10 h-5 rounded-sm justify-center items-center backdrop-blur-md flex border border-dashed"
+              {/* <motion.button
+                className={`w-10 h-5 rounded-sm justify-center items-center backdrop-blur-md flex 
+                border border-dashed ${borderColor}`}
                 style={{ borderColor: TaskColors.REMOVED_TASK }}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (onRowLabelClick) onRowLabelClick(line);
-                }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <Icon name="add" />
-              </motion.button>
+              </motion.button> */}
             </div>
           )}
-        </div>
+        </motion.div>
         <div key={`${line}-row-${taskRowIndex}`} className="flex">
           {taskComponents}
         </div>

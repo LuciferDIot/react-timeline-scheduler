@@ -1,5 +1,5 @@
 // Organisms/Header.tsx
-import { useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { TaskColors } from "../../../data";
 import { getMonthName } from "../../../util/date.util";
@@ -8,6 +8,7 @@ import { DateCell, MonthHeader } from "../../molecules";
 
 interface HeaderProps {
   dates: string[];
+  topic: string;
   cellWidthPX: number;
   lockOperations: boolean;
   daybgColor?: {
@@ -16,7 +17,9 @@ interface HeaderProps {
   };
   scrollIntoToday?: boolean;
   containerRef: React.RefObject<HTMLDivElement>;
+  borderColor: string;
   labelConfig: {
+    additionalStickyLeft: number;
     labelMaxWidth: number;
     setLabelMaxWidth: React.Dispatch<React.SetStateAction<number>>;
   };
@@ -26,12 +29,14 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({
   dates,
+  topic,
   cellWidthPX,
   lockOperations,
   daybgColor,
   scrollIntoToday,
   containerRef,
-  labelConfig: { labelMaxWidth, setLabelMaxWidth },
+  borderColor,
+  labelConfig: { additionalStickyLeft, labelMaxWidth, setLabelMaxWidth },
   setTooltipVisible,
   lockChange,
 }) => {
@@ -104,77 +109,97 @@ export const Header: React.FC<HeaderProps> = ({
   const isCurrentDateInDates = dates.includes(currentDate);
 
   return (
-    <div className="z-[3] sticky top-0 left-0 flex flex-col w-fit h-fit bg-white mb-2">
-      <div className="flex w-full h-fit">
-        <div
+    <div className="z-[3] sticky top-0 left-0 flex flex-col w-fit h-fit backdrop-blur-3xl bg-white mb-2">
+      <div className="flex w-full h-fit gap-2">
+        <motion.div
           ref={labelRef}
-          className="z-[4] sticky left-0 top-0 min-w-48 text-sm text-[#3F3F3F] font-medium text-left border border-b-0 p-2"
-          style={{ backgroundColor: TaskColors.ROW_ODD, width: labelMaxWidth }}
+          className={`z-[4] sticky left-0 top-0 min-w-48 text-sm
+          font-medium text-left border border-b-0 p-2 ${borderColor}`}
+          style={{ backgroundColor: TaskColors.ROW_ODD }}
+          initial={{ width: 0 }}
+          animate={{ width: labelMaxWidth }}
+          exit={{ width: 0 }}
         >
-          Production Line
-        </div>
-        {Object.entries(groupedDates).map(([month, monthDates], index) => {
-          const monthCellWidth =
-            cellWidthPX *
-            (monthDates.length -
-              (index === Object.keys(groupedDates).length - 1 ? cellCount : 0));
+          {topic}
+        </motion.div>
+        <div className="flex">
+          {Object.entries(groupedDates).map(([month, monthDates], index) => {
+            const monthCellWidth =
+              cellWidthPX *
+              (monthDates.length -
+                (index === Object.keys(groupedDates).length - 1
+                  ? cellCount
+                  : 0));
 
-          return (
-            monthCellWidth > 0 && (
-              <MonthHeader
-                key={month}
-                month={month}
-                monthCellWidth={monthCellWidth}
+            return (
+              monthCellWidth > 0 && (
+                <MonthHeader
+                  key={month}
+                  borderColor={borderColor}
+                  month={month}
+                  monthCellWidth={monthCellWidth}
+                  textStickyLeftPX={labelMaxWidth + additionalStickyLeft}
+                />
+              )
+            );
+          })}
+
+          {/* lock icons */}
+          <div
+            className="sticky top-0 right-0 flex justify-center items-center 
+            text-left text-xs"
+            style={{ width: `${cellCount * cellWidthPX}px` }}
+          >
+            {scrollIntoToday && isCurrentDateInDates && (
+              <IconButton
+                onClick={handleScrollToCurrentDate}
+                isActive={!isCurrentDateInView}
+                borderColor={borderColor}
+                iconType="location"
+                tooltipText="Go to Today"
+                setTooltipVisible={setTooltipVisible}
               />
-            )
-          );
-        })}
-
-        {/* lock icons */}
-        <div
-          className="sticky top-0 right-0 flex justify-center items-center bg-white text-left text-xs"
-          style={{ width: `${cellCount * cellWidthPX}px` }}
-        >
-          {scrollIntoToday && isCurrentDateInDates && (
+            )}
             <IconButton
-              onClick={handleScrollToCurrentDate}
-              isActive={!isCurrentDateInView}
-              iconType="location"
-              tooltipText="Go to Today"
+              onClick={lockChange}
+              isActive={lockOperations}
+              borderColor={borderColor}
+              iconType="lock"
+              tooltipText={`${lockOperations ? "Unlock" : "Lock"} Operations`}
               setTooltipVisible={setTooltipVisible}
             />
-          )}
-          <IconButton
-            onClick={lockChange}
-            isActive={lockOperations}
-            iconType="lock"
-            tooltipText={`${lockOperations ? "Unlock" : "Lock"} Operations`}
-            setTooltipVisible={setTooltipVisible}
-          />
+          </div>
         </div>
       </div>
 
       {/* dates */}
-      <div className="flex">
-        <div
-          className="z-[4] sticky left-0 min-w-48 text-sm text-[#3F3F3F] font-medium text-left border border-t-0 p-2"
+      <div className="flex gap-2">
+        <motion.div
+          className={`z-[4] sticky left-0 min-w-48 text-sm font-medium 
+          text-left border border-t-0 p-2 ${borderColor}`}
           style={{ backgroundColor: TaskColors.ROW_ODD }}
+          initial={{ width: 0 }}
+          animate={{ width: labelMaxWidth }}
+          exit={{ width: 0 }}
         />
-        {dates.map((date) => {
-          const bgColor = daybgColor?.daybgColorHighlight[date];
-          return (
-            <DateCell
-              key={date}
-              date={date}
-              isCurrentDate={date === currentDate}
-              cellWidthPX={cellWidthPX}
-              height={height}
-              linePosition={linePosition}
-              bgColor={bgColor}
-              currentDateRef={currentDateRef}
-            />
-          );
-        })}
+        <div className="flex">
+          {dates.map((date) => {
+            const bgColor = daybgColor?.daybgColorHighlight[date];
+            return (
+              <DateCell
+                key={date}
+                date={date}
+                borderColor={borderColor}
+                isCurrentDate={date === currentDate}
+                cellWidthPX={cellWidthPX}
+                height={height}
+                linePosition={linePosition}
+                bgColor={bgColor}
+                currentDateRef={currentDateRef}
+              />
+            );
+          })}
+        </div>
       </div>
     </div>
   );

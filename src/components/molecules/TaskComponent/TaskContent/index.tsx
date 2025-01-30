@@ -10,6 +10,7 @@ type TaskContentProps = {
   taskBackgroundColor: string;
   lockOperations: boolean;
   cellWidthPX: number;
+  textStickyLeftPX?: number;
   handleVisibleTooltip: (task: ProductionTask) => void;
   handleExpand: () => void;
   handleShrink: () => void;
@@ -22,6 +23,7 @@ export const TaskContent = ({
   taskBackgroundColor,
   lockOperations,
   cellWidthPX,
+  textStickyLeftPX,
   handleVisibleTooltip,
   handleExpand,
   handleShrink,
@@ -39,7 +41,7 @@ export const TaskContent = ({
     }}
     transition={{ duration: 0.5, ease: "easeInOut" }}
   >
-    <TaskLabel label={task.label} />
+    <TaskLabel label={task.label} textStickyLeftPX={textStickyLeftPX} />
     {!lockOperations && (
       <TaskActionButtons
         task={task}
