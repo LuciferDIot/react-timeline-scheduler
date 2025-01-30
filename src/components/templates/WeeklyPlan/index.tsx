@@ -58,6 +58,7 @@ export const WeeklyPlan: React.FC<WeeklyPlanProps> = React.memo(
 
     const [schedulerTasks, setSchedulerTasks] =
       useState<ProductionTask[]>(data);
+    const [error, setError] = useState<string | undefined>();
     const [lockOperations, setLockOperations] = useState<boolean>(true);
     const [mousePosition, setMousePosition] = useState<Coordination>({
       x: 0,
@@ -69,6 +70,7 @@ export const WeeklyPlan: React.FC<WeeklyPlanProps> = React.memo(
     const [rightClickUI, setrightClickUI] = useState<ProductionTask | null>(
       null
     );
+    const [labelMaxWidth, setLabelMaxWidth] = useState<number>(0);
 
     const { start: tableStartDate, end: tableEndDate } = useMemo(() => {
       if (schedulerTasks.length === 0) {
@@ -148,74 +150,101 @@ export const WeeklyPlan: React.FC<WeeklyPlanProps> = React.memo(
       }
     };
 
+    useEffect(() => {
+      setError(undefined);
+      schedulerTasks.forEach((task) => {
+        if (task.startDate > task.endDate) {
+          setError(`Task ${task.id} has an invalid date range`);
+        } else if (task.prevEndDate && task.startDate > task.prevEndDate) {
+          setError(`Task ${task.id} has an invalid date range`);
+        }
+      });
+    }, [schedulerTasks]);
+
     return (
       <AnimatePresence mode="sync" presenceAffectsLayout>
-        <div
-          ref={containerRef}
-          className="relative h-full max-w-[90vw] max-h-[75vh] w-fit h-fit
-          scrollbar-track-white dark:scrollbar-track-black scrollbar-thumb-black/20
-           scrollbar-thin overflow-x-scroll horizontal-scroll"
-          onMouseMove={handleMouseMove}
-        >
-          <div className="w-fit text-sm">
-            <Header
-              lockOperations={lockOperations}
-              dates={dates}
-              daybgColor={daybgColor}
-              containerRef={containerRef}
-              cellWidthPX={mergedStyles.customCellWidthPX}
-              scrollIntoToday={scrollIntoToday}
-              setTooltipVisible={setTooltipVisible}
-              lockChange={() => setLockOperations(!lockOperations)}
-            />
-            {Object.keys(groupedTasks)
-              .sort((a, b) => a.localeCompare(b))
-              .map((line) => (
-                <div className="pb-2 bg-white" key={line}>
-                  {groupedTasks[line].map((row, taskRowIndex) => (
-                    <Row
-                      key={`${line}-${taskRowIndex}`}
-                      lockOperations={lockOperations}
-                      cellWidthPX={mergedStyles.customCellWidthPX}
-                      cellHeightPX={mergedStyles.customCellHeightPX}
-                      departmentName={line}
-                      row={row}
-                      rowEndDate={tableEndDate}
-                      dates={dates}
-                      rowIndex={Object.keys(groupedTasks)
-                        .sort((a, b) => a.localeCompare(b))
-                        .flatMap((department) => groupedTasks[department])
-                        .findIndex((r) => r === row)}
-                      groupedTasks={groupedTasks}
-                      taskRowIndex={taskRowIndex}
-                      taskbgColorFormat={mergedStyles.taskbgColorFormat}
-                      setrightClickUI={setrightClickUI}
-                      setTooltipVisible={setTooltipVisible}
-                      tooltipComponent={tooltipComponent}
-                      onRowExpand={onRowExpand}
-                      onRowShrink={onRowShrink}
-                      onTaskClick={onTaskClick}
-                      onRowLabelClick={onRowLabelClick}
-                      setSchedulerTasks={setSchedulerTasks}
-                    />
-                  ))}
-                </div>
-              ))}
+        {error ? (
+          <div className="w-full h-full flex justify-center items-center p-4">
+            {error}
           </div>
-        </div>
-        {tooltipVisible && !rightClickUI && (
-          <Tooltip mousePosition={mousePosition}>{tooltipVisible}</Tooltip>
-        )}
-        {rightClickUI && (
-          <ContextMenu
-            mousePosition={mousePosition}
-            onClose={() => setrightClickUI(null)}
-          >
-            <RightClickUI
-              task={rightClickUI}
-              setSchedulerTasks={setSchedulerTasks}
-            />
-          </ContextMenu>
+        ) : (
+          <>
+            <div
+              ref={containerRef}
+              className="relative max-w-[90vw] max-h-[75vh] w-fit h-fit
+          scrollbar-track-white dark:scrollbar-track-black scrollbar-thumb-black/20
+          scrollbar-thin overflow-x-scroll horizontal-scroll border-black/50"
+              onMouseMove={handleMouseMove}
+            >
+              <div className="w-fit text-sm">
+                <Header
+                  lockOperations={lockOperations}
+                  dates={dates}
+                  daybgColor={daybgColor}
+                  containerRef={containerRef}
+                  cellWidthPX={mergedStyles.customCellWidthPX}
+                  scrollIntoToday={scrollIntoToday}
+                  labelConfig={{
+                    labelMaxWidth,
+                    setLabelMaxWidth,
+                  }}
+                  setTooltipVisible={setTooltipVisible}
+                  lockChange={() => setLockOperations(!lockOperations)}
+                />
+                {Object.keys(groupedTasks)
+                  .sort((a, b) => a.localeCompare(b))
+                  .map((line) => (
+                    <div className="pb-2 bg-white" key={line}>
+                      {groupedTasks[line].map((row, taskRowIndex) => (
+                        <Row
+                          key={`${line}-${taskRowIndex}`}
+                          lockOperations={lockOperations}
+                          cellWidthPX={mergedStyles.customCellWidthPX}
+                          cellHeightPX={mergedStyles.customCellHeightPX}
+                          departmentName={line}
+                          row={row}
+                          rowEndDate={tableEndDate}
+                          dates={dates}
+                          rowIndex={Object.keys(groupedTasks)
+                            .sort((a, b) => a.localeCompare(b))
+                            .flatMap((department) => groupedTasks[department])
+                            .findIndex((r) => r === row)}
+                          groupedTasks={groupedTasks}
+                          taskRowIndex={taskRowIndex}
+                          taskbgColorFormat={mergedStyles.taskbgColorFormat}
+                          labelConfig={{
+                            labelMaxWidth,
+                            setLabelMaxWidth,
+                          }}
+                          setrightClickUI={setrightClickUI}
+                          setTooltipVisible={setTooltipVisible}
+                          tooltipComponent={tooltipComponent}
+                          onRowExpand={onRowExpand}
+                          onRowShrink={onRowShrink}
+                          onTaskClick={onTaskClick}
+                          onRowLabelClick={onRowLabelClick}
+                          setSchedulerTasks={setSchedulerTasks}
+                        />
+                      ))}
+                    </div>
+                  ))}
+              </div>
+            </div>
+            {tooltipVisible && !rightClickUI && (
+              <Tooltip mousePosition={mousePosition}>{tooltipVisible}</Tooltip>
+            )}
+            {rightClickUI && (
+              <ContextMenu
+                mousePosition={mousePosition}
+                onClose={() => setrightClickUI(null)}
+              >
+                <RightClickUI
+                  task={rightClickUI}
+                  setSchedulerTasks={setSchedulerTasks}
+                />
+              </ContextMenu>
+            )}
+          </>
         )}
       </AnimatePresence>
     );

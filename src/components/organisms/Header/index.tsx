@@ -16,6 +16,10 @@ interface HeaderProps {
   };
   scrollIntoToday?: boolean;
   containerRef: React.RefObject<HTMLDivElement>;
+  labelConfig: {
+    labelMaxWidth: number;
+    setLabelMaxWidth: React.Dispatch<React.SetStateAction<number>>;
+  };
   setTooltipVisible: React.Dispatch<React.SetStateAction<React.ReactNode>>;
   lockChange: () => void;
 }
@@ -27,6 +31,7 @@ export const Header: React.FC<HeaderProps> = ({
   daybgColor,
   scrollIntoToday,
   containerRef,
+  labelConfig: { labelMaxWidth, setLabelMaxWidth },
   setTooltipVisible,
   lockChange,
 }) => {
@@ -43,8 +48,16 @@ export const Header: React.FC<HeaderProps> = ({
     [dates]
   );
 
+  const labelRef = useRef<HTMLDivElement>(null);
   const currentDateRef = useRef<HTMLDivElement | null>(null);
   const isCurrentDateInView = useInView(currentDateRef, { amount: "all" });
+
+  useEffect(() => {
+    if (labelRef.current) {
+      const width = labelRef.current.getBoundingClientRect().width;
+      setLabelMaxWidth((prev) => Math.max(prev, width));
+    }
+  }, [dates]);
 
   useEffect(() => {
     if (currentDateRef.current) {
@@ -88,12 +101,15 @@ export const Header: React.FC<HeaderProps> = ({
     return () => clearInterval(interval);
   }, [cellWidthPX]);
 
+  const isCurrentDateInDates = dates.includes(currentDate);
+
   return (
     <div className="z-[3] sticky top-0 left-0 flex flex-col w-fit h-fit bg-white mb-2">
       <div className="flex w-full h-fit">
         <div
+          ref={labelRef}
           className="z-[4] sticky left-0 top-0 min-w-48 text-sm text-[#3F3F3F] font-medium text-left border border-b-0 p-2"
-          style={{ backgroundColor: TaskColors.ROW_ODD }}
+          style={{ backgroundColor: TaskColors.ROW_ODD, width: labelMaxWidth }}
         >
           Production Line
         </div>
@@ -101,7 +117,8 @@ export const Header: React.FC<HeaderProps> = ({
           const monthCellWidth =
             cellWidthPX *
             (monthDates.length -
-              (index === Object.keys(groupedDates).length - 1 ? cellCount : 1));
+              (index === Object.keys(groupedDates).length - 1 ? cellCount : 0));
+
           return (
             monthCellWidth > 0 && (
               <MonthHeader
@@ -112,14 +129,16 @@ export const Header: React.FC<HeaderProps> = ({
             )
           );
         })}
+
+        {/* lock icons */}
         <div
           className="sticky top-0 right-0 flex justify-center items-center bg-white text-left text-xs"
           style={{ width: `${cellCount * cellWidthPX}px` }}
         >
-          {scrollIntoToday && (
+          {scrollIntoToday && isCurrentDateInDates && (
             <IconButton
               onClick={handleScrollToCurrentDate}
-              isActive={isCurrentDateInView}
+              isActive={!isCurrentDateInView}
               iconType="location"
               tooltipText="Go to Today"
               setTooltipVisible={setTooltipVisible}
@@ -135,6 +154,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
+      {/* dates */}
       <div className="flex">
         <div
           className="z-[4] sticky left-0 min-w-48 text-sm text-[#3F3F3F] font-medium text-left border border-t-0 p-2"
@@ -151,6 +171,7 @@ export const Header: React.FC<HeaderProps> = ({
               height={height}
               linePosition={linePosition}
               bgColor={bgColor}
+              currentDateRef={currentDateRef}
             />
           );
         })}

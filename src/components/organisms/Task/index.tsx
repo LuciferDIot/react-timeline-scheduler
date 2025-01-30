@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import React, { useCallback, useMemo } from "react";
+import { TaskColors } from "../../../data";
 import { ProductionTask } from "../../../types";
 import { ExtendedTaskSection, TaskContent } from "../../molecules";
-import { TaskColors } from "../../../data";
 
 interface TaskProps {
   task: ProductionTask;

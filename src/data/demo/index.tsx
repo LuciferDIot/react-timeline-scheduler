@@ -9,7 +9,7 @@ export const demoSchedulerData: WeeklyPlanConfig = {
       departmentId: "D01",
       startDate: new Date("2025-02-01"),
       endDate: new Date("2025-02-10"),
-      prevEndDate: new Date("2025-01-30"),
+      prevEndDate: new Date("2025-02-06"),
       styleAllocationId: "Style1",
       progress: 45,
       bgColorKey: "yellow",
@@ -33,7 +33,7 @@ export const demoSchedulerData: WeeklyPlanConfig = {
       departmentId: "D02",
       startDate: new Date("2025-02-05"),
       endDate: new Date("2025-02-15"),
-      prevEndDate: new Date("2025-02-03"),
+      prevEndDate: new Date("2025-02-07"),
       styleAllocationId: "Style2",
       progress: 70,
       bgColorKey: "blue",
@@ -61,7 +61,7 @@ export const demoSchedulerData: WeeklyPlanConfig = {
       progress: 30,
       bgColorKey: "green",
       extendedStyles: {
-        backgroundColor: "green",
+        backgroundColor: "black",
         color: "white",
       },
       tooltipComponent: (task: ProductionTask) => (
@@ -84,11 +84,6 @@ export const demoSchedulerData: WeeklyPlanConfig = {
   styles: {
     customCellWidthPX: 100,
     customCellHeightPX: 40,
-    taskbgColorFormat: {
-      yellow: "lightyellow",
-      blue: "lightblue",
-      green: "lightgreen",
-    },
     daybgColorHighlight: {
       "2025-02-01": [new Date("2025-02-01"), new Date("2025-02-02")],
       "2025-02-10": [new Date("2025-02-10"), new Date("2025-02-12")],

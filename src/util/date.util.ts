@@ -14,6 +14,8 @@ export const calculatePercentage = (task: ProductionTask): number => {
   // Calculate the percentage of time elapsed
   const percentage = (elapsedDuration / totalDuration) * 100;
 
+  console.log(task.label, totalDuration, elapsedDuration);
+
   // Ensure the percentage is between 0% and 100%
   return 100 - Math.min(100, Math.max(0, percentage));
 };

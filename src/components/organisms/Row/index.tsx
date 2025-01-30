@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { TaskColors } from "../../../data";
 import { ProductionTask } from "../../../types";
 import { calculatePercentage } from "../../../util/date.util";
@@ -19,6 +19,10 @@ interface RowProps {
   cellHeightPX: number;
   lockOperations: boolean;
   taskbgColorFormat?: { [key: string]: string };
+  labelConfig: {
+    labelMaxWidth: number;
+    setLabelMaxWidth: React.Dispatch<React.SetStateAction<number>>;
+  };
 
   setrightClickUI: React.Dispatch<React.SetStateAction<ProductionTask | null>>;
   setTooltipVisible: React.Dispatch<React.SetStateAction<React.ReactNode>>;
@@ -51,6 +55,7 @@ const Row: React.FC<RowProps> = React.memo(
     cellHeightPX,
     taskbgColorFormat,
     lockOperations,
+    labelConfig: { labelMaxWidth, setLabelMaxWidth },
 
     setrightClickUI,
     setTooltipVisible,
@@ -61,6 +66,15 @@ const Row: React.FC<RowProps> = React.memo(
     onTaskClick,
     onRowLabelClick,
   }) => {
+    const labelRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+      if (labelRef.current) {
+        const width = labelRef.current.getBoundingClientRect().width;
+        setLabelMaxWidth((prev) => Math.max(prev, width));
+      }
+    }, [line]);
+
     const taskComponents = useMemo(
       () =>
         dates.map((date, index) => {
@@ -126,6 +140,7 @@ const Row: React.FC<RowProps> = React.memo(
     return (
       <div key={line} className="flex flex-row">
         <div
+          ref={labelRef}
           className={`z-[2] sticky left-0 min-w-48 p-2 border-x-2 ${
             groupedTasks[line].length > 1
               ? taskRowIndex === 0
@@ -135,7 +150,7 @@ const Row: React.FC<RowProps> = React.memo(
                 : "border-y-0"
               : "border"
           }`}
-          style={{ backgroundColor: TaskColors.ROW_ODD }}
+          style={{ backgroundColor: TaskColors.ROW_ODD, width: labelMaxWidth }}
         >
           {taskRowIndex === 0 && (
             <div className="flex items-center justify-between gap-2">

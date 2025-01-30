@@ -30,7 +30,7 @@ export const TaskContent = ({
   <motion.div
     key={task.bgColorKey}
     animate={{
-      width: `${percentage}%`,
+      width: `${percentage === 0 ? 100 : percentage}%`,
       backgroundColor: taskBackgroundColor,
     }}
     className="relative w-full h-full flex justify-start items-center text-white font-bold text-sm"
