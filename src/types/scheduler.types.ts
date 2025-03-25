@@ -3,6 +3,21 @@ export interface TableDateRange {
   end: Date;
 }
 
+export interface Coordination {
+  x: number | null;
+  y: number | null;
+}
+
+export type TableData = {
+  tableDate: ProductionTask[];
+  isFirstInit: boolean;
+};
+
+export enum StripIndex {
+  One = "one",
+  Two = "Two",
+}
+
 export interface ProductionTask {
   id: string;
   label: string;
@@ -14,8 +29,15 @@ export interface ProductionTask {
   styleAllocationId: string;
   progress?: number;
   bgColorKey?: string;
-  extendedStyles?: Omit<React.CSSProperties, "width">;
-  tooltipComponent?: (task: ProductionTask) => React.ReactNode;
+  discontinue?: {
+    startDate: Date;
+    endDate: Date;
+  };
+  extendedStyles?: Omit<React.CSSProperties, "width" | "height">;
+  tooltipComponent?: (
+    task: ProductionTask,
+    index?: StripIndex
+  ) => React.ReactNode;
 }
 
 export interface WeeklyPlanConfigStyles {
@@ -37,3 +59,9 @@ export interface WeeklyPlanConfig {
   rowCategories?: string[];
   styles?: WeeklyPlanConfigStyles;
 }
+
+export type ContextMenuType = {
+  icon: React.ReactNode;
+  label: string;
+  onAction: (task: ProductionTask) => void;
+};

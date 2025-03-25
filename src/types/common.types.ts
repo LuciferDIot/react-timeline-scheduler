@@ -1,4 +1,4 @@
 export interface Coordination {
-  x: number;
-  y: number;
+  x: number | null;
+  y: number | null;
 }

@@ -1,35 +1,54 @@
-import { ProductionTask } from "../../../../../types";
-import { AnimatedButton, Icon } from "../../../../atoms";
+import moment from "moment";
+import { useMemo } from "react";
+import { useStylesStore } from "../../../../../stores";
+import {
+  ProductionTask,
+  StripIndex,
+} from "../../../../../types/scheduler.types";
+import { AnimatedButton, StripActionIcon } from "../../../../atoms";
 import { ContainerAnimation } from "../ContainerAnimation";
 
 type ActionButtons = {
   task: ProductionTask;
-  cellWidthPX: number;
   handleShrink: () => void;
   handleExpand: () => void;
-  handleVisibleTooltip: (task: ProductionTask) => void;
-  setTooltipVisible: (value: React.SetStateAction<React.ReactNode>) => void;
+  handleVisibleTooltip: (task: ProductionTask, index?: StripIndex) => void;
 };
 
 export const TaskActionButtons = ({
-  cellWidthPX,
   task,
   handleVisibleTooltip,
   handleShrink,
   handleExpand,
-  setTooltipVisible,
-}: ActionButtons) => (
-  <ContainerAnimation
-    cellWidthPX={cellWidthPX}
-    setTooltipVisible={setTooltipVisible}
-    handleVisibleTooltip={handleVisibleTooltip}
-    task={task}
-  >
-    <AnimatedButton onClick={handleShrink}>
-      <Icon name="back" />
-    </AnimatedButton>
-    <AnimatedButton onClick={handleExpand}>
-      <Icon name="forward" />
-    </AnimatedButton>
-  </ContainerAnimation>
-);
+}: ActionButtons) => {
+  const { customCellWidthPX } = useStylesStore();
+  const left = useMemo(
+    () =>
+      (task.prevEndDate && moment(task.prevEndDate).isBefore(task.endDate)
+        ? moment(task.prevEndDate).diff(
+            moment(task.startDate).startOf("days"),
+            "days"
+          )
+        : moment(task.endDate).diff(
+            moment(task.startDate).startOf("days"),
+            "days"
+          )) * customCellWidthPX,
+    [customCellWidthPX, task.endDate, task.prevEndDate, task.startDate]
+  );
+
+  return (
+    <ContainerAnimation
+      left={left}
+      cellWidthPX={customCellWidthPX}
+      handleVisibleTooltip={handleVisibleTooltip}
+      task={task}
+    >
+      <AnimatedButton onClick={handleShrink}>
+        <StripActionIcon name="back" />
+      </AnimatedButton>
+      <AnimatedButton onClick={handleExpand}>
+        <StripActionIcon name="forward" />
+      </AnimatedButton>
+    </ContainerAnimation>
+  );
+};

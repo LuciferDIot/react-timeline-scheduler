@@ -1,23 +1,31 @@
 import { AnimatePresence } from "framer-motion";
+import _ from "lodash";
+import moment from "moment";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { TaskColors } from "../../../data";
-import { Coordination, ProductionTask, WeeklyPlanConfig } from "../../../types";
-import { generateGroupedTasks } from "../../../util/common.util";
-import { ContextMenu, Tooltip } from "../../atoms";
-import { RightClickUI } from "../../molecules";
+import { defaultStyles } from "../../../data/styles";
+import {
+  useActionStore,
+  useChildStore,
+  useDataStore,
+  useStylesStore,
+} from "../../../stores";
+import {
+  ContextMenuType,
+  ProductionTask,
+  StripIndex,
+  WeeklyPlanConfig,
+} from "../../../types/scheduler.types";
 import { Header } from "../../organisms/Header";
 import { Row } from "../../organisms/Row";
+import { ContextMenu, Tooltip } from "../../atoms";
+import { RightClickUI } from "../../molecules";
+import { generateGroupedTasks } from "../../../util/common.util";
 
-const defaultStyles = {
-  customCellHeightPX: 40,
-  customCellWidthPX: 100,
-  taskbgColorFormat: TaskColors,
-  daybgColorHighlight: undefined,
-};
-
-export interface WeeklyPlanProps {
+export interface TimelineSchedulerProps {
   config: WeeklyPlanConfig;
   scrollIntoToday?: boolean;
+  loading?: boolean;
+  rightClickOptions?: ContextMenuType[];
   onTaskClick?: (task: ProductionTask) => void;
   onRowExpand?: (
     departmentName: string,
@@ -30,13 +38,13 @@ export interface WeeklyPlanProps {
     task: ProductionTask
   ) => Promise<void>;
   onRowLabelClick?: (departmentName: string) => void;
-  tooltipComponent?: (task: ProductionTask) => React.ReactNode;
+  tooltipComponent?: (
+    task: ProductionTask,
+    index?: StripIndex
+  ) => React.ReactNode;
 }
 
-const borderColor = "border-gray-200";
-const additionalStickyLeft = 10;
-
-export const WeeklyPlan: React.FC<WeeklyPlanProps> = React.memo(
+export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
   ({
     config: {
       topic,
@@ -44,218 +52,202 @@ export const WeeklyPlan: React.FC<WeeklyPlanProps> = React.memo(
       endOffsetDays = 0,
       data = [],
       styles = defaultStyles,
-      rowCategories = [1, 2, 3, 4, 5, 6, 7, 8, 9],
+      rowCategories,
     },
+    rightClickOptions,
     scrollIntoToday,
     tooltipComponent,
     onRowExpand,
     onRowShrink,
     onTaskClick,
     onRowLabelClick,
+    loading, // New loading prop
   }) => {
-    const mergedStyles = useMemo(
-      () => ({ ...defaultStyles, ...styles }),
-      [styles]
-    );
-
     const containerRef = useRef<HTMLDivElement>(null);
-
-    const [schedulerTasks, setSchedulerTasks] =
-      useState<ProductionTask[]>(data);
     const [error, setError] = useState<string | undefined>();
-    const [lockOperations, setLockOperations] = useState<boolean>(true);
-    const [mousePosition, setMousePosition] = useState<Coordination>({
-      x: 0,
-      y: 0,
-    });
-    const [tooltipVisible, setTooltipVisible] =
-      useState<React.ReactNode | null>(null);
 
-    const [rightClickUI, setrightClickUI] = useState<ProductionTask | null>(
-      null
-    );
-    const [labelMaxWidth, setLabelMaxWidth] = useState<number>(0);
+    const {
+      tableEndDate,
+      tableStartDate,
+      schedulerTasks,
+      setSchedulerTasks,
+      setOffsetDays,
+    } = useDataStore();
+    const { setAllStyles } = useStylesStore();
 
-    const { start: tableStartDate, end: tableEndDate } = useMemo(() => {
-      if (schedulerTasks.length === 0) {
-        const startOffSetDay = new Date();
-        startOffSetDay.setDate(startOffSetDay.getDate() + startOffsetDays);
+    const {
+      mouseCoordination,
+      rightClickTask,
+      tooltipVisible,
+      setDefaultTooltipComponent,
+      setMouseCoordination,
+      removeRightClickTask,
+    } = useChildStore();
 
-        const endOffsetDay = new Date();
-        endOffsetDay.setDate(endOffsetDay.getDate() + endOffsetDays);
-
-        return { start: startOffSetDay, end: endOffsetDay };
-      }
-
-      const taskStartDates = new Date(
-        Math.min(...schedulerTasks.map((task) => task.startDate.getTime())) -
-          2 * 86400000
-      );
-      const taskEndDates = new Date(
-        Math.max(...schedulerTasks.map((task) => task.endDate.getTime())) +
-          2 * 86400000
-      );
-
-      return { start: taskStartDates, end: taskEndDates };
-    }, [schedulerTasks, startOffsetDays, endOffsetDays]);
-
-    const daybgColor = useMemo(() => {
-      if (!styles.daybgColorHighlight) return undefined;
-
-      return {
-        daysHighlight: Object.values(styles.daybgColorHighlight).flat(),
-        daybgColorHighlight: Object.keys(styles.daybgColorHighlight).reduce(
-          (acc, color) => {
-            styles.daybgColorHighlight?.[color]?.forEach((date) => {
-              acc[date.toISOString().split("T")[0]] = color;
-            });
-            return acc;
-          },
-          {} as { [key: string]: string }
-        ),
-      };
-    }, [styles.daybgColorHighlight]);
+    const { setAll } = useActionStore();
 
     useEffect(() => {
-      if (data !== schedulerTasks) {
+      setAll({ onTaskClick, onRowExpand, onRowShrink, onRowLabelClick });
+    }, [onTaskClick, onRowExpand, onRowShrink, onRowLabelClick, setAll]);
+
+    useEffect(() => {
+      tooltipComponent && setDefaultTooltipComponent(tooltipComponent);
+    }, [setDefaultTooltipComponent, tooltipComponent]);
+
+    useEffect(() => {
+      setAllStyles(styles);
+    }, [setAllStyles, styles]);
+
+    useEffect(() => {
+      if (!_.isEqual(data, schedulerTasks)) {
         setSchedulerTasks(data);
       }
-    }, [data]);
+    }, [data, schedulerTasks, setSchedulerTasks]);
 
-    const days = useMemo(
-      () =>
-        Math.ceil(
-          (tableEndDate.getTime() - tableStartDate.getTime()) / 86400000
-        ) + 1,
-      [tableStartDate, tableEndDate]
-    );
-    const dates = useMemo(
-      () =>
-        Array.from({ length: days }).map((_, index) => {
-          const date = new Date(tableStartDate);
-          date.setDate(tableStartDate.getDate() + index);
-          return date.toISOString().split("T")[0];
-        }),
-      [days, tableStartDate]
-    );
-
-    const groupedTasks = useMemo(() => {
-      const grouped = generateGroupedTasks(schedulerTasks);
-
-      rowCategories.forEach(
-        (category) => !grouped[category] && (grouped[category] = [[]])
-      );
-      return grouped;
-    }, [schedulerTasks, rowCategories]);
+    useEffect(() => {
+      setOffsetDays(startOffsetDays, endOffsetDays);
+    }, [startOffsetDays, endOffsetDays, setOffsetDays]);
 
     const handleMouseMove = (e: React.MouseEvent) => {
       if (tooltipVisible) {
-        setMousePosition({ x: e.clientX, y: e.clientY });
+        setMouseCoordination({ x: e.clientX, y: e.clientY });
       }
     };
 
     useEffect(() => {
       setError(undefined);
-      schedulerTasks.forEach((task) => {
-        if (task.startDate > task.endDate) {
-          setError(`Task ${task.id} has an invalid date range`);
-        } else if (task.prevEndDate && task.startDate > task.prevEndDate) {
+      schedulerTasks.tableDate.forEach((task) => {
+        if (!moment(task.startDate).isValid()) {
+          console.error(`Invalid startDate in task ${task.id}`, task.startDate);
+          setError(`Invalid startDate in task ${task.id}`);
+        }
+        if (!moment(task.endDate).isValid()) {
+          console.error(`Invalid endDate in task ${task.id}`, task.endDate);
+          setError(`Invalid endDate in task ${task.id}`);
+        }
+        if (moment(task.startDate).isAfter(moment(task.endDate))) {
           setError(`Task ${task.id} has an invalid date range`);
         }
       });
     }, [schedulerTasks]);
 
-    return (
-      <AnimatePresence mode="sync" presenceAffectsLayout>
-        {error ? (
-          <div className="w-full h-full flex justify-center items-center p-4">
-            {error}
-          </div>
-        ) : (
-          <>
-            <div
-              ref={containerRef}
-              className="relative max-w-[90vw] max-h-[75vh] w-fit h-fit
+    const mandatoryFieldsAvailable = useMemo(() => {
+      return schedulerTasks.tableDate.every(
+        (task) =>
+          moment(task.startDate).isValid() &&
+          moment(task.endDate).isValid() &&
+          moment(task.startDate).isSameOrBefore(moment(task.endDate))
+      );
+    }, [schedulerTasks]);
+
+    const groupedTasks = useMemo(() => {
+      try {
+        const grouped = generateGroupedTasks(schedulerTasks.tableDate);
+        rowCategories?.forEach((category: string) => {
+          if (!grouped[category]) {
+            grouped[category] = [[]];
+          }
+        });
+        return grouped;
+      } catch (err) {
+        console.error("Error while grouping tasks:", err);
+        setError("Failed to group tasks. Check data format.");
+        return {};
+      }
+    }, [schedulerTasks, rowCategories]);
+
+    const dates = useMemo(() => {
+      if (!tableStartDate || !tableEndDate) return [];
+
+      const start = moment(tableStartDate);
+      const end = moment(tableEndDate);
+
+      return Array.from({ length: end.diff(start, "days") + 1 }).map(
+        (_, index) => start.clone().add(index, "days").format("YYYY-MM-DD")
+      );
+    }, [tableStartDate, tableEndDate]);
+
+    try {
+      if (!dates) setError("Failed to generate dates.");
+
+      return (
+        <AnimatePresence mode="sync" presenceAffectsLayout>
+          {loading || !mandatoryFieldsAvailable ? (
+            <div className="w-full h-full flex justify-center items-center p-4">
+              {loading ? "Loading..." : "Error: Mandatory fields are missing."}
+            </div>
+          ) : error ? (
+            <div className="w-full h-full flex justify-center items-center p-4">
+              {error}
+            </div>
+          ) : (
+            <>
+              <div
+                ref={containerRef}
+                className="relative max-w-[90vw] max-h-[75vh] w-fit h-fit
           scrollbar-track-white dark:scrollbar-track-black scrollbar-thumb-black/20
           scrollbar-thin overflow-x-scroll horizontal-scroll"
-              onMouseMove={handleMouseMove}
-            >
-              <div className="w-fit text-sm">
-                <Header
-                  lockOperations={lockOperations}
-                  dates={dates}
-                  topic={topic}
-                  daybgColor={daybgColor}
-                  containerRef={containerRef}
-                  cellWidthPX={mergedStyles.customCellWidthPX}
-                  scrollIntoToday={scrollIntoToday}
-                  borderColor={borderColor}
-                  labelConfig={{
-                    additionalStickyLeft,
-                    labelMaxWidth,
-                    setLabelMaxWidth,
-                  }}
-                  setTooltipVisible={setTooltipVisible}
-                  lockChange={() => setLockOperations(!lockOperations)}
-                />
-                {Object.keys(groupedTasks)
-                  .sort((a, b) => a.localeCompare(b))
-                  .map((line) => (
-                    <div className="pb-2 bg-white" key={line}>
-                      {groupedTasks[line].map((row, taskRowIndex) => (
-                        <Row
-                          key={`${line}-${taskRowIndex}`}
-                          lockOperations={lockOperations}
-                          cellWidthPX={mergedStyles.customCellWidthPX}
-                          cellHeightPX={mergedStyles.customCellHeightPX}
-                          departmentName={line}
-                          row={row}
-                          rowEndDate={tableEndDate}
-                          dates={dates}
-                          rowIndex={Object.keys(groupedTasks)
-                            .sort((a, b) => a.localeCompare(b))
-                            .flatMap((department) => groupedTasks[department])
-                            .findIndex((r) => r === row)}
-                          groupedTasks={groupedTasks}
-                          taskRowIndex={taskRowIndex}
-                          taskbgColorFormat={mergedStyles.taskbgColorFormat}
-                          borderColor={borderColor}
-                          labelConfig={{
-                            additionalStickyLeft,
-                            labelMaxWidth,
-                            setLabelMaxWidth,
-                          }}
-                          setrightClickUI={setrightClickUI}
-                          setTooltipVisible={setTooltipVisible}
-                          tooltipComponent={tooltipComponent}
-                          onRowExpand={onRowExpand}
-                          onRowShrink={onRowShrink}
-                          onTaskClick={onTaskClick}
-                          onRowLabelClick={onRowLabelClick}
-                          setSchedulerTasks={setSchedulerTasks}
-                        />
-                      ))}
-                    </div>
-                  ))}
-              </div>
-            </div>
-            {tooltipVisible && !rightClickUI && (
-              <Tooltip mousePosition={mousePosition}>{tooltipVisible}</Tooltip>
-            )}
-            {rightClickUI && (
-              <ContextMenu
-                mousePosition={mousePosition}
-                onClose={() => setrightClickUI(null)}
+                onMouseMove={handleMouseMove}
               >
-                <RightClickUI
-                  task={rightClickUI}
-                  setSchedulerTasks={setSchedulerTasks}
-                />
-              </ContextMenu>
-            )}
-          </>
-        )}
-      </AnimatePresence>
-    );
+                <div className="w-fit text-sm">
+                  <Header
+                    dates={dates}
+                    topic={topic}
+                    daybgColorHighlight={styles.daybgColorHighlight}
+                    containerRef={containerRef}
+                    scrollIntoToday={scrollIntoToday}
+                  />
+                  {Object.keys(groupedTasks || [])
+                    .sort((a, b) => a.localeCompare(b))
+                    .map((line) => (
+                      <div className="pb-2 bg-white" key={line}>
+                        {groupedTasks[line]?.map((row, taskRowIndex) => (
+                          <Row
+                            key={`${line}-${taskRowIndex}`}
+                            departmentName={line}
+                            row={row}
+                            dates={dates}
+                            rowIndex={Object.keys(groupedTasks)
+                              .sort((a, b) => a.localeCompare(b))
+                              .flatMap((department) => groupedTasks[department])
+                              .findIndex((r) => r === row)}
+                            groupedTasks={groupedTasks}
+                            taskRowIndex={taskRowIndex}
+                          />
+                        ))}
+                      </div>
+                    ))}
+                </div>
+              </div>
+              {tooltipVisible && !rightClickTask && (
+                <Tooltip mousePosition={mouseCoordination}>
+                  {tooltipVisible}
+                </Tooltip>
+              )}
+              {rightClickTask && rightClickOptions && (
+                <ContextMenu
+                  mousePosition={mouseCoordination}
+                  onClose={() => removeRightClickTask()}
+                >
+                  <RightClickUI
+                    task={rightClickTask}
+                    rightClickOptions={rightClickOptions}
+                  />
+                </ContextMenu>
+              )}
+            </>
+          )}
+        </AnimatePresence>
+      );
+    } catch (error) {
+      console.error("Error in TimelineScheduler:", error);
+      return (
+        <div className="w-full h-full flex justify-center items-center p-4">
+          {error instanceof Error
+            ? error.message
+            : "An unexpected error occurred."}
+        </div>
+      );
+    }
   }
 );

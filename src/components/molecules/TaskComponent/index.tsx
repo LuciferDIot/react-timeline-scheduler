@@ -1,2 +1,4 @@
+export * from "./DiscontinueCells";
 export * from "./ExtendedTaskSection";
-export * from "./TaskContent";
+export * from "./FirstEmptyCell";
+export * from "./TaskCells";

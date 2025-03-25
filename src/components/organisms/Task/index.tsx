@@ -1,58 +1,41 @@
 import { motion } from "framer-motion";
+import moment from "moment";
 import React, { useCallback, useMemo } from "react";
-import { TaskColors } from "../../../data";
-import { ProductionTask } from "../../../types";
-import { ExtendedTaskSection, TaskContent } from "../../molecules";
+import { TaskColors } from "../../../data/styles";
+import {
+  useActionStore,
+  useChildStore,
+  useDataStore,
+  useStylesStore,
+} from "../../../stores";
+import { ProductionTask, StripIndex } from "../../../types/scheduler.types";
+import { TaskLabel } from "../../atoms";
+import {
+  DiscontinueCells,
+  TaskActionButtons,
+  TaskCells,
+} from "../../molecules";
+import { calculateDatesPercentage } from "../../../util/date.util";
 
 interface TaskProps {
   task: ProductionTask;
   span: number;
   rowIndex: number;
-  cellWidthPX: number;
-  percentage?: number;
-  taskbgColorFormat?: { [key: string]: string };
-  lockOperations: boolean;
   borderColor: string;
-  textStickyLeftPX?: number;
-
-  setrightClickUI: React.Dispatch<React.SetStateAction<ProductionTask | null>>;
-  setTooltipVisible: React.Dispatch<React.SetStateAction<React.ReactNode>>;
-  setSchedulerTasks: React.Dispatch<React.SetStateAction<ProductionTask[]>>;
-  onTaskClick?: (task: ProductionTask) => void;
-  onRowExpand?: (
-    departmentName: string,
-    departmentId: string,
-    task: ProductionTask
-  ) => Promise<void>;
-  onRowShrink?: (
-    departmentName: string,
-    departmentId: string,
-    task: ProductionTask
-  ) => Promise<void>;
-  tooltipComponent?: (task: ProductionTask) => React.ReactNode;
 }
 
 export const Task: React.FC<TaskProps> = React.memo(
-  ({
-    task,
-    span,
-    rowIndex,
-    percentage = 0,
-    cellWidthPX,
-    taskbgColorFormat,
-    lockOperations,
-    borderColor,
-    textStickyLeftPX,
-
-    setrightClickUI,
-    setTooltipVisible,
-    setSchedulerTasks,
-    onRowExpand,
-    onRowShrink,
-    onTaskClick,
-    tooltipComponent,
-  }) => {
-    const taskWidth = useMemo(() => cellWidthPX * span, [cellWidthPX, span]);
+  ({ task, span, rowIndex, borderColor }) => {
+    const { setTooltipVisible, setrightClickTask, defaultTooltipComponent } =
+      useChildStore();
+    const { lockOperations, onRowExpand, onRowShrink, onTaskClick } =
+      useActionStore();
+    const { customCellWidthPX, taskbgColorFormat } = useStylesStore();
+    const { updateSchedulerTaskDates } = useDataStore();
+    const taskWidth = useMemo(
+      () => customCellWidthPX * span,
+      [customCellWidthPX, span]
+    );
 
     const taskBackgroundColor = useMemo(() => {
       return taskbgColorFormat &&
@@ -75,99 +58,126 @@ export const Task: React.FC<TaskProps> = React.memo(
       };
     }, [task.extendedStyles]);
 
-    const handleExpand = useCallback(() => {
-      setSchedulerTasks((prev) =>
-        prev.map((t) => {
-          if (t.id === task.id) {
-            const newEndDate = new Date(
-              t.endDate.getTime() + 24 * 60 * 60 * 1000
-            ); // Add one day
-            const updatedTask = {
-              ...t,
-              prevEndDate: t.prevEndDate ? t.prevEndDate : t.endDate,
-              endDate: newEndDate,
-            };
+    const handleVisibleTooltip = useCallback(
+      (task: ProductionTask, index?: StripIndex) => {
+        setTooltipVisible(
+          task.tooltipComponent
+            ? task.tooltipComponent(task, index)
+            : defaultTooltipComponent?.(task, index)
+        );
+      },
+      [defaultTooltipComponent, setTooltipVisible]
+    );
 
-            onRowExpand?.(task.departmentName, task.departmentId, updatedTask);
-            return updatedTask;
+    const TaskActionButton = useMemo(() => {
+      const updateTaskDate = (operation: "add" | "subtract") => {
+        return (prev: ProductionTask[]) => {
+          const taskIndex = prev.findIndex((t) => t.id === task.id);
+          if (taskIndex === -1) return prev;
+
+          const updatedTask = prev[taskIndex];
+          const days = operation === "add" ? 1 : -1;
+          const action = operation === "add" ? onRowExpand : onRowShrink;
+          const newEndDate = (
+            operation === "add"
+              ? moment(updatedTask.endDate)
+              : moment(updatedTask.endDate)
+          )
+            .add(days, "days")
+            .toDate();
+
+          if (moment(updatedTask.startDate).isSameOrAfter(newEndDate))
+            return prev;
+
+          if (
+            moment(newEndDate).date() === moment(updatedTask.prevEndDate).date()
+          ) {
+            updatedTask.prevEndDate = undefined;
+          } else if (updatedTask.prevEndDate === undefined) {
+            updatedTask.prevEndDate = updatedTask.endDate;
           }
-          return t;
-        })
-      );
-    }, [task, onRowExpand]);
+          updatedTask.endDate = newEndDate;
+          prev[taskIndex] = updatedTask;
+          action && action(task.departmentName, task.departmentId, updatedTask);
 
-    const handleShrink = useCallback(() => {
-      setSchedulerTasks((prev) =>
-        prev.map((t) => {
-          if (t.id === task.id) {
-            const newEndDate = new Date(
-              t.endDate.getTime() - 24 * 60 * 60 * 1000
-            ); // Subtract one day
-            const updatedTask = {
-              ...t,
-              prevEndDate: t.prevEndDate ? t.prevEndDate : t.endDate,
-              endDate: newEndDate,
-            };
+          return [...prev];
+        };
+      };
 
-            onRowShrink?.(task.departmentName, task.departmentId, updatedTask);
-            return updatedTask;
-          }
-          return t;
-        })
-      );
-    }, [task, onRowShrink]);
+      const handleExpand = () =>
+        updateSchedulerTaskDates(updateTaskDate("add"));
+      const handleShrink = () =>
+        updateSchedulerTaskDates(updateTaskDate("subtract"));
 
-    const handleVisibleTooltip = (task: ProductionTask) => {
-      setTooltipVisible(
-        task.tooltipComponent
-          ? task.tooltipComponent(task)
-          : tooltipComponent?.(task)
+      return (
+        <TaskActionButtons
+          task={task}
+          handleVisibleTooltip={handleVisibleTooltip}
+          handleExpand={handleExpand}
+          handleShrink={handleShrink}
+        />
       );
-    };
+    }, [
+      handleVisibleTooltip,
+      onRowExpand,
+      onRowShrink,
+      task,
+      updateSchedulerTaskDates,
+    ]);
 
     const handleRightClick = (task: ProductionTask, e: React.MouseEvent) => {
       e.preventDefault(); // Prevent the default context menu from appearing
-      setrightClickUI(task); // Call the right-click handler
+      setrightClickTask(task); // Call the right-click handler
     };
+
+    const labelLeftPercentage =
+      (calculateDatesPercentage(task.startDate) * customCellWidthPX) / 100;
 
     return (
       <motion.div
         key={`${task.id}-${taskWidth}-${task.startDate}-${task.endDate}`}
-        className={`z-0 min-h-10 h-full p-0.5 border text-center text-nowrap ${borderColor} ${
+        className={`relative group flex w-full h-full p-0.5 text-white font-bold 
+          text-sm z-0 min-h-10 border text-center text-nowrap ${borderColor} ${
           lockOperations ? "cursor-default" : "cursor-pointer hover:opacity-80"
         }`}
+        animate={{
+          width: `${taskWidth}px`,
+        }}
         style={{
           width: `${taskWidth}px`,
           backgroundColor:
             rowIndex % 2 === 0 ? TaskColors.ROW_EVEN : TaskColors.ROW_ODD,
         }}
-        onClick={() => onTaskClick?.(task)} // Left-click handler
-        onContextMenu={(e) => handleRightClick(task, e)} // Left-click handler
-        layout
-        transition={{ duration: 0.5, ease: "easeInOut" }}
-        onMouseEnter={() => handleVisibleTooltip(task)}
-        onMouseLeave={() => setTooltipVisible(null)}
+        onContextMenu={(e) => handleRightClick(task, e)}
       >
-        <div className="group flex h-full w-full">
-          <TaskContent
-            task={task}
-            percentage={percentage}
-            taskBackgroundColor={taskBackgroundColor}
-            lockOperations={lockOperations}
-            cellWidthPX={cellWidthPX}
-            textStickyLeftPX={textStickyLeftPX}
-            handleVisibleTooltip={handleVisibleTooltip}
-            handleExpand={handleExpand}
-            handleShrink={handleShrink}
-            setTooltipVisible={setTooltipVisible}
-          />
-          {percentage !== 100 && (
-            <ExtendedTaskSection
-              percentage={percentage}
-              extendedStyles={extendedStyles}
+        <TaskLabel label={task.label} addExtraLeft={labelLeftPercentage} />
+
+        <motion.div
+          className="w-fit h-full"
+          onClick={() => onTaskClick?.(task)}
+          initial={{ width: 0 }}
+          animate={{ width: "fit-content" }}
+        >
+          {task.discontinue && (
+            <DiscontinueCells
+              endDate={task.discontinue.endDate}
+              startDate={task.discontinue.startDate}
+              stripStartDate={task.startDate}
             />
           )}
-        </div>
+          <TaskCells
+            task={task}
+            handleVisibleTooltip={handleVisibleTooltip}
+            taskBackgroundColor={taskBackgroundColor || ""}
+            extendedStyles={extendedStyles}
+            dates={{
+              startDate: task.startDate,
+              endDate: task.endDate,
+              prevEndDate: task.prevEndDate,
+            }}
+          />
+        </motion.div>
+        {!lockOperations && TaskActionButton}
       </motion.div>
     );
   }

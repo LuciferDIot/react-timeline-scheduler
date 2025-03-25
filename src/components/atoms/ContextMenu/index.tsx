@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Coordination } from "../../../types";
+import { Coordination } from "../../../types/scheduler.types";
 
 type Props = {
   children: React.ReactNode; // The content of the ContextMenu
@@ -42,10 +42,10 @@ function ContextMenu({ onClose, children, mousePosition }: Props) {
 
   // Calculate the position only once when the component mounts
   useEffect(() => {
-    if (!contextMenuRef.current) return;
+    const { x, y } = coordination;
+    if (!contextMenuRef.current || !x || !y) return;
 
     const { width, height } = contextMenuRef.current.getBoundingClientRect();
-    const { x, y } = coordination;
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
@@ -69,7 +69,7 @@ function ContextMenu({ onClose, children, mousePosition }: Props) {
       y: tooltipTop,
       x: tooltipLeft,
     });
-  }, [coordination]); // This effect runs only once, when the component mounts
+  }, [mousePosition]); // This effect runs only once, when the component mounts
 
   return (
     <div

@@ -3,6 +3,7 @@ import React from "react";
 import { FaLock, FaLockOpen } from "react-icons/fa";
 import { TbCurrentLocation, TbCurrentLocationOff } from "react-icons/tb";
 import { TaskColors } from "../../../../data";
+import { useChildStore } from "../../../../stores";
 import { HeaderTooltip } from "../HeaderTooltip";
 
 interface IconButtonProps {
@@ -11,17 +12,17 @@ interface IconButtonProps {
   iconType: "lock" | "location";
   tooltipText: string;
   borderColor: string;
-  setTooltipVisible: React.Dispatch<React.SetStateAction<React.ReactNode>>;
 }
 
-export const IconButton: React.FC<IconButtonProps> = ({
+export const HeaderIconButton: React.FC<IconButtonProps> = ({
   onClick,
   isActive,
   iconType,
   tooltipText,
   borderColor,
-  setTooltipVisible,
 }) => {
+  const { setTooltipVisible } = useChildStore();
+
   const Icon =
     iconType === "lock"
       ? isActive
