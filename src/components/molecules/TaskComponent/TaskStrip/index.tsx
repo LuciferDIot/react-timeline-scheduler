@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import moment from "moment";
 import { useMemo } from "react";
 import { useChildStore, useStylesStore } from "../../../../stores";
-import { ProductionTask, StripIndex } from "../../../../types/scheduler.types";
+import { ProductionTask, StripIndex } from "../../../../types";
 
 type TaskStripType = {
   index: number;

@@ -1,10 +1,7 @@
 import moment from "moment";
 import { useMemo } from "react";
 import { useStylesStore } from "../../../../../stores";
-import {
-  ProductionTask,
-  StripIndex,
-} from "../../../../../types/scheduler.types";
+import { ProductionTask, StripIndex } from "../../../../../types";
 import { AnimatedButton, StripActionIcon } from "../../../../atoms";
 import { ContainerAnimation } from "../ContainerAnimation";
 

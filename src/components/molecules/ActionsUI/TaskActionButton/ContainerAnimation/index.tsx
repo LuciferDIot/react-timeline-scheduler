@@ -1,10 +1,7 @@
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
 import { useChildStore } from "../../../../../stores";
-import {
-  ProductionTask,
-  StripIndex,
-} from "../../../../../types/scheduler.types";
+import { ProductionTask, StripIndex } from "../../../../../types";
 
 type ContainerAnimationProps = {
   cellWidthPX: number;

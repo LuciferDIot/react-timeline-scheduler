@@ -14,12 +14,12 @@ import {
   ProductionTask,
   StripIndex,
   WeeklyPlanConfig,
-} from "../../../types/scheduler.types";
-import { Header } from "../../organisms/Header";
-import { Row } from "../../organisms/Row";
+} from "../../../types";
+import { generateGroupedTasks } from "../../../util/common.util";
 import { ContextMenu, Tooltip } from "../../atoms";
 import { RightClickUI } from "../../molecules";
-import { generateGroupedTasks } from "../../../util/common.util";
+import { Header } from "../../organisms/Header";
+import { Row } from "../../organisms/Row";
 
 export interface TimelineSchedulerProps {
   config: WeeklyPlanConfig;

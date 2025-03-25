@@ -8,14 +8,14 @@ import {
   useDataStore,
   useStylesStore,
 } from "../../../stores";
-import { ProductionTask, StripIndex } from "../../../types/scheduler.types";
+import { ProductionTask, StripIndex } from "../../../types";
+import { calculateDatesPercentage } from "../../../util/date.util";
 import { TaskLabel } from "../../atoms";
 import {
   DiscontinueCells,
   TaskActionButtons,
   TaskCells,
 } from "../../molecules";
-import { calculateDatesPercentage } from "../../../util/date.util";
 
 interface TaskProps {
   task: ProductionTask;

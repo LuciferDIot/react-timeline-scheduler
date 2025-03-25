@@ -1,6 +1,5 @@
 import { create } from "zustand";
-import { ProductionTask, StripIndex } from "../types/scheduler.types";
-import { Coordination } from "../types";
+import { Coordination, ProductionTask, StripIndex } from "../types";
 
 interface ChildrenState {
   mouseCoordination: Coordination;

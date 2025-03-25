@@ -3,11 +3,6 @@ export interface TableDateRange {
   end: Date;
 }
 
-export interface Coordination {
-  x: number | null;
-  y: number | null;
-}
-
 export type TableData = {
   tableDate: ProductionTask[];
   isFirstInit: boolean;

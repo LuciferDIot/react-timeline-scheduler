@@ -1,6 +1,6 @@
 import moment from "moment";
 import { create } from "zustand";
-import { ProductionTask, TableData } from "../types/scheduler.types";
+import { ProductionTask, TableData } from "../types";
 
 interface DataState {
   schedulerTasks: TableData;

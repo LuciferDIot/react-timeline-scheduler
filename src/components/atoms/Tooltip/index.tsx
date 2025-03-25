@@ -37,8 +37,8 @@ export const Tooltip: React.FC<TooltipProps> = ({
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
-    let tooltipTop = y + 10; // Default offset below the mouse
-    let tooltipLeft = x + 10; // Default offset to the right of the mouse
+    let tooltipTop = (y || 0) + 10; // Default offset below the mouse
+    let tooltipLeft = (x || 0) + 10; // Default offset to the right of the mouse
     let newBorderRadius = "12px 12px 12px 0";
     let newBorderWidth = "2px";
 
@@ -50,22 +50,22 @@ export const Tooltip: React.FC<TooltipProps> = ({
 
     // Adjust position if the tooltip exceeds the viewport
     if (exceedsRight) {
-      tooltipLeft = x - width - 10; // Move to the left of the mouse
+      tooltipLeft = (x || 0) - width - 10; // Move to the left of the mouse
       newBorderRadius = "12px 0 12px 12px";
       newBorderWidth = "3px";
     }
     if (exceedsBottom) {
-      tooltipTop = y - height - 10; // Move above the mouse
+      tooltipTop = (y || 0) - height - 10; // Move above the mouse
       newBorderRadius = "12px 12px 0 12px";
       newBorderWidth = "3px";
     }
     if (exceedsLeft) {
-      tooltipLeft = x + 10; // Move back to the right
+      tooltipLeft = (x || 0) + 10; // Move back to the right
       newBorderRadius = "12px 12px 12px 0";
       newBorderWidth = "3px";
     }
     if (exceedsTop) {
-      tooltipTop = y + 10; // Move back below
+      tooltipTop = (y || 0) + 10; // Move back below
       newBorderRadius = "12px 12px 12px 0";
       newBorderWidth = "3px";
     }

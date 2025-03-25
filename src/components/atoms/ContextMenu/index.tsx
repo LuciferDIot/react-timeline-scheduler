@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Coordination } from "../../../types/scheduler.types";
+import { Coordination } from "../../../types";
 
 type Props = {
   children: React.ReactNode; // The content of the ContextMenu
