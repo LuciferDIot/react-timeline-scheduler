@@ -1,25 +1,24 @@
 import { motion } from "framer-motion";
+import { useStylesStore } from "../../../stores";
 
 type TaskLabelProps = {
   label: string;
-  textStickyLeftPX?: number;
+  addExtraLeft?: number;
 };
 
-export const TaskLabel = ({
-  label,
-  textStickyLeftPX = 208,
-}: TaskLabelProps) => {
-  console.log(textStickyLeftPX);
+export const TaskLabel = ({ label, addExtraLeft = 0 }: TaskLabelProps) => {
+  const { additionalStickyLeft, rowLableMaxWidth } = useStylesStore();
 
   return (
     <motion.label
-      key={textStickyLeftPX}
-      className={`sticky top-0 px-5`}
+      key={rowLableMaxWidth + additionalStickyLeft || 208}
+      className={`z-[5] h-full sticky top-0 flex justify-start items-center px-5`}
       initial={{
         left: 0,
       }}
       animate={{
-        left: textStickyLeftPX,
+        left: rowLableMaxWidth + additionalStickyLeft || 208,
+        marginLeft: addExtraLeft,
       }}
       exit={{
         left: 0,

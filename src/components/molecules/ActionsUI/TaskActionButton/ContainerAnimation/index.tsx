@@ -1,30 +1,34 @@
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
-import { ProductionTask } from "../../../../../types";
+import { useChildStore } from "../../../../../stores";
+import { ProductionTask, StripIndex } from "../../../../../types";
 
 type ContainerAnimationProps = {
   cellWidthPX: number;
   children: ReactNode;
-  setTooltipVisible: (value: React.SetStateAction<ReactNode>) => void;
-  handleVisibleTooltip: (task: ProductionTask) => void;
+  left: number;
+  handleVisibleTooltip: (task: ProductionTask, index?: StripIndex) => void;
   task: ProductionTask;
 };
 
 export const ContainerAnimation = ({
   cellWidthPX,
   children,
-  setTooltipVisible,
   handleVisibleTooltip,
   task,
-}: ContainerAnimationProps) => (
-  <motion.div
-    className="absolute right-0 top-0 h-full flex justify-center items-center gap-2 text-white text-lg"
-    initial={{ width: "0%" }}
-    animate={{ width: `${cellWidthPX}px` }}
-    transition={{ duration: 0.5, ease: "easeInOut" }}
-    onMouseEnter={() => setTooltipVisible(null)}
-    onMouseLeave={() => handleVisibleTooltip(task)}
-  >
-    {children}
-  </motion.div>
-);
+  left,
+}: ContainerAnimationProps) => {
+  const { removeTooltip } = useChildStore();
+  return (
+    <motion.div
+      className="absolute z-[6] top-0 h-full flex justify-center items-center gap-2 text-white text-lg"
+      initial={{ width: "0%", left: `${left - 5}px` }}
+      animate={{ width: `${cellWidthPX}px`, left: `${left - 5}px` }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
+      onMouseEnter={removeTooltip}
+      onMouseLeave={() => handleVisibleTooltip(task)}
+    >
+      {children}
+    </motion.div>
+  );
+};

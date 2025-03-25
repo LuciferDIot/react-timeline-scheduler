@@ -77,3 +77,23 @@ export const generateTableDates = (
 
   return { tableStartDate: taskStartDates, tableEndDate: taskEndDates, dates };
 };
+
+export const calculateDatesPercentage = (start: Date): number => {
+  // Get the start of the current day (00:00:00)
+  const startOfDay = moment(start).startOf("day");
+
+  // Get the start of the next day (00:00:00)
+  const startOfNextDay = moment(startOfDay).add(1, "day");
+
+  // Calculate the total duration in milliseconds
+  const totalDuration = moment(startOfNextDay).diff(startOfDay, "milliseconds");
+
+  // Calculate the elapsed duration in milliseconds
+  const elapsedDuration = moment(start).diff(startOfDay, "milliseconds");
+
+  // Calculate the percentage with decimal precision
+  const percentage = (elapsedDuration / totalDuration) * 100;
+
+  // Ensure the percentage is between 0% and 100%
+  return Math.min(100, Math.max(0, percentage));
+};
