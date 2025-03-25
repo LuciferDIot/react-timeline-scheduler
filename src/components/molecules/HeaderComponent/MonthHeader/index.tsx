@@ -14,7 +14,7 @@ export const MonthHeader: React.FC<MonthHeaderProps> = ({
   borderColor,
 }) => (
   <div
-    className={`bg-white text-left border p-2 text-xs ${borderColor}`}
+    className={`backdrop-blur-2xl text-left border p-2 text-xs ${borderColor}`}
     style={{ width: `${monthCellWidth}px` }}
   >
     <HeaderLabel text={month} />

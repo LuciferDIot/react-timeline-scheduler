@@ -73,7 +73,7 @@ export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
       setSchedulerTasks,
       setOffsetDays,
     } = useDataStore();
-    const { setAllStyles } = useStylesStore();
+    const { borderColor, setAllStyles } = useStylesStore();
 
     const {
       mouseCoordination,
@@ -91,7 +91,9 @@ export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
     }, [onTaskClick, onRowExpand, onRowShrink, onRowLabelClick, setAll]);
 
     useEffect(() => {
-      tooltipComponent && setDefaultTooltipComponent(tooltipComponent);
+      if (tooltipComponent) {
+        setDefaultTooltipComponent(tooltipComponent);
+      }
     }, [setDefaultTooltipComponent, tooltipComponent]);
 
     useEffect(() => {
@@ -184,9 +186,8 @@ export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
             <>
               <div
                 ref={containerRef}
-                className="relative max-w-[90vw] max-h-[75vh] w-fit h-fit
-          scrollbar-track-white dark:scrollbar-track-black scrollbar-thumb-black/20
-          scrollbar-thin overflow-x-scroll horizontal-scroll"
+                className={`relative border ${borderColor} max-w-[90vw] max-h-[75vh] w-fit h-fit
+                rounded-md scrollbar-thin overflow-x-scroll `}
                 onMouseMove={handleMouseMove}
               >
                 <div className="w-fit text-sm">
