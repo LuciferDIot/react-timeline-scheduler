@@ -10,9 +10,11 @@
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "noEmit": true,
     "isolatedModules": true,
     "moduleDetection": "force",
-    "noEmit": true,
+    "emitDeclarationOnly": true,
     "jsx": "react-jsx",
 
     /* Linting */
@@ -20,7 +22,13 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    // Generate .d.ts files properly
+    "declaration": true,
+    "declarationDir": "./dist",
+    "typeRoots": ["./dist/index.d.ts", "node_modules/@types"]
   },
-  "include": ["src"]
+  "include": ["src", "./index.ts"],
+  "exclude": ["node_modules"]
 }
