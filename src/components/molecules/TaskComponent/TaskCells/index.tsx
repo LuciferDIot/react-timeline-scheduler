@@ -1,7 +1,7 @@
+import { calculateDatesPercentage } from "@/util/date.util";
 import { motion } from "framer-motion";
 import React from "react";
-import { ProductionTask, StripIndex } from "../../../../types";
-import { calculateDatesPercentage } from "../../../../util/date.util";
+import { ProductionTask, StripIndex } from "../../../../types/scheduler.types";
 import { ExtendedCell } from "../ExtendedCell";
 import { FirstEmptyCell } from "../FirstEmptyCell";
 import { TaskStrip } from "../TaskStrip";
@@ -35,8 +35,7 @@ export const TaskCells = React.memo(
       : null;
     const endPercentage = calculateDatesPercentage(endDate);
 
-    if (midPercentage && Math.floor(midPercentage) === 99)
-      console.log(midPercentage);
+    console.log(startPercentage, midPercentage, endPercentage);
 
     return (
       <motion.div

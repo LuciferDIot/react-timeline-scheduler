@@ -1,8 +1,8 @@
+import { calculateDatesPercentage } from "@/util/date.util";
 import { motion } from "framer-motion";
 import moment from "moment";
 import { useMemo } from "react";
 import { useStylesStore } from "../../../../stores";
-import { calculateDatesPercentage } from "../../../../util/date.util";
 
 type Props = {
   startDate: Date;
@@ -36,7 +36,7 @@ const DiscontinueCells = ({ endDate, startDate, stripStartDate }: Props) => {
   );
 
   return (
-    <div className="absolute top-0 right-0 w-full h-full flex z-[2] pointer-events-none cursor-none">
+    <div className="discontinue absolute top-0 right-0 w-full h-full flex z-[2] pointer-events-none cursor-none">
       <motion.div
         className="h-full border border-dashed border-x-0"
         animate={{

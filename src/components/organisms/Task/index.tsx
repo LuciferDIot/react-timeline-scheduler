@@ -1,3 +1,4 @@
+import { calculateDatesPercentage } from "@/util/date.util";
 import { motion } from "framer-motion";
 import moment from "moment";
 import React, { useCallback, useMemo } from "react";
@@ -8,8 +9,7 @@ import {
   useDataStore,
   useStylesStore,
 } from "../../../stores";
-import { ProductionTask, StripIndex } from "../../../types";
-import { calculateDatesPercentage } from "../../../util/date.util";
+import { ProductionTask, StripIndex } from "../../../types/scheduler.types";
 import { TaskLabel } from "../../atoms";
 import {
   DiscontinueCells,
@@ -98,7 +98,9 @@ export const Task: React.FC<TaskProps> = React.memo(
           }
           updatedTask.endDate = newEndDate;
           prev[taskIndex] = updatedTask;
-          action && action(task.departmentName, task.departmentId, updatedTask);
+          if (action) {
+            action(task.departmentName, task.departmentId, updatedTask);
+          }
 
           return [...prev];
         };
@@ -153,10 +155,10 @@ export const Task: React.FC<TaskProps> = React.memo(
         <TaskLabel label={task.label} addExtraLeft={labelLeftPercentage} />
 
         <motion.div
-          className="w-fit h-full"
+          className="w-full h-full"
           onClick={() => onTaskClick?.(task)}
           initial={{ width: 0 }}
-          animate={{ width: "fit-content" }}
+          animate={{ width: "100%" }}
         >
           {task.discontinue && (
             <DiscontinueCells
