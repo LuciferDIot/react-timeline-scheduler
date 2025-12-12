@@ -10,10 +10,14 @@ import {
     useStylesStore,
 } from "../../../stores";
 import {
+    AnimationConfig,
     ContextMenuType,
+    DragConfig,
     ProductionTask,
+    SchedulerTheme,
     StripIndex,
     WeeklyPlanConfig,
+    WeeklyPlanConfigStyles,
 } from "../../../types";
 import { generateGroupedTasks } from "../../../util/common.util";
 import { ContextMenu, Tooltip } from "../../atoms";
@@ -22,7 +26,16 @@ import { Header } from "../../organisms/Header";
 import { Row } from "../../organisms/Row";
 
 export interface TimelineSchedulerProps {
-  config: WeeklyPlanConfig;
+  config?: WeeklyPlanConfig;
+  topic?: string;
+  data?: ProductionTask[];
+  startOffsetDays?: number;
+  endOffsetDays?: number;
+  rowCategories?: string[];
+  styles?: WeeklyPlanConfigStyles;
+  theme?: Partial<SchedulerTheme>;
+  dragConfig?: DragConfig;
+  animationConfig?: AnimationConfig;
   scrollIntoToday?: boolean;
   loading?: boolean;
   rightClickOptions?: ContextMenuType[];
@@ -47,17 +60,16 @@ export interface TimelineSchedulerProps {
 
 export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
   ({
-    config: {
-      topic,
-      startOffsetDays = 0,
-      endOffsetDays = 0,
-      data = [],
-      styles = defaultStyles,
-      rowCategories,
-      theme,
-      dragConfig,
-      animationConfig,
-    },
+    config,
+    topic: propTopic,
+    data: propData,
+    startOffsetDays: propStartOffsetDays,
+    endOffsetDays: propEndOffsetDays,
+    rowCategories: propRowCategories,
+    styles: propStyles,
+    theme: propTheme,
+    dragConfig: propDragConfig,
+    animationConfig: propAnimationConfig,
     rightClickOptions,
     scrollIntoToday,
     tooltipComponent,
@@ -68,6 +80,16 @@ export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
     loading, // New loading prop
     className,
   }) => {
+    // Merge config and props with defaults
+    const topic = propTopic ?? config?.topic ?? "Weekly Schedule";
+    const data = propData ?? config?.data ?? [];
+    const startOffsetDays = propStartOffsetDays ?? config?.startOffsetDays ?? 0;
+    const endOffsetDays = propEndOffsetDays ?? config?.endOffsetDays ?? 0;
+    const rowCategories = propRowCategories ?? config?.rowCategories;
+    const styles = propStyles ?? config?.styles ?? defaultStyles;
+    const theme = propTheme ?? config?.theme;
+    const dragConfig = propDragConfig ?? config?.dragConfig;
+    const animationConfig = propAnimationConfig ?? config?.animationConfig;
     const containerRef = useRef<HTMLDivElement>(null);
     const [error, setError] = useState<string | undefined>();
 

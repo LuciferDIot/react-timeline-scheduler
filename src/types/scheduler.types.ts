@@ -21,7 +21,7 @@ export interface ProductionTask {
   startDate: Date;
   endDate: Date;
   prevEndDate?: Date;
-  styleAllocationId: string;
+  styleAllocationId?: string;
   progress?: number;
   bgColorKey?: string;
   discontinue?: {

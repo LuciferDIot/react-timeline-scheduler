@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import moment from "moment";
 import React, { useEffect, useMemo, useRef } from "react";
 
-import { useActionStore, useDataStore, useStylesStore } from "../../../stores";
+import { useActionStore, useStylesStore } from "../../../stores";
 import { ProductionTask } from "../../../types";
 import { Task } from "../Task";
 
@@ -26,10 +26,11 @@ const Row: React.FC<RowProps> = React.memo(
     groupedTasks,
     taskRowIndex,
   }) => {
+    // console.log('Row rendering:', line, dates.length, row.length);
     const { onRowLabelClick } = useActionStore();
     const { rowLableMaxWidth, borderColor, setRowLableMaxWidth, theme } =
       useStylesStore();
-    const { tableEndDate } = useDataStore();
+    // const { tableEndDate } = useDataStore();
 
     const labelRef = useRef<HTMLDivElement>(null);
 
@@ -40,18 +41,47 @@ const Row: React.FC<RowProps> = React.memo(
       }
     }, [line, setRowLableMaxWidth]);
 
+    const taskMap = useMemo(() => {
+        const lookup = new Map<string, ProductionTask | "occupied">();
+        
+        row.forEach(task => {
+             // Check if task is visible at all
+             const viewStart = moment(dates[0]);
+             const viewEnd = moment(dates[dates.length -1]);
+             
+             if (moment(task.endDate).isBefore(viewStart) || moment(task.startDate).isAfter(viewEnd)) return;
+             
+             // Determine effective start
+             let effectiveStart = moment(task.startDate);
+             if (effectiveStart.isBefore(viewStart)) effectiveStart = viewStart;
+             
+             const effectiveStartStr = effectiveStart.format("YYYY-MM-DD");
+             lookup.set(effectiveStartStr, task);
+             
+             let current = effectiveStart.clone().add(1, 'days');
+             const end = moment(task.endDate);
+             
+             while (current.isSameOrBefore(end)) {
+                 const dStr = current.format("YYYY-MM-DD");
+                 if (!lookup.has(dStr)) lookup.set(dStr, "occupied"); 
+                 current.add(1, 'days');
+                 
+                 // Optimization: break if beyond viewEnd
+                 if (current.isAfter(viewEnd)) break;
+             }
+        });
+        return lookup;
+    }, [row, dates]);
+
     const taskComponents = useMemo(
       () =>
         dates.map((date, index) => {
-          const currDate = moment(date);
-          const task = row.find(
-            (t) =>
-              moment(t.startDate).isSameOrBefore(currDate, "day") &&
-              moment(t.endDate).isSameOrAfter(currDate, "day")
-          );
-
-          if (!task) {
-            return (
+          const entry = taskMap.get(date);
+          
+          if (entry === "occupied") return null;
+          
+          if (!entry) {
+             return (
               <EmptyCell
                 key={`${line}-${date}`}
                 borderColor={borderColor}
@@ -59,25 +89,27 @@ const Row: React.FC<RowProps> = React.memo(
               />
             );
           }
-
-          const taskStartIndex = dates.indexOf(
-            moment(task.startDate).format("YYYY-MM-DD")
-          );
-          const taskEndIndex = dates.indexOf(
+          
+          // It is a task
+          const task = entry as ProductionTask;
+          
+          // Calculate span
+          // We can use the logic we had, but simplified since we know we are at effective start.
+           const taskStartIndex = index; // Since we are here, this IS the start (effective or real)
+           
+           const taskEndIndex = dates.indexOf(
             moment(task.endDate).format("YYYY-MM-DD")
           );
 
-          let span = taskEndIndex - taskStartIndex + 1;
-
-          if (taskEndIndex < taskStartIndex) {
-            const endOfRowIndex = dates.indexOf(
-              moment(tableEndDate).format("YYYY-MM-DD")
-            );
-            span = endOfRowIndex - taskStartIndex + 1;
+          let span;
+          if (taskEndIndex >= 0) {
+            span = taskEndIndex - taskStartIndex + 1;
+          } else {
+             // Ends after view
+             span = dates.length - taskStartIndex;
           }
 
-          if (index === taskStartIndex) {
-            return (
+          return (
               <Task
                 key={`${task.id}-${date}`}
                 task={task}
@@ -86,11 +118,8 @@ const Row: React.FC<RowProps> = React.memo(
                 borderColor={borderColor}
               />
             );
-          }
-
-          return null;
         }),
-      [dates, row, line, borderColor, rowIndex, tableEndDate]
+      [dates, taskMap, line, borderColor, rowIndex]
     );
 
     return (
@@ -112,6 +141,7 @@ const Row: React.FC<RowProps> = React.memo(
           style={{
             backgroundColor:
               taskRowIndex % 2 === 0 ? theme.row.even : theme.row.odd,
+            color: theme.text.primary,
           }}
           initial={{ width: 0 }}
           animate={{ width: rowLableMaxWidth }}

@@ -1,19 +1,19 @@
 import { motion } from "framer-motion";
 import moment from "moment";
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { TaskColors } from "../../../data/styles";
 import {
-  useActionStore,
-  useChildStore,
-  useDataStore,
-  useStylesStore,
+    useActionStore,
+    useChildStore,
+    useDataStore,
+    useStylesStore,
 } from "../../../stores";
 import { ProductionTask, StripIndex } from "../../../types";
 import { calculateDatesPercentage } from "../../../util/date.util";
 import { TaskLabel } from "../../atoms";
 import {
-  DiscontinueCells,
-  TaskCells
+    DiscontinueCells,
+    TaskCells
 } from "../../molecules";
 
 interface TaskProps {
@@ -106,31 +106,55 @@ export const Task: React.FC<TaskProps> = React.memo(
       document.body.style.cursor = "col-resize";
       document.body.style.userSelect = "none";
 
-      const calculateDrag = (clientX: number) => {
-         const currentScroll = viewport ? viewport.scrollLeft : 0;
-         const scrollDelta = currentScroll - startScrollLeft;
-         const mouseDelta = clientX - startX;
-         const totalDelta = mouseDelta + scrollDelta;
-         
-         if (direction === "right") {
-           const newWidth = Math.max(customCellWidthPX, startWidth + totalDelta);
-           setDragProperties({ width: newWidth, left: 0, direction });
-         } else {
-           const clampedDelta = Math.min(totalDelta, startWidth - customCellWidthPX);
-           setDragProperties({
-              width: startWidth - clampedDelta,
-              left: clampedDelta,
-              direction
-            });
-         }
-      };
+      const virtualDeltaRef = useRef(0);
 
-      const handleMouseMove = (moveEvent: MouseEvent) => {
+       // Reset virtual delta on drag start
+       useEffect(() => {
+          if (isDragging) virtualDeltaRef.current = 0;
+       }, [isDragging]);
+
+       const calculateDrag = (clientX: number, virtualSpeed = 0) => {
+          const currentScroll = viewport ? viewport.scrollLeft : 0;
+          const scrollDelta = currentScroll - startScrollLeft;
+          const mouseDelta = clientX - startX;
+          
+          virtualDeltaRef.current += virtualSpeed;
+          
+          const totalDelta = mouseDelta + scrollDelta + virtualDeltaRef.current;
+          
+          if (direction === "right") {
+            const newWidth = Math.max(customCellWidthPX, startWidth + totalDelta);
+            setDragProperties({ width: newWidth, left: 0, direction });
+          } else {
+            const clampedDelta = Math.min(totalDelta, startWidth - customCellWidthPX);
+            // Allow expanding left indefinitely (negative clampedDelta)
+            // But if shrinking, clamp to min width.
+            
+            // Wait, logic above for left:
+            // startWidth - clampedDelta = newWidth.
+             // If totalDelta is large positive (shrinking from left), we clamp it to startWidth - minWidth.
+            // If totalDelta is negative (expanding left), we don't clamp?
+            // "clampedDelta" naming is confusing.
+            
+            // Logic check:
+            // If expanding left, totalDelta is negative. clampedDelta = negative.
+            // width = startWidth - (-large) = large. Correct.
+            // left = -large. Correct.
+            
+            setDragProperties({
+               width: startWidth - clampedDelta,
+               left: clampedDelta,
+               direction
+             });
+          }
+       };
+
+       const handleMouseMove = (moveEvent: MouseEvent) => {
         currentMouseX = moveEvent.clientX;
         calculateDrag(moveEvent.clientX);
       };
 
-      const autoScrollLoop = () => {
+       const autoScrollLoop = () => {
          if (!viewport || !dragConfig.autoScroll?.enabled) return;
          
          const { left, right } = viewport.getBoundingClientRect();
@@ -151,8 +175,17 @@ export const Task: React.FC<TaskProps> = React.memo(
          }
          
          if (scrollSpeed !== 0) {
+            const prevScrollLeft = viewport.scrollLeft;
             viewport.scrollLeft += scrollSpeed;
-            calculateDrag(mouseX);
+            const actualScrollDelta = viewport.scrollLeft - prevScrollLeft;
+            
+            // If scroll was clamped (hit the edge), we treat the remaining speed as "virtual" expansion
+            // This allows the task to keep growing even if the view can't scroll further
+            if (Math.abs(actualScrollDelta) < Math.abs(scrollSpeed)) {
+                calculateDrag(mouseX, scrollSpeed);
+            } else {
+                calculateDrag(mouseX);
+            }
          }
          
          rafId = requestAnimationFrame(autoScrollLoop);
@@ -172,7 +205,8 @@ export const Task: React.FC<TaskProps> = React.memo(
         const finalScroll = viewport ? viewport.scrollLeft : 0;
         const scrollDelta = finalScroll - startScrollLeft;
         const mouseDelta = upEvent.clientX - startX;
-        const totalDelta = mouseDelta + scrollDelta;
+        
+        const totalDelta = mouseDelta + scrollDelta + virtualDeltaRef.current;
         
         const cellWidth = customCellWidthPX;
         const daysChanged = Math.round(totalDelta / cellWidth);

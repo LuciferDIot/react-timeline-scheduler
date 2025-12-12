@@ -76,8 +76,9 @@ export const useDataStore = create<DataState>((set) => ({
     })) as SetSchedulerTasks,
   updateSchedulerTaskDates: ((action) =>
     set((state) => {
+      const updatedTableDate = action(state.schedulerTasks.tableDate || []);
       const { start: tableStartDate, end: tableEndDate } = startEndDates(
-        state.schedulerTasks.tableDate || [],
+        updatedTableDate,
         state.startOffsetDays,
         state.endOffsetDays
       );
@@ -85,7 +86,7 @@ export const useDataStore = create<DataState>((set) => ({
       return {
         schedulerTasks: {
           isFirstInit: true,
-          tableDate: action(state.schedulerTasks.tableDate || []),
+          tableDate: updatedTableDate,
         },
         tableStartDate,
         tableEndDate,
