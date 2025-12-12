@@ -1,19 +1,18 @@
 import "./index.css";
 // Main component export
-export * from "./components/templates/WeeklyPlan";
+export * from "./components/templates/Timeline";
 
 // Re-export all types
 export type {
     AnimationConfig,
     ContextMenuType,
-    DragConfig,
-    ProductionTask,
+    DragConfig, SchedulerConfig,
+    SchedulerConfigStyles, SchedulerTask,
     SchedulerTheme,
-    StripIndex,
-    TableDateRange,
-    WeeklyPlanConfig,
-    WeeklyPlanConfigStyles
+    TableDateRange
 } from "./types";
+
+export { StripIndex } from "./types";
 
 // Re-export stores for advanced usage
 export {
@@ -24,4 +23,4 @@ export {
 } from "./stores";
 
 // Re-export the props type with a clear name
-export type { TimelineSchedulerProps } from "./components/templates/WeeklyPlan";
+export type { TimelineProps } from "./components/templates/Timeline";

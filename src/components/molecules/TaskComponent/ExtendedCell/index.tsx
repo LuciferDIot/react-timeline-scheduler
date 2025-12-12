@@ -2,10 +2,10 @@ import { motion } from "framer-motion";
 import moment from "moment";
 import { useMemo } from "react";
 import { useChildStore, useStylesStore } from "../../../../stores";
-import { ProductionTask, StripIndex } from "../../../../types";
+import { SchedulerTask, StripIndex } from "../../../../types";
 
 type Props = {
-  task: ProductionTask;
+  task: SchedulerTask;
   endDate: Date;
   prevEndDate: Date;
   midPercentage: number;
@@ -14,7 +14,7 @@ type Props = {
     backgroundColor: string;
   };
 
-  handleVisibleTooltip: (task: ProductionTask, index?: StripIndex) => void;
+  handleVisibleTooltip: (task: SchedulerTask, index?: StripIndex) => void;
 };
 
 function ExtendedCell({

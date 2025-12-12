@@ -1,22 +1,22 @@
 import { create } from "zustand";
-import { Coordination, ProductionTask, StripIndex } from "../types";
+import { Coordination, SchedulerTask, StripIndex } from "../types";
 
 interface ChildrenState {
   mouseCoordination: Coordination;
   tooltipVisible: React.ReactNode | null;
-  rightClickTask: ProductionTask | null;
+  rightClickTask: SchedulerTask | null;
   hasHydrated: boolean;
   defaultTooltipComponent:
-    | ((task: ProductionTask, index?: StripIndex) => React.ReactNode)
+    | ((task: SchedulerTask, index?: StripIndex) => React.ReactNode)
     | null;
 
   setMouseCoordination: (coordination: Coordination) => void;
   removeTooltip: () => void;
   setTooltipVisible: (tooltip: React.ReactNode) => void;
   removeRightClickTask: () => void;
-  setrightClickTask: (task: ProductionTask) => void;
+  setrightClickTask: (task: SchedulerTask) => void;
   setDefaultTooltipComponent: (
-    action: (task: ProductionTask, index?: StripIndex) => React.ReactNode
+    action: (task: SchedulerTask, index?: StripIndex) => React.ReactNode
   ) => void;
 }
 

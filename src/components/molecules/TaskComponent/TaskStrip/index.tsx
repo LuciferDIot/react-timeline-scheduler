@@ -2,11 +2,11 @@ import { motion } from "framer-motion";
 import moment from "moment";
 import { useMemo } from "react";
 import { useChildStore, useStylesStore } from "../../../../stores";
-import { ProductionTask, StripIndex } from "../../../../types";
+import { SchedulerTask, StripIndex } from "../../../../types";
 
 type TaskStripType = {
   index: number;
-  task: ProductionTask;
+  task: SchedulerTask;
   startPercentage: number;
   endPercentage: number;
   startDate: Date;
@@ -14,7 +14,7 @@ type TaskStripType = {
   prevEndDate?: Date;
   taskBackgroundColor: string;
 
-  handleVisibleTooltip: (task: ProductionTask, index?: StripIndex) => void;
+  handleVisibleTooltip: (task: SchedulerTask, index?: StripIndex) => void;
 };
 
 export const TaskStrip = ({

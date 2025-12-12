@@ -1,8 +1,8 @@
 import { useChildStore } from "../../../../stores";
-import { ContextMenuType, ProductionTask } from "../../../../types";
+import { ContextMenuType, SchedulerTask } from "../../../../types";
 
 type Props = {
-  task: ProductionTask;
+  task: SchedulerTask;
   rightClickOptions: ContextMenuType[];
 };
 
@@ -28,7 +28,7 @@ function RightClickUI({ task, rightClickOptions }: Props) {
 }
 
 type RightClickUIRowType = {
-  task: ProductionTask;
+  task: SchedulerTask;
   isLast: boolean;
 } & ContextMenuType;
 

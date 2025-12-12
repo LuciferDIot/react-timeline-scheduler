@@ -1,9 +1,9 @@
 import moment from "moment";
 import { create } from "zustand";
-import { ProductionTask, TableData } from "../types";
+import { SchedulerTask, TableData } from "../types";
 
 interface DataState {
-  schedulerTasks: TableData;
+  schedulerData: TableData;
   hasHydrated: boolean;
   startOffsetDays: number;
   endOffsetDays: number;
@@ -11,9 +11,9 @@ interface DataState {
   tableEndDate: moment.Moment;
 
   setOffsetDays: (startOffset: number, endOffset: number) => void;
-  setSchedulerTasks: (tasks: ProductionTask[]) => void;
+  setSchedulerData: (tasks: SchedulerTask[]) => void;
   updateSchedulerTaskDates: (
-    action: (prev: ProductionTask[]) => ProductionTask[]
+    action: (prev: SchedulerTask[]) => SchedulerTask[]
   ) => void;
 }
 
@@ -21,18 +21,18 @@ interface SetOffsetDays {
   (start: number, end: number): void;
 }
 
-interface SetSchedulerTasks {
-  (tasks: ProductionTask[]): void;
+interface SetSchedulerData {
+  (tasks: SchedulerTask[]): void;
 }
 
 interface UpdateSchedulerTask {
-  (action: (prev: ProductionTask[]) => ProductionTask[]): void;
+  (action: (prev: SchedulerTask[]) => SchedulerTask[]): void;
 }
 
 export const useDataStore = create<DataState>((set) => ({
-  schedulerTasks: {
+  schedulerData: {
     isFirstInit: false,
-    tableDate: [],
+    tasks: [],
   },
   hasHydrated: false,
   startOffsetDays: 0,
@@ -43,7 +43,7 @@ export const useDataStore = create<DataState>((set) => ({
   setOffsetDays: ((start, end) =>
     set((state: DataState) => {
       const { start: tableStartDate, end: tableEndDate } = startEndDates(
-        state.schedulerTasks.tableDate || [],
+        state.schedulerData.tasks || [],
         start,
         end
       );
@@ -55,38 +55,38 @@ export const useDataStore = create<DataState>((set) => ({
         tableEndDate,
       };
     })) as SetOffsetDays,
-  setSchedulerTasks: ((tasks) =>
+  setSchedulerData: ((tasks) =>
     set((state: DataState) => {
       const { start: tableStartDate, end: tableEndDate } = startEndDates(
-        state.schedulerTasks.tableDate || [],
+        state.schedulerData.tasks || [],
         state.startOffsetDays,
         state.endOffsetDays
       );
 
-      if (state.schedulerTasks.isFirstInit || tasks.length === 0) return state;
+      if (state.schedulerData.isFirstInit || tasks.length === 0) return state;
 
       return {
-        schedulerTasks: {
-          tableDate: tasks,
+        schedulerData: {
+          tasks: tasks,
           isFirstInit: true,
         },
         tableStartDate,
         tableEndDate,
       };
-    })) as SetSchedulerTasks,
+    })) as SetSchedulerData,
   updateSchedulerTaskDates: ((action) =>
     set((state) => {
-      const updatedTableDate = action(state.schedulerTasks.tableDate || []);
+      const updatedTasks = action(state.schedulerData.tasks || []);
       const { start: tableStartDate, end: tableEndDate } = startEndDates(
-        updatedTableDate,
+        updatedTasks,
         state.startOffsetDays,
         state.endOffsetDays
       );
 
       return {
-        schedulerTasks: {
+        schedulerData: {
           isFirstInit: true,
-          tableDate: updatedTableDate,
+          tasks: updatedTasks,
         },
         tableStartDate,
         tableEndDate,
@@ -95,23 +95,23 @@ export const useDataStore = create<DataState>((set) => ({
 }));
 
 const startEndDates = (
-  schedulerTasks: ProductionTask[],
+  tasks: SchedulerTask[],
   startOffsetDays: number,
   endOffsetDays: number
 ) => {
-  if (schedulerTasks.length === 0) {
+  if (tasks.length === 0) {
     return {
       start: moment().add(startOffsetDays, "days"),
       end: moment().add(endOffsetDays, "days"),
     };
   }
 
-  let minStart = moment(schedulerTasks[0].startDate);
-  let maxEnd = moment(schedulerTasks[0].endDate);
+  let minStart = moment(tasks[0].startDate);
+  let maxEnd = moment(tasks[0].endDate);
 
-  for (let i = 1; i < schedulerTasks.length; i++) {
-    const taskStart = moment(schedulerTasks[i].startDate);
-    const taskEnd = moment(schedulerTasks[i].endDate);
+  for (let i = 1; i < tasks.length; i++) {
+    const taskStart = moment(tasks[i].startDate);
+    const taskEnd = moment(tasks[i].endDate);
     if (taskStart.isBefore(minStart)) minStart = taskStart;
     if (taskEnd.isAfter(maxEnd)) maxEnd = taskEnd;
   }

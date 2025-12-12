@@ -11,8 +11,8 @@ export enum TaskColors {
 export const defaultStyles = {
   customCellHeightPX: 40,
   customCellWidthPX: 100,
-  taskbgColorFormat: TaskColors,
-  daybgColorHighlight: undefined,
+  taskColorFormat: TaskColors,
+  dayColorHighlight: undefined,
 };
 
 export * from "./defaultTheme";

@@ -1,7 +1,7 @@
 import moment from "moment";
-import { ProductionTask } from "../types";
+import { SchedulerTask } from "../types";
 
-export const calculatePercentage = (task: ProductionTask): number => {
+export const calculatePercentage = (task: SchedulerTask): number => {
   // Calculate the total duration of the task in days
   const totalDuration =
     moment(task.endDate).diff(moment(task.startDate), "days") + 1;
@@ -43,7 +43,7 @@ export const getMonthName = (date: Date): string => {
 };
 
 export const generateTableDates = (
-  tasks: ProductionTask[],
+  tasks: SchedulerTask[],
   startOffsetDays: number,
   endOffsetDays: number
 ) => {

@@ -1,15 +1,15 @@
 import moment from "moment";
 import { useMemo } from "react";
 import { useStylesStore } from "../../../../../stores";
-import { ProductionTask, StripIndex } from "../../../../../types";
+import { SchedulerTask, StripIndex } from "../../../../../types";
 import { AnimatedButton, StripActionIcon } from "../../../../atoms";
 import { ContainerAnimation } from "../ContainerAnimation";
 
 type ActionButtons = {
-  task: ProductionTask;
+  task: SchedulerTask;
   handleShrink: () => void;
   handleExpand: () => void;
-  handleVisibleTooltip: (task: ProductionTask, index?: StripIndex) => void;
+  handleVisibleTooltip: (task: SchedulerTask, index?: StripIndex) => void;
 };
 
 export const TaskActionButtons = ({

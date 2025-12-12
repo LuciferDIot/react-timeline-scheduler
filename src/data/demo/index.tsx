@@ -1,24 +1,24 @@
-import { ProductionTask, WeeklyPlanConfig } from "../../types";
+import { SchedulerConfig, SchedulerTask } from "../../types";
 
-export const demoSchedulerData: WeeklyPlanConfig = {
-  topic: "Production Schedule",
+export const demoSchedulerData: SchedulerConfig = {
+  label: "Production Schedule",
   data: [
     {
       id: "task1",
       label: "Sewing",
-      departmentName: "Sewing Department",
-      departmentId: "D01",
+      groupLabel: "Sewing Department",
+      groupId: "D01",
       startDate: new Date("2025-02-01"),
       endDate: new Date("2025-02-10"),
       prevEndDate: new Date("2025-02-06"),
-      styleAllocationId: "Style1",
+      variant: "Style1",
       progress: 45,
-      bgColorKey: "yellow",
+      colorKey: "yellow",
       extendedStyles: {
         backgroundColor: "yellow",
         color: "black",
       },
-      tooltipComponent: (task: ProductionTask) => (
+      tooltipComponent: (task: SchedulerTask) => (
         <div>
           <strong>{task.label}</strong>
           <p>Start: {task.startDate.toDateString()}</p>
@@ -30,19 +30,19 @@ export const demoSchedulerData: WeeklyPlanConfig = {
     {
       id: "task2",
       label: "Cutting",
-      departmentName: "Cutting Department",
-      departmentId: "D02",
+      groupLabel: "Cutting Department",
+      groupId: "D02",
       startDate: new Date("2025-02-05"),
       endDate: new Date("2025-02-15"),
       prevEndDate: new Date("2025-02-07"),
-      styleAllocationId: "Style2",
+      variant: "Style2",
       progress: 70,
-      bgColorKey: "blue",
+      colorKey: "blue",
       extendedStyles: {
         backgroundColor: "blue",
         color: "white",
       },
-      tooltipComponent: (task: ProductionTask) => (
+      tooltipComponent: (task: SchedulerTask) => (
         <div>
           <strong>{task.label}</strong>
           <p>Start: {task.startDate.toDateString()}</p>
@@ -54,18 +54,18 @@ export const demoSchedulerData: WeeklyPlanConfig = {
     {
       id: "task3",
       label: "Packing",
-      departmentName: "Packing Department",
-      departmentId: "D03",
+      groupLabel: "Packing Department",
+      groupId: "D03",
       startDate: new Date("2025-02-10"),
       endDate: new Date("2025-02-20"),
-      styleAllocationId: "Style3",
+      variant: "Style3",
       progress: 30,
-      bgColorKey: "green",
+      colorKey: "green",
       extendedStyles: {
         backgroundColor: "black",
         color: "white",
       },
-      tooltipComponent: (task: ProductionTask) => (
+      tooltipComponent: (task: SchedulerTask) => (
         <div>
           <strong>{task.label}</strong>
           <p>Start: {task.startDate.toDateString()}</p>
@@ -77,7 +77,7 @@ export const demoSchedulerData: WeeklyPlanConfig = {
   ],
   startOffsetDays: 7,
   endOffsetDays: 30,
-  rowCategories: [
+  resources: [
     "Sewing Department",
     "Cutting Department",
     "Packing Department",
@@ -85,7 +85,7 @@ export const demoSchedulerData: WeeklyPlanConfig = {
   styles: {
     customCellWidthPX: 100,
     customCellHeightPX: 40,
-    daybgColorHighlight: {
+    dayColorHighlight: {
       "2025-02-01": [new Date("2025-02-01"), new Date("2025-02-02")],
       "2025-02-10": [new Date("2025-02-10"), new Date("2025-02-12")],
     },

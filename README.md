@@ -33,7 +33,7 @@ yarn add react-timeline-scheduler
 ## 🚀 Usage
 
 ```tsx
-import { WeeklyPlan } from "react-timeline-scheduler";
+import { Timeline } from "react-timeline-scheduler";
 import "react-timeline-scheduler/dist/style.css"; // ⚠️ IMPORTANT: Must import styles!
 
 const App = () => {
@@ -41,21 +41,21 @@ const App = () => {
     {
       id: "task-1",
       label: "Project Alpha",
-      departmentName: "Engineering",
-      departmentId: "dept-1",
+      groupLabel: "Engineering",
+      groupId: "dept-1",
       startDate: new Date("2024-01-01"),
       endDate: new Date("2024-01-05"),
       // Optional: Custom styles per task
-      styleAllocationId: "style-1"
+      variant: "style-1"
     },
     // ... more tasks
   ];
 
   return (
     <div className="w-screen h-screen">
-      <WeeklyPlan
+      <Timeline
         config={{
-          topic: "Project Schedule",
+          label: "Project Schedule",
           data: data,
           theme: {
             primary: "#3b82f6", 
@@ -97,22 +97,22 @@ const myTheme = {
 
 ## 📄 API Reference
 
-### `WeeklyPlan` Props
+### `Timeline` Props
 
 | Prop | Type | Description |
 | :--- | :--- | :--- |
-| `config` | `WeeklyPlanConfig` | **Required**. Main configuration object containing data and settings. |
+| `config` | `SchedulerConfig` | **Required**. Main configuration object containing data and settings. |
 | `className` | `string` | Optional. Custom CSS class for the root container. |
 | `onTaskClick` | `(task) => void` | Callback fired when a task is clicked. |
 | `onRowLabelClick` | `(label) => void` | Callback fired when a row label is clicked. |
 | `loading` | `boolean` | Shows a loading state if true. |
 
-### `WeeklyPlanConfig`
+### `SchedulerConfig`
 
 | Property | Type | Description |
 | :--- | :--- | :--- |
-| `data` | `ProductionTask[]` | Array of task objects. |
-| `topic` | `string` | Title shown in the top-left corner. |
+| `data` | `SchedulerTask[]` | Array of task objects. |
+| `label` | `string` | Title shown in the top-left corner. |
 | `theme` | `Partial<SchedulerTheme>` | Theme override object. |
 | `startOffsetDays` | `number` | Days to subtract from the start date view. |
 | `endOffsetDays` | `number` | Days to add to the end date view. |

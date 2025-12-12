@@ -8,7 +8,7 @@ import {
     useDataStore,
     useStylesStore,
 } from "../../../stores";
-import { ProductionTask, StripIndex } from "../../../types";
+import { SchedulerTask, StripIndex } from "../../../types";
 import { calculateDatesPercentage } from "../../../util/date.util";
 import { TaskLabel } from "../../atoms";
 import {
@@ -17,7 +17,7 @@ import {
 } from "../../molecules";
 
 interface TaskProps {
-  task: ProductionTask;
+  task: SchedulerTask;
   span: number;
   rowIndex: number;
   borderColor: string;
@@ -29,7 +29,7 @@ export const Task: React.FC<TaskProps> = React.memo(
       useChildStore();
     const { lockOperations, onRowExpand, onRowShrink, onTaskClick, dragConfig } =
       useActionStore();
-  const { customCellWidthPX, taskbgColorFormat, theme } = useStylesStore();
+  const { customCellWidthPX, taskColorFormat, theme } = useStylesStore();
     const { updateSchedulerTaskDates } = useDataStore();
     const [isDragging, setIsDragging] = React.useState(false);
     const [dragProperties, setDragProperties] = React.useState<{
@@ -46,14 +46,14 @@ export const Task: React.FC<TaskProps> = React.memo(
     );
 
     const taskBackgroundColor = useMemo(() => {
-      return taskbgColorFormat &&
-        task.bgColorKey &&
-        taskbgColorFormat[task.bgColorKey]
-        ? taskbgColorFormat[task.bgColorKey]
+      return taskColorFormat &&
+        task.colorKey &&
+        taskColorFormat[task.colorKey]
+        ? taskColorFormat[task.colorKey]
         : rowIndex % 2 === 0
         ? theme.task.even
         : theme.task.odd;
-    }, [taskbgColorFormat, task.bgColorKey, rowIndex, theme]);
+    }, [taskColorFormat, task.colorKey, rowIndex, theme]);
 
     const extendedStyles = useMemo(() => {
       return {
@@ -67,7 +67,7 @@ export const Task: React.FC<TaskProps> = React.memo(
     }, [task.extendedStyles]);
 
     const handleVisibleTooltip = useCallback(
-      (task: ProductionTask, index?: StripIndex) => {
+      (task: SchedulerTask, index?: StripIndex) => {
         if (isDragging) return; // Disable tooltip during drag
         setTooltipVisible(
           task.tooltipComponent
@@ -78,7 +78,7 @@ export const Task: React.FC<TaskProps> = React.memo(
       [defaultTooltipComponent, setTooltipVisible, isDragging]
     );
 
-    const handleRightClick = (task: ProductionTask, e: React.MouseEvent) => {
+    const handleRightClick = (task: SchedulerTask, e: React.MouseEvent) => {
       e.preventDefault(); // Prevent the default context menu from appearing
       setrightClickTask(task); // Call the right-click handler
     };
@@ -209,7 +209,7 @@ export const Task: React.FC<TaskProps> = React.memo(
         const daysChanged = Math.round(totalDelta / cellWidth);
 
         if (daysChanged !== 0) {
-          const updateAction = (prev: ProductionTask[]) => {
+          const updateAction = (prev: SchedulerTask[]) => {
              const taskIndex = prev.findIndex((t) => t.id === task.id);
              if (taskIndex === -1) return prev;
              
@@ -236,8 +236,8 @@ export const Task: React.FC<TaskProps> = React.memo(
              
              const isExpansion = (direction === "right" && daysChanged > 0) || (direction === "left" && daysChanged < 0);
              
-             if (isExpansion && onRowExpand) onRowExpand(task.departmentName, task.departmentId, updatedTask);
-             if (!isExpansion && onRowShrink) onRowShrink(task.departmentName, task.departmentId, updatedTask);
+             if (isExpansion && onRowExpand) onRowExpand(task.groupLabel, task.groupId, updatedTask);
+             if (!isExpansion && onRowShrink) onRowShrink(task.groupLabel, task.groupId, updatedTask);
 
              prev[taskIndex] = updatedTask;
              return [...prev];

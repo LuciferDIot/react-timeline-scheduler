@@ -1,27 +1,27 @@
 import { describe, expect, it } from 'vitest';
-import type { ProductionTask } from '../../types';
+import type { SchedulerTask } from '../../types';
 import { generateGroupedTasks } from '../common.util';
 
 describe('generateGroupedTasks', () => {
-  it('should group tasks by department name', () => {
-    const tasks: ProductionTask[] = [
+  it('should group tasks by group label', () => {
+    const tasks: SchedulerTask[] = [
       {
         id: '1',
         label: 'Task 1',
-        departmentName: 'Engineering',
-        departmentId: 'eng',
+        groupLabel: 'Engineering',
+        groupId: 'eng',
         startDate: new Date('2024-01-01'),
         endDate: new Date('2024-01-05'),
-        styleAllocationId: 'style1',
+        variant: 'style1',
       },
       {
         id: '2',
         label: 'Task 2',
-        departmentName: 'Design',
-        departmentId: 'des',
+        groupLabel: 'Design',
+        groupId: 'des',
         startDate: new Date('2024-01-02'),
         endDate: new Date('2024-01-06'),
-        styleAllocationId: 'style2',
+        variant: 'style2',
       },
     ];
 
@@ -33,25 +33,25 @@ describe('generateGroupedTasks', () => {
     expect(grouped.Design[0]).toContainEqual(tasks[1]);
   });
 
-  it('should handle overlapping tasks in same department', () => {
-    const tasks: ProductionTask[] = [
+  it('should handle overlapping tasks in same group', () => {
+    const tasks: SchedulerTask[] = [
       {
         id: '1',
         label: 'Task 1',
-        departmentName: 'Engineering',
-        departmentId: 'eng',
+        groupLabel: 'Engineering',
+        groupId: 'eng',
         startDate: new Date('2024-01-01'),
         endDate: new Date('2024-01-05'),
-        styleAllocationId: 'style1',
+        variant: 'style1',
       },
       {
         id: '2',
         label: 'Task 2',
-        departmentName: 'Engineering',
-        departmentId: 'eng',
+        groupLabel: 'Engineering',
+        groupId: 'eng',
         startDate: new Date('2024-01-03'),
         endDate: new Date('2024-01-07'),
-        styleAllocationId: 'style2',
+        variant: 'style2',
       },
     ];
 
@@ -64,24 +64,24 @@ describe('generateGroupedTasks', () => {
   });
 
   it('should handle non-overlapping tasks in same row', () => {
-    const tasks: ProductionTask[] = [
+    const tasks: SchedulerTask[] = [
       {
         id: '1',
         label: 'Task 1',
-        departmentName: 'Engineering',
-        departmentId: 'eng',
+        groupLabel: 'Engineering',
+        groupId: 'eng',
         startDate: new Date('2024-01-01'),
         endDate: new Date('2024-01-05'),
-        styleAllocationId: 'style1',
+        variant: 'style1',
       },
       {
         id: '2',
         label: 'Task 2',
-        departmentName: 'Engineering',
-        departmentId: 'eng',
+        groupLabel: 'Engineering',
+        groupId: 'eng',
         startDate: new Date('2024-01-06'),
         endDate: new Date('2024-01-10'),
-        styleAllocationId: 'style2',
+        variant: 'style2',
       },
     ];
 

@@ -1,14 +1,14 @@
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
 import { useChildStore } from "../../../../../stores";
-import { ProductionTask, StripIndex } from "../../../../../types";
+import { SchedulerTask, StripIndex } from "../../../../../types";
 
 type ContainerAnimationProps = {
   cellWidthPX: number;
   children: ReactNode;
   left: number;
-  handleVisibleTooltip: (task: ProductionTask, index?: StripIndex) => void;
-  task: ProductionTask;
+  handleVisibleTooltip: (task: SchedulerTask, index?: StripIndex) => void;
+  task: SchedulerTask;
 };
 
 export const ContainerAnimation = ({

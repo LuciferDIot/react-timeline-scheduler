@@ -1,13 +1,13 @@
 import { motion } from "framer-motion";
 import React from "react";
-import { ProductionTask, StripIndex } from "../../../../types";
+import { SchedulerTask, StripIndex } from "../../../../types";
 import { calculateDatesPercentage } from "../../../../util/date.util";
 import { ExtendedCell } from "../ExtendedCell";
 import { FirstEmptyCell } from "../FirstEmptyCell";
 import { TaskStrip } from "../TaskStrip";
 
 type Props = {
-  task: ProductionTask;
+  task: SchedulerTask;
   taskBackgroundColor: string;
   extendedStyles: {
     backgroundColor: string;
@@ -18,7 +18,7 @@ type Props = {
     prevEndDate?: Date;
   };
 
-  handleVisibleTooltip: (task: ProductionTask, index?: StripIndex) => void;
+  handleVisibleTooltip: (task: SchedulerTask, index?: StripIndex) => void;
 };
 
 export const TaskCells = React.memo(

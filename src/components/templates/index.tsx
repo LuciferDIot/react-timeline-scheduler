@@ -1,10 +1,10 @@
 // Export main component
-export * from "./WeeklyPlan";
+export * from "./Timeline";
 
 // Export types that consumers need
 export type {
-    AnimationConfig, ContextMenuType, DragConfig, ProductionTask, SchedulerTheme, StripIndex, TableDateRange, WeeklyPlanConfig,
-    WeeklyPlanConfigStyles
+    AnimationConfig, ContextMenuType, DragConfig, SchedulerConfig,
+    SchedulerConfigStyles, SchedulerTask, SchedulerTheme, StripIndex, TableDateRange
 } from "../../types";
 
 // Export stores for advanced usage

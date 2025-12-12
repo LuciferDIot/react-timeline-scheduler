@@ -1,32 +1,31 @@
-import type { ProductionTask } from 'react-timeline-scheduler';
-import { WeeklyPlan } from 'react-timeline-scheduler';
+import { Timeline, type SchedulerTask } from 'react-timeline-scheduler';
 import 'react-timeline-scheduler/dist/react-timeline-scheduler.css'; // Import styles directly
 import './App.css';
 
-const testTasks: ProductionTask[] = [
+const testTasks: SchedulerTask[] = [
   {
     id: '1',
     label: 'Package Installation Test',
-    departmentName: 'Engineering',
-    departmentId: 'eng-001',
+    groupLabel: 'Engineering',
+    groupId: 'eng-001',
     startDate: new Date('2024-12-01'),
     endDate: new Date('2024-12-10'),
-    // styleAllocationId is now optional, verifying that!
+    // variant is now optional, verifying that!
   },
   {
     id: '2',
     label: 'React 19 Compatibility',
-    departmentName: 'QA',
-    departmentId: 'qa-001',
+    groupLabel: 'QA',
+    groupId: 'qa-001',
     startDate: new Date('2024-12-05'),
     endDate: new Date('2024-12-15'),
-    styleAllocationId: 'style2',
+    variant: 'style2',
   },
   {
     id: '3',
     label: 'Disappearing Task Test',
-    departmentName: 'Bug Fix',
-    departmentId: 'bug-001',
+    groupLabel: 'Bug Fix',
+    groupId: 'bug-001',
     startDate: new Date('2024-11-20'), // Starts way before others
     endDate: new Date('2024-12-12'),
   },
@@ -43,10 +42,11 @@ function App() {
       </div>
       
       <div className="border rounded p-4 bg-white">
-        <WeeklyPlan
-          topic="Installation Test"
-          data={testTasks}
-          // config object is removed to test direct props
+        <Timeline
+          config={{
+            label: "Installation Test",
+            data: testTasks
+          }}
         />
       </div>
     </div>

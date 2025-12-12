@@ -1,10 +1,10 @@
-import { ProductionTask } from "../types";
+import { SchedulerTask } from "../types";
 
-export const generateGroupedTasks = (tasks: ProductionTask[]) => {
-  return tasks.reduce<Record<string, ProductionTask[][]>>((acc, task) => {
-    if (!acc[task.departmentName]) acc[task.departmentName] = [[]];
+export const generateGroupedTasks = (tasks: SchedulerTask[]) => {
+  return tasks.reduce<Record<string, SchedulerTask[][]>>((acc, task) => {
+    if (!acc[task.groupLabel]) acc[task.groupLabel] = [[]];
 
-    const lineRows = acc[task.departmentName];
+    const lineRows = acc[task.groupLabel];
     let placed = false;
 
     for (const row of lineRows) {

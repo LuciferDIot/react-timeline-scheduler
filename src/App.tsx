@@ -1,10 +1,10 @@
-import { WeeklyPlan } from "./components/templates";
+import { Timeline } from "./components/templates";
 import { demoSchedulerData } from "./data/demo";
 
 function App() {
   return (
     <div className="w-screen h-screen flex items-center justify-center ">
-      <WeeklyPlan config={demoSchedulerData} scrollIntoToday />
+      <Timeline config={demoSchedulerData} scrollIntoToday />
     </div>
   );
 }

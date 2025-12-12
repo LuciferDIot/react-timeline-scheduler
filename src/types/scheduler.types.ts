@@ -4,7 +4,7 @@ export interface TableDateRange {
 }
 
 export type TableData = {
-  tableDate: ProductionTask[];
+  tasks: SchedulerTask[];
   isFirstInit: boolean;
 };
 
@@ -13,24 +13,24 @@ export enum StripIndex {
   Two = "Two",
 }
 
-export interface ProductionTask {
+export interface SchedulerTask {
   id: string;
   label: string;
-  departmentName: string;
-  departmentId: string;
+  groupLabel: string;
+  groupId: string;
   startDate: Date;
   endDate: Date;
   prevEndDate?: Date;
-  styleAllocationId?: string;
+  variant?: string;
   progress?: number;
-  bgColorKey?: string;
+  colorKey?: string;
   discontinue?: {
     startDate: Date;
     endDate: Date;
   };
   extendedStyles?: Omit<React.CSSProperties, "width" | "height">;
   tooltipComponent?: (
-    task: ProductionTask,
+    task: SchedulerTask,
     index?: StripIndex
   ) => React.ReactNode;
 }
@@ -112,24 +112,24 @@ export interface SchedulerTheme {
   };
 }
 
-export interface WeeklyPlanConfigStyles {
+export interface SchedulerConfigStyles {
   customCellWidthPX?: number;
   customCellHeightPX?: number;
-  taskbgColorFormat?: {
+  taskColorFormat?: {
     [key: string]: string;
   };
-  daybgColorHighlight?: {
+  dayColorHighlight?: {
     [key: string]: Date[];
   };
 }
 
-export interface WeeklyPlanConfig {
-  topic: string;
-  data: ProductionTask[];
+export interface SchedulerConfig {
+  label: string;
+  data: SchedulerTask[];
   startOffsetDays?: number;
   endOffsetDays?: number;
-  rowCategories?: string[];
-  styles?: WeeklyPlanConfigStyles;
+  resources?: string[];
+  styles?: SchedulerConfigStyles;
   theme?: Partial<SchedulerTheme>;
   dragConfig?: DragConfig;
   animationConfig?: AnimationConfig;
@@ -138,5 +138,5 @@ export interface WeeklyPlanConfig {
 export type ContextMenuType = {
   icon: React.ReactNode;
   label: string;
-  onAction: (task: ProductionTask) => void;
+  onAction: (task: SchedulerTask) => void;
 };

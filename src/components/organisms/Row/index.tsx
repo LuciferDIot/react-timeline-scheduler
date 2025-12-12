@@ -3,23 +3,23 @@ import moment from "moment";
 import React, { useEffect, useMemo, useRef } from "react";
 
 import { useActionStore, useStylesStore } from "../../../stores";
-import { ProductionTask } from "../../../types";
+import { SchedulerTask } from "../../../types";
 import { Task } from "../Task";
 
 import { EmptyCell } from "../../molecules";
 
 interface RowProps {
-  departmentName: string;
-  row: ProductionTask[];
+  groupLabel: string;
+  row: SchedulerTask[];
   dates: string[];
   rowIndex: number;
-  groupedTasks: Record<string, ProductionTask[][]>;
+  groupedTasks: Record<string, SchedulerTask[][]>;
   taskRowIndex: number;
 }
 
 const Row: React.FC<RowProps> = React.memo(
   ({
-    departmentName: line,
+    groupLabel: line,
     row,
     dates,
     rowIndex,
@@ -42,7 +42,7 @@ const Row: React.FC<RowProps> = React.memo(
     }, [line, setRowLableMaxWidth]);
 
     const taskMap = useMemo(() => {
-        const lookup = new Map<string, ProductionTask | "occupied">();
+        const lookup = new Map<string, SchedulerTask | "occupied">();
         
         row.forEach(task => {
              // Check if task is visible at all
@@ -91,7 +91,7 @@ const Row: React.FC<RowProps> = React.memo(
           }
           
           // It is a task
-          const task = entry as ProductionTask;
+          const task = entry as SchedulerTask;
           
           // Calculate span
           // We can use the logic we had, but simplified since we know we are at effective start.

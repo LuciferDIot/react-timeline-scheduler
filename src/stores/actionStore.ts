@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { AnimationConfig, DragConfig, ProductionTask } from "../types";
+import { AnimationConfig, DragConfig, SchedulerTask } from "../types";
 
 interface ActionStoreState {
   scrollIntoToday: boolean;
@@ -10,18 +10,18 @@ interface ActionStoreState {
   setLockOperations: () => void;
   setDragConfig: (config: DragConfig) => void;
   setAnimationConfig: (config: AnimationConfig) => void;
-  onTaskClick?: (task: ProductionTask) => void;
+  onTaskClick?: (task: SchedulerTask) => void;
   onRowExpand?: (
-    departmentName: string,
-    departmentId: string,
-    task: ProductionTask
+    groupLabel: string,
+    groupId: string,
+    task: SchedulerTask
   ) => Promise<void>;
   onRowShrink?: (
-    departmentName: string,
-    departmentId: string,
-    task: ProductionTask
+    groupLabel: string,
+    groupId: string,
+    task: SchedulerTask
   ) => Promise<void>;
-  onRowLabelClick?: (departmentName: string) => void;
+  onRowLabelClick?: (groupLabel: string) => void;
   setAll: (state: Partial<ActionStoreState>) => void;
 }
 

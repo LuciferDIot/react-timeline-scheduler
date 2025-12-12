@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { create } from "zustand";
 import { defaultStyles, defaultTheme } from "../data";
-import { SchedulerTheme, WeeklyPlanConfigStyles } from "../types";
+import { SchedulerConfigStyles, SchedulerTheme } from "../types";
 
 interface StylesState {
   rowLableMaxWidth: number;
@@ -9,10 +9,10 @@ interface StylesState {
   customCellHeightPX: number;
   borderColor: string;
   theme: SchedulerTheme;
-  taskbgColorFormat: {
+  taskColorFormat: {
     [key: string]: string;
   };
-  daybgColorHighlight:
+  dayColorHighlight:
     | {
         [key: string]: Date[];
       }
@@ -21,16 +21,16 @@ interface StylesState {
 
   setRowLableMaxWidth: (action: (prev: number) => number) => void;
   setAllStyles: (
-    styles: WeeklyPlanConfigStyles,
+    styles: SchedulerConfigStyles,
     theme?: Partial<SchedulerTheme>
   ) => void;
   setCustomCellWidthPX: (customCellWidthPX: number) => void;
   setCustomCellHeightPX: (customCellHeightPX: number) => void;
-  setTaskbgColorFormat: (
-    taskbgColorFormat: WeeklyPlanConfigStyles["taskbgColorFormat"]
+  setTaskColorFormat: (
+    taskColorFormat: SchedulerConfigStyles["taskColorFormat"]
   ) => void;
-  setDaybgColorHighlight: (
-    daybgColorHighlight: WeeklyPlanConfigStyles["daybgColorHighlight"]
+  setDayColorHighlight: (
+    dayColorHighlight: SchedulerConfigStyles["dayColorHighlight"]
   ) => void;
 }
 
@@ -44,7 +44,7 @@ export const useStylesStore = create<StylesState>((set) => ({
   setRowLableMaxWidth: (action) =>
     set((state) => ({ rowLableMaxWidth: action(state.rowLableMaxWidth) })),
   setAllStyles: (
-    styles: WeeklyPlanConfigStyles,
+    styles: SchedulerConfigStyles,
     theme?: Partial<SchedulerTheme>
   ) =>
     set({
@@ -52,20 +52,20 @@ export const useStylesStore = create<StylesState>((set) => ({
         styles.customCellWidthPX ?? defaultStyles.customCellWidthPX,
       customCellHeightPX:
         styles.customCellHeightPX || defaultStyles.customCellHeightPX,
-      taskbgColorFormat:
-        styles.taskbgColorFormat || defaultStyles.taskbgColorFormat,
-      daybgColorHighlight:
-        styles.daybgColorHighlight || defaultStyles.daybgColorHighlight,
+      taskColorFormat:
+        styles.taskColorFormat || defaultStyles.taskColorFormat,
+      dayColorHighlight:
+        styles.dayColorHighlight || defaultStyles.dayColorHighlight,
       theme: theme ? _.merge({}, defaultTheme, theme) : defaultTheme,
     }),
   setCustomCellWidthPX: (customCellWidthPX: number) =>
     set({ customCellWidthPX }),
   setCustomCellHeightPX: (customCellHeightPX: number) =>
     set({ customCellHeightPX }),
-  setTaskbgColorFormat: (
-    taskbgColorFormat: WeeklyPlanConfigStyles["taskbgColorFormat"]
-  ) => set({ taskbgColorFormat }),
-  setDaybgColorHighlight: (
-    daybgColorHighlight: WeeklyPlanConfigStyles["daybgColorHighlight"]
-  ) => set({ daybgColorHighlight }),
+  setTaskColorFormat: (
+    taskColorFormat: SchedulerConfigStyles["taskColorFormat"]
+  ) => set({ taskColorFormat }),
+  setDayColorHighlight: (
+    dayColorHighlight: SchedulerConfigStyles["dayColorHighlight"]
+  ) => set({ dayColorHighlight }),
 }));

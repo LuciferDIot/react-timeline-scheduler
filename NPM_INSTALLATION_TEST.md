@@ -49,26 +49,26 @@ npm install react react-dom tailwindcss
 Update `src/App.tsx`:
 
 ```typescript
-import { WeeklyPlan, type ProductionTask } from 'react-timeline-scheduler';
+import { Timeline, type SchedulerTask } from 'react-timeline-scheduler';
 
-const testTasks: ProductionTask[] = [
+const testTasks: SchedulerTask[] = [
   {
     id: '1',
     label: 'Development Phase',
-    departmentName: 'Engineering',
-    departmentId: 'eng',
+    groupLabel: 'Engineering',
+    groupId: 'eng',
     startDate: new Date('2024-01-01'),
     endDate: new Date('2024-01-10'),
-    styleAllocationId: 'style1',
+    variant: 'style1',
   },
   {
     id: '2',
     label: 'Testing Phase',
-    departmentName: 'QA',
-    departmentId: 'qa',
+    groupLabel: 'QA',
+    groupId: 'qa',
     startDate: new Date('2024-01-05'),
     endDate: new Date('2024-01-15'),
-    styleAllocationId: 'style2',
+    variant: 'style2',
   },
 ];
 
@@ -76,9 +76,9 @@ function App() {
   return (
     <div className="w-screen h-screen p-4">
       <h1 className="text-2xl font-bold mb-4">NPM Package Test</h1>
-      <WeeklyPlan
+      <Timeline
         config={{
-          topic: "Project Timeline",
+          label: "Project Timeline",
           data: testTasks,
         }}
       />
@@ -117,8 +117,8 @@ Visit: `http://localhost:5173`
 
 ### TypeScript Autocomplete
 All types should be available:
-- `WeeklyPlan` component
-- `ProductionTask` interface
+- `Timeline` component
+- `SchedulerTask` interface
 - `DragConfig` interface
 - `AnimationConfig` interface
 - `useActionStore`, `useDataStore`, etc.
@@ -152,11 +152,11 @@ Take screenshots of:
 
 ```typescript
 import {
-  WeeklyPlan,
-  type ProductionTask,
+  Timeline,
+  type SchedulerTask,
   type DragConfig,
   type AnimationConfig,
-  type WeeklyPlanConfig,
+  type SchedulerConfig,
   type SchedulerTheme,
   useActionStore,
   useDataStore,
@@ -188,9 +188,9 @@ const animationConfig: AnimationConfig = {
   taskResize: { duration: 0.5, ease: 'easeInOut' },
 };
 
-<WeeklyPlan
+<Timeline
   config={{
-    topic: "Advanced Test",
+    label: "Advanced Test",
     data: testTasks,
     dragConfig,
     animationConfig,

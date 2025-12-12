@@ -13,11 +13,11 @@ import {
     AnimationConfig,
     ContextMenuType,
     DragConfig,
-    ProductionTask,
+    SchedulerConfig,
+    SchedulerConfigStyles,
+    SchedulerTask,
     SchedulerTheme,
     StripIndex,
-    WeeklyPlanConfig,
-    WeeklyPlanConfigStyles,
 } from "../../../types";
 import { generateGroupedTasks } from "../../../util/common.util";
 import { ContextMenu, Tooltip } from "../../atoms";
@@ -25,47 +25,47 @@ import { RightClickUI } from "../../molecules";
 import { Header } from "../../organisms/Header";
 import { Row } from "../../organisms/Row";
 
-export interface TimelineSchedulerProps {
-  config?: WeeklyPlanConfig;
-  topic?: string;
-  data?: ProductionTask[];
+export interface TimelineProps {
+  config?: SchedulerConfig;
+  label?: string;
+  data?: SchedulerTask[];
   startOffsetDays?: number;
   endOffsetDays?: number;
-  rowCategories?: string[];
-  styles?: WeeklyPlanConfigStyles;
+  resources?: string[];
+  styles?: SchedulerConfigStyles;
   theme?: Partial<SchedulerTheme>;
   dragConfig?: DragConfig;
   animationConfig?: AnimationConfig;
   scrollIntoToday?: boolean;
   loading?: boolean;
   rightClickOptions?: ContextMenuType[];
-  onTaskClick?: (task: ProductionTask) => void;
+  onTaskClick?: (task: SchedulerTask) => void;
   onRowExpand?: (
-    departmentName: string,
-    departmentId: string,
-    task: ProductionTask
+    groupLabel: string,
+    groupId: string,
+    task: SchedulerTask
   ) => Promise<void>;
   onRowShrink?: (
-    departmentName: string,
-    departmentId: string,
-    task: ProductionTask
+    groupLabel: string,
+    groupId: string,
+    task: SchedulerTask
   ) => Promise<void>;
-  onRowLabelClick?: (departmentName: string) => void;
+  onRowLabelClick?: (groupLabel: string) => void;
   tooltipComponent?: (
-    task: ProductionTask,
+    task: SchedulerTask,
     index?: StripIndex
   ) => React.ReactNode;
   className?: string;
 }
 
-export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
+export const Timeline: React.FC<TimelineProps> = React.memo(
   ({
     config,
-    topic: propTopic,
+    label: propLabel,
     data: propData,
     startOffsetDays: propStartOffsetDays,
     endOffsetDays: propEndOffsetDays,
-    rowCategories: propRowCategories,
+    resources: propResources,
     styles: propStyles,
     theme: propTheme,
     dragConfig: propDragConfig,
@@ -77,15 +77,15 @@ export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
     onRowShrink,
     onTaskClick,
     onRowLabelClick,
-    loading, // New loading prop
+    loading,
     className,
   }) => {
     // Merge config and props with defaults
-    const topic = propTopic ?? config?.topic ?? "Weekly Schedule";
+    const label = propLabel ?? config?.label ?? "Timeline";
     const data = propData ?? config?.data ?? [];
     const startOffsetDays = propStartOffsetDays ?? config?.startOffsetDays ?? 0;
     const endOffsetDays = propEndOffsetDays ?? config?.endOffsetDays ?? 0;
-    const rowCategories = propRowCategories ?? config?.rowCategories;
+    const resources = propResources ?? config?.resources;
     const styles = propStyles ?? config?.styles ?? defaultStyles;
     const theme = propTheme ?? config?.theme;
     const dragConfig = propDragConfig ?? config?.dragConfig;
@@ -96,8 +96,8 @@ export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
     const {
       tableEndDate,
       tableStartDate,
-      schedulerTasks,
-      setSchedulerTasks,
+      schedulerData,
+      setSchedulerData,
       setOffsetDays,
     } = useDataStore();
     const { setAllStyles } = useStylesStore();
@@ -135,10 +135,10 @@ export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
     }, [setAllStyles, styles, theme]);
 
     useEffect(() => {
-      if (!_.isEqual(data, schedulerTasks.tableDate)) {
-        setSchedulerTasks(data);
+      if (!_.isEqual(data, schedulerData.tasks)) {
+        setSchedulerData(data);
       }
-    }, [data, schedulerTasks.tableDate, setSchedulerTasks]);
+    }, [data, schedulerData.tasks, setSchedulerData]);
 
     useEffect(() => {
       setOffsetDays(startOffsetDays, endOffsetDays);
@@ -152,7 +152,7 @@ export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
 
     useEffect(() => {
       setError(undefined);
-      schedulerTasks.tableDate.forEach((task) => {
+      schedulerData.tasks.forEach((task) => {
         if (!moment(task.startDate).isValid()) {
           console.error(`Invalid startDate in task ${task.id}`, task.startDate);
           setError(`Invalid startDate in task ${task.id}`);
@@ -165,21 +165,21 @@ export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
           setError(`Task ${task.id} has an invalid date range`);
         }
       });
-    }, [schedulerTasks]);
+    }, [schedulerData]);
 
     const mandatoryFieldsAvailable = useMemo(() => {
-      return schedulerTasks.tableDate.every(
+      return schedulerData.tasks.every(
         (task) =>
           moment(task.startDate).isValid() &&
           moment(task.endDate).isValid() &&
           moment(task.startDate).isSameOrBefore(moment(task.endDate))
       );
-    }, [schedulerTasks]);
+    }, [schedulerData]);
 
     const groupedTasks = useMemo(() => {
       try {
-        const grouped = generateGroupedTasks(schedulerTasks.tableDate);
-        rowCategories?.forEach((category: string) => {
+        const grouped = generateGroupedTasks(schedulerData.tasks);
+        resources?.forEach((category: string) => {
           if (!grouped[category]) {
             grouped[category] = [[]];
           }
@@ -190,7 +190,7 @@ export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
         setError("Failed to group tasks. Check data format.");
         return {};
       }
-    }, [schedulerTasks, rowCategories]);
+    }, [schedulerData, resources]);
 
     const dates = useMemo(() => {
       if (!tableStartDate || !tableEndDate) return [];
@@ -228,8 +228,8 @@ export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
                 <div className="w-fit text-sm">
                   <Header
                     dates={dates}
-                    topic={topic}
-                    daybgColorHighlight={styles.daybgColorHighlight}
+                    topic={label}
+                    daybgColorHighlight={styles.dayColorHighlight}
                     containerRef={containerRef}
                     scrollIntoToday={scrollIntoToday}
                   />
@@ -240,12 +240,12 @@ export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
                         {groupedTasks[line]?.map((row, taskRowIndex) => (
                           <Row
                             key={`${line}-${taskRowIndex}`}
-                            departmentName={line}
+                            groupLabel={line}
                             row={row}
                             dates={dates}
                             rowIndex={Object.keys(groupedTasks)
                               .sort((a, b) => a.localeCompare(b))
-                              .flatMap((department) => groupedTasks[department])
+                              .flatMap((resource) => groupedTasks[resource])
                               .findIndex((r) => r === row)}
                             groupedTasks={groupedTasks}
                             taskRowIndex={taskRowIndex}
