@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import moment from "moment";
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { TaskColors } from "../../../data/styles";
 import {
     useActionStore,
@@ -37,6 +37,8 @@ export const Task: React.FC<TaskProps> = React.memo(
       left: number;
       direction: "left" | "right";
     } | null>(null);
+    const virtualDeltaRef = useRef(0);
+
 
     const taskWidth = useMemo(
       () => customCellWidthPX * span,
@@ -106,12 +108,7 @@ export const Task: React.FC<TaskProps> = React.memo(
       document.body.style.cursor = "col-resize";
       document.body.style.userSelect = "none";
 
-      const virtualDeltaRef = useRef(0);
-
-       // Reset virtual delta on drag start
-       useEffect(() => {
-          if (isDragging) virtualDeltaRef.current = 0;
-       }, [isDragging]);
+      virtualDeltaRef.current = 0;
 
        const calculateDrag = (clientX: number, virtualSpeed = 0) => {
           const currentScroll = viewport ? viewport.scrollLeft : 0;
