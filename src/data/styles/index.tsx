@@ -14,3 +14,5 @@ export const defaultStyles = {
   taskbgColorFormat: TaskColors,
   daybgColorHighlight: undefined,
 };
+
+export * from "./defaultTheme";

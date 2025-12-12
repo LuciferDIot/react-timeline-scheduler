@@ -6,7 +6,6 @@ import { useActionStore, useDataStore, useStylesStore } from "../../../stores";
 import { ProductionTask } from "../../../types";
 import { Task } from "../Task";
 
-import { TaskColors } from "../../../data";
 import { EmptyCell } from "../../molecules";
 
 interface RowProps {
@@ -28,7 +27,7 @@ const Row: React.FC<RowProps> = React.memo(
     taskRowIndex,
   }) => {
     const { onRowLabelClick } = useActionStore();
-    const { rowLableMaxWidth, borderColor, setRowLableMaxWidth } =
+    const { rowLableMaxWidth, borderColor, setRowLableMaxWidth, theme } =
       useStylesStore();
     const { tableEndDate } = useDataStore();
 
@@ -114,7 +113,10 @@ const Row: React.FC<RowProps> = React.memo(
                 : "border-y-0"
               : "border"
           }`}
-          style={{ backgroundColor: TaskColors.ROW_ODD }}
+          style={{
+            backgroundColor:
+              taskRowIndex % 2 === 0 ? theme.row.even : theme.row.odd,
+          }}
           initial={{ width: 0 }}
           animate={{ width: rowLableMaxWidth }}
           exit={{ width: 0 }}

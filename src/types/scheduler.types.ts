@@ -35,6 +35,38 @@ export interface ProductionTask {
   ) => React.ReactNode;
 }
 
+export interface SchedulerTheme {
+  primary: string;
+  secondary: string;
+  text: {
+    primary: string;
+    secondary: string;
+  };
+  background: {
+    primary: string;
+    secondary: string;
+  };
+  border: string;
+  row: {
+    even: string;
+    odd: string;
+    hover: string;
+  };
+  grid: {
+    color: string;
+  };
+  header: {
+    background: string;
+    text: string;
+  };
+  task: {
+    even: string;
+    odd: string;
+    hover: string;
+    text: string;
+  };
+}
+
 export interface WeeklyPlanConfigStyles {
   customCellWidthPX?: number;
   customCellHeightPX?: number;
@@ -53,6 +85,7 @@ export interface WeeklyPlanConfig {
   endOffsetDays?: number;
   rowCategories?: string[];
   styles?: WeeklyPlanConfigStyles;
+  theme?: Partial<SchedulerTheme>;
 }
 
 export type ContextMenuType = {

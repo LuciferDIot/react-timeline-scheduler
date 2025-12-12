@@ -1,7 +1,6 @@
 // Organisms/Header.tsx
 import { motion, useInView } from "framer-motion";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { TaskColors } from "../../../data";
 import { useActionStore, useStylesStore } from "../../../stores";
 import { getMonthName } from "../../../util/date.util";
 import { HeaderIconButton } from "../../atoms";
@@ -30,6 +29,7 @@ export const Header: React.FC<HeaderProps> = ({
     rowLableMaxWidth,
     borderColor,
     setRowLableMaxWidth,
+    theme,
   } = useStylesStore();
   const { height } = containerRef.current
     ? containerRef.current.getBoundingClientRect()
@@ -135,7 +135,10 @@ export const Header: React.FC<HeaderProps> = ({
           ref={labelRef}
           className={`z-[4] sticky left-0 top-0 min-w-32 md:min-w-48 text-sm
           font-medium text-left border border-b-0 p-2 ${borderColor}`}
-          style={{ backgroundColor: TaskColors.ROW_ODD }}
+          style={{
+            backgroundColor: theme.header.background,
+            color: theme.header.text,
+          }}
           initial={{ width: 0 }}
           animate={{ width: rowLableMaxWidth }}
           exit={{ width: 0 }}
@@ -194,7 +197,7 @@ export const Header: React.FC<HeaderProps> = ({
         <motion.div
           className={`z-[4] sticky left-0 min-w-32 md:min-w-48 text-sm font-medium 
           text-left border border-t-0 p-2 ${borderColor}`}
-          style={{ backgroundColor: TaskColors.ROW_ODD }}
+          style={{ backgroundColor: theme.header.background }}
           initial={{ width: 0 }}
           animate={{ width: rowLableMaxWidth }}
           exit={{ width: 0 }}

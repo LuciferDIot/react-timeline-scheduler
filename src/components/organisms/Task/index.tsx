@@ -30,7 +30,7 @@ export const Task: React.FC<TaskProps> = React.memo(
       useChildStore();
     const { lockOperations, onRowExpand, onRowShrink, onTaskClick } =
       useActionStore();
-    const { customCellWidthPX, taskbgColorFormat } = useStylesStore();
+  const { customCellWidthPX, taskbgColorFormat, theme } = useStylesStore();
     const { updateSchedulerTaskDates } = useDataStore();
     const taskWidth = useMemo(
       () => customCellWidthPX * span,
@@ -43,9 +43,9 @@ export const Task: React.FC<TaskProps> = React.memo(
         taskbgColorFormat[task.bgColorKey]
         ? taskbgColorFormat[task.bgColorKey]
         : rowIndex % 2 === 0
-        ? TaskColors.TASK_EVEN
-        : TaskColors.TASK_ODD;
-    }, [taskbgColorFormat, task.bgColorKey, rowIndex]);
+        ? theme.task.even
+        : theme.task.odd;
+    }, [taskbgColorFormat, task.bgColorKey, rowIndex, theme]);
 
     const extendedStyles = useMemo(() => {
       return {
@@ -146,7 +146,7 @@ export const Task: React.FC<TaskProps> = React.memo(
         style={{
           width: `${taskWidth}px`,
           backgroundColor:
-            rowIndex % 2 === 0 ? TaskColors.ROW_EVEN : TaskColors.ROW_ODD,
+            rowIndex % 2 === 0 ? theme.row.even : theme.row.odd,
         }}
         onContextMenu={(e) => handleRightClick(task, e)}
         layout

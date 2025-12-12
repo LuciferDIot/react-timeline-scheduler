@@ -54,6 +54,7 @@ export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
       data = [],
       styles = defaultStyles,
       rowCategories,
+      theme,
     },
     rightClickOptions,
     scrollIntoToday,
@@ -97,8 +98,8 @@ export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
     }, [setDefaultTooltipComponent, tooltipComponent]);
 
     useEffect(() => {
-      setAllStyles(styles);
-    }, [setAllStyles, styles]);
+      setAllStyles(styles, theme);
+    }, [setAllStyles, styles, theme]);
 
     useEffect(() => {
       if (!_.isEqual(data, schedulerTasks.tableDate)) {
