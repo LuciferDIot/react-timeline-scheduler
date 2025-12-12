@@ -105,12 +105,18 @@ const startEndDates = (
     };
   }
 
+  let minStart = moment(schedulerTasks[0].startDate);
+  let maxEnd = moment(schedulerTasks[0].endDate);
+
+  for (let i = 1; i < schedulerTasks.length; i++) {
+    const taskStart = moment(schedulerTasks[i].startDate);
+    const taskEnd = moment(schedulerTasks[i].endDate);
+    if (taskStart.isBefore(minStart)) minStart = taskStart;
+    if (taskEnd.isAfter(maxEnd)) maxEnd = taskEnd;
+  }
+
   return {
-    start: moment
-      .min(schedulerTasks.map((task) => moment(task.startDate)))
-      .subtract(2, "days"),
-    end: moment
-      .max(schedulerTasks.map((task) => moment(task.endDate)))
-      .add(2, "days"),
+    start: minStart.subtract(2, "days"),
+    end: maxEnd.add(2, "days"),
   };
 };

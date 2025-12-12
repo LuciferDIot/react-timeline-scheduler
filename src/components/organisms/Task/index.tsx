@@ -3,18 +3,18 @@ import moment from "moment";
 import React, { useCallback, useMemo } from "react";
 import { TaskColors } from "../../../data/styles";
 import {
-  useActionStore,
-  useChildStore,
-  useDataStore,
-  useStylesStore,
+    useActionStore,
+    useChildStore,
+    useDataStore,
+    useStylesStore,
 } from "../../../stores";
 import { ProductionTask, StripIndex } from "../../../types";
 import { calculateDatesPercentage } from "../../../util/date.util";
 import { TaskLabel } from "../../atoms";
 import {
-  DiscontinueCells,
-  TaskActionButtons,
-  TaskCells,
+    DiscontinueCells,
+    TaskActionButtons,
+    TaskCells,
 } from "../../molecules";
 
 interface TaskProps {
@@ -149,6 +149,9 @@ export const Task: React.FC<TaskProps> = React.memo(
             rowIndex % 2 === 0 ? TaskColors.ROW_EVEN : TaskColors.ROW_ODD,
         }}
         onContextMenu={(e) => handleRightClick(task, e)}
+        layout
+        whileHover={{ scale: 1.02, zIndex: 10 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
       >
         <TaskLabel label={task.label} addExtraLeft={labelLeftPercentage} />
 

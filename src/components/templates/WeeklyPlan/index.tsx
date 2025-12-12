@@ -4,16 +4,16 @@ import moment from "moment";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { defaultStyles } from "../../../data/styles";
 import {
-  useActionStore,
-  useChildStore,
-  useDataStore,
-  useStylesStore,
+    useActionStore,
+    useChildStore,
+    useDataStore,
+    useStylesStore,
 } from "../../../stores";
 import {
-  ContextMenuType,
-  ProductionTask,
-  StripIndex,
-  WeeklyPlanConfig,
+    ContextMenuType,
+    ProductionTask,
+    StripIndex,
+    WeeklyPlanConfig,
 } from "../../../types";
 import { generateGroupedTasks } from "../../../util/common.util";
 import { ContextMenu, Tooltip } from "../../atoms";
@@ -42,6 +42,7 @@ export interface TimelineSchedulerProps {
     task: ProductionTask,
     index?: StripIndex
   ) => React.ReactNode;
+  className?: string;
 }
 
 export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
@@ -62,6 +63,7 @@ export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
     onTaskClick,
     onRowLabelClick,
     loading, // New loading prop
+    className,
   }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [error, setError] = useState<string | undefined>();
@@ -99,10 +101,10 @@ export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
     }, [setAllStyles, styles]);
 
     useEffect(() => {
-      if (!_.isEqual(data, schedulerTasks)) {
+      if (!_.isEqual(data, schedulerTasks.tableDate)) {
         setSchedulerTasks(data);
       }
-    }, [data, schedulerTasks, setSchedulerTasks]);
+    }, [data, schedulerTasks.tableDate, setSchedulerTasks]);
 
     useEffect(() => {
       setOffsetDays(startOffsetDays, endOffsetDays);
@@ -184,9 +186,9 @@ export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
             <>
               <div
                 ref={containerRef}
-                className="relative max-w-[90vw] max-h-[75vh] w-fit h-fit
+                className={`relative w-full h-full
           scrollbar-track-white dark:scrollbar-track-black scrollbar-thumb-black/20
-          scrollbar-thin overflow-x-scroll horizontal-scroll"
+          scrollbar-thin overflow-x-scroll horizontal-scroll ${className || ""}`}
                 onMouseMove={handleMouseMove}
               >
                 <div className="w-fit text-sm">

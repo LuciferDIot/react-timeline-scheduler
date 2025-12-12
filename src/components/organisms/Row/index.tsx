@@ -2,9 +2,9 @@ import { motion } from "framer-motion";
 import moment from "moment";
 import React, { useEffect, useMemo, useRef } from "react";
 
-import { Task } from "../Task";
-import { ProductionTask } from "../../../types";
 import { useActionStore, useDataStore, useStylesStore } from "../../../stores";
+import { ProductionTask } from "../../../types";
+import { Task } from "../Task";
 
 import { TaskColors } from "../../../data";
 import { EmptyCell } from "../../molecules";
@@ -99,10 +99,13 @@ const Row: React.FC<RowProps> = React.memo(
     );
 
     return (
-      <div key={line} className="flex flex-row gap-2">
+      <div
+        key={line}
+        className="flex flex-row gap-2 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors duration-200"
+      >
         <motion.div
           ref={labelRef}
-          className={` z-[2] sticky left-0 min-w-48 p-2 border-x-1 ${borderColor} ${
+          className={` z-[2] sticky left-0 min-w-32 md:min-w-48 p-2 border-x-1 ${borderColor} ${
             (groupedTasks[line]?.length ?? 0) > 1
               ? taskRowIndex === 0
                 ? "border-t-[0.1px]"

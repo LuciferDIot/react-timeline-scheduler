@@ -133,7 +133,7 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="flex w-full h-fit gap-2">
         <motion.div
           ref={labelRef}
-          className={`z-[4] sticky left-0 top-0 min-w-48 text-sm
+          className={`z-[4] sticky left-0 top-0 min-w-32 md:min-w-48 text-sm
           font-medium text-left border border-b-0 p-2 ${borderColor}`}
           style={{ backgroundColor: TaskColors.ROW_ODD }}
           initial={{ width: 0 }}
@@ -192,7 +192,7 @@ export const Header: React.FC<HeaderProps> = ({
       {/* dates */}
       <div className="flex gap-2">
         <motion.div
-          className={`z-[4] sticky left-0 min-w-48 text-sm font-medium 
+          className={`z-[4] sticky left-0 min-w-32 md:min-w-48 text-sm font-medium 
           text-left border border-t-0 p-2 ${borderColor}`}
           style={{ backgroundColor: TaskColors.ROW_ODD }}
           initial={{ width: 0 }}

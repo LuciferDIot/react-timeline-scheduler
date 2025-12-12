@@ -1,28 +1,45 @@
 {
-  "name": "react-scheduler",
-  "private": true,
-  "version": "0.0.0",
+  "name": "react-timeline-scheduler",
+  "version": "0.1.0",
   "type": "module",
+  "description": "A responsive and customizable timeline scheduler component for React.",
+  "author": "LuciferDIot",
+  "license": "MIT",
+  "main": "./dist/react-timeline-scheduler.umd.cjs",
+  "module": "./dist/react-timeline-scheduler.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/react-timeline-scheduler.js",
+      "require": "./dist/react-timeline-scheduler.umd.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^4.0.1"
+  },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.1",
     "framer-motion": "^12.0.6",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
     "react-icons": "^5.4.0",
-    "tailwindcss": "^4.0.1",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
     "@types/lodash": "^4.17.16",
+    "@types/node": "^25.0.1",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react-swc": "^3.7.2",
@@ -32,6 +49,7 @@
     "globals": "^15.14.0",
     "typescript": "~5.6.3",
     "typescript-eslint": "^8.22.0",
-    "vite": "^6.0.11"
+    "vite": "^6.0.11",
+    "vite-plugin-dts": "^4.5.4"
   }
 }
