@@ -34,10 +34,6 @@ const Row: React.FC<RowProps> = React.memo(
     const labelRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-      console.log(dates.length);
-    }, [dates.length]);
-
-    useEffect(() => {
       if (labelRef.current) {
         const width = labelRef.current.getBoundingClientRect().width;
         setRowLableMaxWidth((prev) => Math.max(prev, width));

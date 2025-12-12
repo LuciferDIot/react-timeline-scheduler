@@ -1,4 +1,3 @@
-import "./App.css";
 import { WeeklyPlan } from "./components/templates";
 import { demoSchedulerData } from "./data/demo";
 

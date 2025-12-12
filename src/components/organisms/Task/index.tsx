@@ -27,7 +27,7 @@ export const Task: React.FC<TaskProps> = React.memo(
   ({ task, span, rowIndex, borderColor }) => {
     const { setTooltipVisible, setrightClickTask, defaultTooltipComponent } =
       useChildStore();
-    const { lockOperations, onRowExpand, onRowShrink, onTaskClick } =
+    const { lockOperations, onRowExpand, onRowShrink, onTaskClick, dragConfig } =
       useActionStore();
   const { customCellWidthPX, taskbgColorFormat, theme } = useStylesStore();
     const { updateSchedulerTaskDates } = useDataStore();
@@ -85,9 +85,6 @@ export const Task: React.FC<TaskProps> = React.memo(
       (calculateDatesPercentage(task.startDate) * customCellWidthPX) / 100;
 
     const handleMouseDown = (e: React.MouseEvent, direction: "left" | "right") => {
-      // DEBUG LOG
-      console.log("MouseDown on Handle", { direction, lockOperations, taskWidth });
-      
       if (lockOperations) return;
       e.stopPropagation();
       e.preventDefault(); 
@@ -134,12 +131,12 @@ export const Task: React.FC<TaskProps> = React.memo(
       };
 
       const autoScrollLoop = () => {
-         if (!viewport) return;
+         if (!viewport || !dragConfig.autoScroll?.enabled) return;
          
          const { left, right } = viewport.getBoundingClientRect();
          const mouseX = currentMouseX;
-         const edgeZone = 50;
-         const maxSpeed = 20;
+         const edgeZone = dragConfig.autoScroll?.edgeZone ?? 50;
+         const maxSpeed = dragConfig.autoScroll?.maxSpeed ?? 20;
          
          let scrollSpeed = 0;
          
@@ -286,16 +283,20 @@ export const Task: React.FC<TaskProps> = React.memo(
           {/* Resize Handles */}
           {!lockOperations && (
             <>
-                <div
-                  className="absolute left-0 top-0 bottom-0 w-4 cursor-col-resize z-50 hover:bg-black/10 transition-colors touch-none"
-                  style={{ left: "-8px" }}
-                  onMouseDown={(e) => handleMouseDown(e, "left")}
-                />
-                <div
-                  className="absolute right-0 top-0 bottom-0 w-4 cursor-col-resize z-50 hover:bg-black/10 transition-colors touch-none"
-                  style={{ right: "-8px" }}
-                  onMouseDown={(e) => handleMouseDown(e, "right")}
-                />
+                {dragConfig.enableLeftResize && (
+                  <div
+                    className="absolute left-0 top-0 bottom-0 w-4 cursor-col-resize z-50 hover:bg-black/10 transition-colors touch-none"
+                    style={{ left: "-8px" }}
+                    onMouseDown={(e) => handleMouseDown(e, "left")}
+                  />
+                )}
+                {dragConfig.enableRightResize && (
+                  <div
+                    className="absolute right-0 top-0 bottom-0 w-4 cursor-col-resize z-50 hover:bg-black/10 transition-colors touch-none"
+                    style={{ right: "-8px" }}
+                    onMouseDown={(e) => handleMouseDown(e, "right")}
+                  />
+                )}
             </>
           )}
         </motion.div>

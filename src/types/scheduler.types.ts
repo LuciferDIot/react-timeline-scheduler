@@ -35,6 +35,51 @@ export interface ProductionTask {
   ) => React.ReactNode;
 }
 
+/**
+ * Configuration for drag-to-resize behavior
+ */
+export interface DragConfig {
+  /** Enable left-side resize handle */
+  enableLeftResize?: boolean;
+  /** Enable right-side resize handle */
+  enableRightResize?: boolean;
+  /** Auto-scroll configuration when dragging near edges */
+  autoScroll?: {
+    /** Enable auto-scrolling */
+    enabled?: boolean;
+    /** Distance from edge to trigger scroll (in pixels) */
+    edgeZone?: number;
+    /** Maximum scroll speed per frame (in pixels) */
+    maxSpeed?: number;
+  };
+  /** Snap task resize to grid boundaries */
+  snapToGrid?: boolean;
+  /** Minimum task duration in days */
+  minTaskDuration?: number;
+}
+
+/**
+ * Configuration for animations
+ */
+export interface AnimationConfig {
+  /** Enable all animations */
+  enabled?: boolean;
+  /** Task resize animation */
+  taskResize?: {
+    /** Animation duration in seconds */
+    duration?: number;
+    /** Easing function (framer-motion easing) */
+    ease?: string | number[];
+  };
+  /** Cell expand/collapse animation */
+  cellExpand?: {
+    /** Animation duration in seconds */
+    duration?: number;
+    /** Easing function (framer-motion easing) */
+    ease?: string | number[];
+  };
+}
+
 export interface SchedulerTheme {
   primary: string;
   secondary: string;
@@ -86,6 +131,8 @@ export interface WeeklyPlanConfig {
   rowCategories?: string[];
   styles?: WeeklyPlanConfigStyles;
   theme?: Partial<SchedulerTheme>;
+  dragConfig?: DragConfig;
+  animationConfig?: AnimationConfig;
 }
 
 export type ContextMenuType = {

@@ -55,6 +55,8 @@ export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
       styles = defaultStyles,
       rowCategories,
       theme,
+      dragConfig,
+      animationConfig,
     },
     rightClickOptions,
     scrollIntoToday,
@@ -92,6 +94,15 @@ export const WeeklyPlan: React.FC<TimelineSchedulerProps> = React.memo(
     useEffect(() => {
       setAll({ onTaskClick, onRowExpand, onRowShrink, onRowLabelClick });
     }, [onTaskClick, onRowExpand, onRowShrink, onRowLabelClick, setAll]);
+
+    useEffect(() => {
+      if (dragConfig) {
+        useActionStore.getState().setDragConfig(dragConfig);
+      }
+      if (animationConfig) {
+        useActionStore.getState().setAnimationConfig(animationConfig);
+      }
+    }, [dragConfig, animationConfig]);
 
     useEffect(() => {
       tooltipComponent && setDefaultTooltipComponent(tooltipComponent);
