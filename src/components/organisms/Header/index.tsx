@@ -129,11 +129,11 @@ export const Header: React.FC<HeaderProps> = ({
   }, [customCellWidthPX]);
 
   return (
-    <div className="z-[3] sticky top-0 left-0 flex flex-col w-fit h-fit backdrop-blur-3xl bg-white mb-2">
+    <div className="z-[70] sticky top-0 left-0 flex flex-col w-fit h-fit backdrop-blur-3xl bg-white mb-2">
       <div className="flex w-full h-fit gap-2">
         <motion.div
           ref={labelRef}
-          className={`z-[4] sticky left-0 top-0 min-w-32 md:min-w-48 text-sm
+          className={`z-[80] sticky left-0 top-0 min-w-32 md:min-w-48 text-sm
           font-medium text-left border border-b-0 p-2 ${borderColor}`}
           style={{
             backgroundColor: theme.header.background,

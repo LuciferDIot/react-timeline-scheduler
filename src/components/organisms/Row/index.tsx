@@ -104,7 +104,7 @@ const Row: React.FC<RowProps> = React.memo(
       >
         <motion.div
           ref={labelRef}
-          className={` z-[2] sticky left-0 min-w-32 md:min-w-48 p-2 border-x-1 ${borderColor} ${
+          className={` z-[60] sticky left-0 min-w-32 md:min-w-48 p-2 border-x-1 ${borderColor} ${
             (groupedTasks[line]?.length ?? 0) > 1
               ? taskRowIndex === 0
                 ? "border-t-[0.1px]"

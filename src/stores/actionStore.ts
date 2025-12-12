@@ -23,7 +23,7 @@ interface ActionStoreState {
 
 export const useActionStore = create<ActionStoreState>((set) => ({
   scrollIntoToday: false,
-  lockOperations: true,
+  lockOperations: false,
   onTaskClick: () => {},
   onRowExpand: () => Promise.resolve(),
   onRowShrink: () => Promise.resolve(),
