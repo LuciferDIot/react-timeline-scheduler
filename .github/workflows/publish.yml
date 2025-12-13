@@ -20,3 +20,29 @@ jobs:
       - run: npm run test
       - run: npm run build
       - run: npm publish --provenance --access public
+
+  deploy-demo:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      - name: Install parent dependencies
+        run: npm install
+      - name: Build parent project
+        run: npm run build
+      - name: Install test-install dependencies
+        working-directory: ./test-install
+        run: npm install
+      - name: Build test-install
+        working-directory: ./test-install
+        run: npm run build
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./test-install/dist

@@ -13,7 +13,7 @@
     "@tailwindcss/vite": "^4.1.18",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "react-timeline-scheduler": "file:../react-timeline-scheduler-1.0.20.tgz",
+    "react-timeline-scheduler": "file:..",
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
