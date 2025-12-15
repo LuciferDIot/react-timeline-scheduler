@@ -1,6 +1,6 @@
 import moment from "moment";
 import { create } from "zustand";
-import { SchedulerTask, TableData } from "../types";
+import { SchedulerConfig, SchedulerTask, TableData } from "../types";
 
 interface DataState {
   schedulerData: TableData;
@@ -9,7 +9,9 @@ interface DataState {
   endOffsetDays: number;
   tableStartDate: moment.Moment;
   tableEndDate: moment.Moment;
+  config?: SchedulerConfig;
 
+  setConfig: (config: SchedulerConfig) => void;
   setOffsetDays: (startOffset: number, endOffset: number) => void;
   setSchedulerData: (tasks: SchedulerTask[]) => void;
   updateSchedulerTaskDates: (
@@ -39,6 +41,9 @@ export const useDataStore = create<DataState>((set) => ({
   endOffsetDays: 0,
   tableStartDate: moment().startOf("week"),
   tableEndDate: moment().endOf("week"),
+  config: undefined,
+
+  setConfig: (config: SchedulerConfig) => set({ config }),
 
   setOffsetDays: ((start, end) =>
     set((state: DataState) => {

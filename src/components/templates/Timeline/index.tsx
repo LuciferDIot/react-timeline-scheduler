@@ -99,8 +99,9 @@ export const Timeline: React.FC<TimelineProps> = React.memo(
       schedulerData,
       setSchedulerData,
       setOffsetDays,
+      setConfig,
     } = useDataStore();
-    const { setAllStyles } = useStylesStore();
+    const { setAllStyles, theme: currentTheme } = useStylesStore();
 
     const {
       mouseCoordination,
@@ -112,6 +113,12 @@ export const Timeline: React.FC<TimelineProps> = React.memo(
     } = useChildStore();
 
     const { setAll } = useActionStore();
+
+    useEffect(() => {
+        if(config) {
+            setConfig(config);
+        }
+    }, [config, setConfig]);
 
     useEffect(() => {
       setAll({ onTaskClick, onRowExpand, onRowShrink, onRowLabelClick });
@@ -236,7 +243,7 @@ export const Timeline: React.FC<TimelineProps> = React.memo(
                   {Object.keys(groupedTasks || [])
                     .sort((a, b) => a.localeCompare(b))
                     .map((line) => (
-                      <div className="pb-2 bg-white" key={line}>
+                      <div className="pb-2" style={{ backgroundColor: currentTheme.background.secondary }} key={line}>
                         {groupedTasks[line]?.map((row, taskRowIndex) => (
                           <Row
                             key={`${line}-${taskRowIndex}`}

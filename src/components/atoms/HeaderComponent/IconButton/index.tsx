@@ -2,8 +2,7 @@
 import React from "react";
 import { FaLock, FaLockOpen } from "react-icons/fa";
 import { TbCurrentLocation, TbCurrentLocationOff } from "react-icons/tb";
-import { TaskColors } from "../../../../data";
-import { useChildStore } from "../../../../stores";
+import { useChildStore, useStylesStore } from "../../../../stores";
 import { HeaderTooltip } from "../HeaderTooltip";
 
 interface IconButtonProps {
@@ -22,6 +21,7 @@ export const HeaderIconButton: React.FC<IconButtonProps> = ({
   borderColor,
 }) => {
   const { setTooltipVisible } = useChildStore();
+  const { theme } = useStylesStore();
 
   const Icon =
     iconType === "lock"
@@ -39,7 +39,11 @@ export const HeaderIconButton: React.FC<IconButtonProps> = ({
         isActive && "text-white"
       }`}
       style={{
-        backgroundColor: isActive ? TaskColors.TASK_EVEN : TaskColors.ROW_EVEN,
+        backgroundColor: isActive 
+          ? (theme.task.even) 
+          : (theme.toolbar?.background || "transparent"),
+        color: isActive ? theme.task.text : theme.toolbar?.text || theme.header.text || theme.text.primary,
+        borderColor: isActive ? theme.border : (theme.toolbar?.background ? theme.border : "transparent")
       }}
       onMouseEnter={() =>
         setTooltipVisible(<HeaderTooltip text={tooltipText} />)

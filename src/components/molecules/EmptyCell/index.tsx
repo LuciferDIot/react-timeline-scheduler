@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { TaskColors } from "../../../data";
+
 import { useStylesStore } from "../../../stores";
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
 };
 
 export function EmptyCell({ rowIndex, borderColor }: Props) {
-  const { customCellHeightPX, customCellWidthPX } = useStylesStore();
+  const { customCellHeightPX, customCellWidthPX, theme } = useStylesStore();
   return (
     <motion.div
       className={`flex-1 border p-2 ${borderColor}`}
@@ -17,7 +17,8 @@ export function EmptyCell({ rowIndex, borderColor }: Props) {
         width: `${customCellWidthPX}px`,
         height: `${customCellHeightPX}px`,
         backgroundColor:
-          rowIndex % 2 === 0 ? TaskColors.ROW_EVEN : TaskColors.ROW_ODD,
+          rowIndex % 2 === 0 ? theme.row.even : theme.row.odd,
+        borderColor: theme.border,
         scale: 1,
       }}
       exit={{ width: `${customCellWidthPX / 2}px` }}

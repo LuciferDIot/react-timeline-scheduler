@@ -279,6 +279,9 @@ export const Task: React.FC<TaskProps> = React.memo(
             width: isDragging && dragProperties ? `${dragProperties.width}px` : "100%",
             backgroundColor:
               rowIndex % 2 === 0 ? theme.row.even : theme.row.odd,
+            borderColor: theme.task && theme.task.border !== undefined 
+                ? theme.task.border 
+                : borderColor,
           }}
           onContextMenu={(e) => handleRightClick(task, e)}
           layout={!isDragging}

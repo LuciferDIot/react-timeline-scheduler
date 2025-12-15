@@ -99,6 +99,7 @@ export interface SchedulerTheme {
   };
   grid: {
     color: string;
+    currentDateLine?: string;
   };
   header: {
     background: string;
@@ -109,6 +110,12 @@ export interface SchedulerTheme {
     odd: string;
     hover: string;
     text: string;
+    border?: string;
+  };
+  toolbar?: {
+    icon?: string;
+    background?: string;
+    text?: string;
   };
 }
 
@@ -123,6 +130,12 @@ export interface SchedulerConfigStyles {
   };
 }
 
+export interface SchedulerThemeConfig {
+  mode?: "light" | "dark";
+  light?: Partial<SchedulerTheme>;
+  dark?: Partial<SchedulerTheme>;
+}
+
 export interface SchedulerConfig {
   label: string;
   data: SchedulerTask[];
@@ -130,8 +143,9 @@ export interface SchedulerConfig {
   endOffsetDays?: number;
   resources?: string[];
   styles?: SchedulerConfigStyles;
-  theme?: Partial<SchedulerTheme>;
+  theme?: Partial<SchedulerTheme> | SchedulerThemeConfig;
   dragConfig?: DragConfig;
+  disableToolbar?: boolean;
   animationConfig?: AnimationConfig;
 }
 
