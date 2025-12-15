@@ -46,7 +46,7 @@ const App = () => {
       startDate: new Date("2024-01-01"),
       endDate: new Date("2024-01-05"),
       // Optional: Custom styles per task
-      variant: "style-1"
+      variant: "style-1",
     },
     // ... more tasks
   ];
@@ -58,11 +58,11 @@ const App = () => {
           label: "Project Schedule",
           data: data,
           theme: {
-            primary: "#3b82f6", 
+            primary: "#3b82f6",
             text: {
-               primary: "#1f2937" 
-            }
-          }
+              primary: "#1f2937",
+            },
+          },
         }}
       />
     </div>
@@ -99,24 +99,56 @@ const myTheme = {
 
 ### `Timeline` Props
 
-| Prop | Type | Description |
-| :--- | :--- | :--- |
-| `config` | `SchedulerConfig` | **Required**. Main configuration object containing data and settings. |
-| `className` | `string` | Optional. Custom CSS class for the root container. |
-| `onTaskClick` | `(task) => void` | Callback fired when a task is clicked. |
-| `onRowLabelClick` | `(label) => void` | Callback fired when a row label is clicked. |
-| `loading` | `boolean` | Shows a loading state if true. |
+| Prop              | Type              | Description                                                           |
+| :---------------- | :---------------- | :-------------------------------------------------------------------- |
+| `config`          | `SchedulerConfig` | **Required**. Main configuration object containing data and settings. |
+| `className`       | `string`          | Optional. Custom CSS class for the root container.                    |
+| `onTaskClick`     | `(task) => void`  | Callback fired when a task is clicked.                                |
+| `onRowLabelClick` | `(label) => void` | Callback fired when a row label is clicked.                           |
+| `loading`         | `boolean`         | Shows a loading state if true.                                        |
 
 ### `SchedulerConfig`
 
-| Property | Type | Description |
-| :--- | :--- | :--- |
-| `data` | `SchedulerTask[]` | Array of task objects. |
-| `label` | `string` | Title shown in the top-left corner. |
-| `theme` | `Partial<SchedulerTheme>` | Theme override object. |
-| `startOffsetDays` | `number` | Days to subtract from the start date view. |
-| `endOffsetDays` | `number` | Days to add to the end date view. |
-| `dragConfig` | `DragConfig` | Configuration for drag behavior (autoScroll, etc.). |
+| Property          | Type                      | Description                                                               |
+| :---------------- | :------------------------ | :------------------------------------------------------------------------ |
+| `data`            | `SchedulerTask[]`         | Array of task objects.                                                    |
+| `label`           | `string`                  | Title shown in the top-left corner.                                       |
+| `theme`           | `Partial<SchedulerTheme>` | Theme override object.                                                    |
+| `startOffsetDays` | `number`                  | Days to subtract from the start date view.                                |
+| `endOffsetDays`   | `number`                  | Days to add to the end date view.                                         |
+| `dragConfig`      | `DragConfig`              | Configuration for drag behavior (autoScroll, etc.).                       |
+| `disableToolbar`  | `boolean`                 | Set to `true` to hide the top toolbar controls (Topic label, Lock icons). |
+
+### Advanced Features
+
+#### 🛠️ Custom Tooltips
+
+You can provide a fully custom tooltip for each task using the `tooltipComponent` property. This accepts any React Node, giving you complete control over the content and styling.
+
+```tsx
+{
+  id: "task-1",
+  label: "Task with Custom Tooltip",
+  // ... other properties
+  tooltipComponent: (task) => (
+    <div className="custom-tooltip-content">
+      <h4>{task.label}</h4>
+      <span className="status-badge">In Progress</span>
+    </div>
+  )
+}
+```
+
+#### 🔒 Toolbar & Lock Functionality
+
+The toolbar provides quick access to timeline controls:
+
+- **Lock Icon**: Toggles "Read-Only" mode. When locked:
+  - Drag-and-drop operations are disabled.
+  - Task resizing is disabled.
+  - Row expansion/collapsing is disabled (preventing accidental layout changes).
+- **Location Icon**: Quickly scrolls to the current date (Today).
+- **Disable Toolbar**: You can completely hide the toolbar using `config.disableToolbar: true`. This removes the header controls while keeping the date axis.
 
 ---
 

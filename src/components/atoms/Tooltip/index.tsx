@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import { Coordination } from "../../../types";
 
 interface TooltipProps {
@@ -12,94 +12,81 @@ export const Tooltip: React.FC<TooltipProps> = ({
   mousePosition,
 }) => {
   const tooltipRef = useRef<HTMLDivElement>(null);
-  const [tooltipSize, setTooltipSize] = useState({ width: 0, height: 0 });
-  const [style, setStyle] = useState({
-    top: "0px",
-    left: "0px",
-    borderRadius: "12px 12px 12px 0",
-    borderWidth: "2px",
-  });
+  const [position, setPosition] = useState({ top: 0, left: 0 });
 
-  // Measure the tooltip's size after it renders
-  useEffect(() => {
-    if (tooltipRef.current) {
-      const { width, height } = tooltipRef.current.getBoundingClientRect();
-      setTooltipSize({ width, height });
-    }
-  }, [children]);
+  // Debug helpers (can be removed later)
+  React.useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.debug("Tooltip mounted", { mousePosition });
+  }, []);
 
-  // Update the tooltip's position and style based on mouse position and viewport boundaries
-  useEffect(() => {
-    if (!tooltipRef.current) return;
+  // Use useLayoutEffect to calculate position before paint
+  useLayoutEffect(() => {
+    if (!tooltipRef.current || mousePosition.x === null || mousePosition.y === null) return;
 
-    const { width, height } = tooltipSize;
+    const tooltip = tooltipRef.current;
     const { x, y } = mousePosition;
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
-    let tooltipTop = (y || 0) + 10; // Default offset below the mouse
-    let tooltipLeft = (x || 0) + 10; // Default offset to the right of the mouse
-    let newBorderRadius = "12px 12px 12px 0";
-    let newBorderWidth = "2px";
+    const offset = 12; // Distance from cursor
+    const edgePadding = 8; // Padding from viewport edges
 
-    // Check if the tooltip exceeds the viewport boundaries
-    const exceedsRight = tooltipLeft + width > viewportWidth;
-    const exceedsBottom = tooltipTop + height > viewportHeight;
-    const exceedsLeft = tooltipLeft < 0;
-    const exceedsTop = tooltipTop < 0;
+    // Ensure tooltip cannot be wider than the viewport minus padding so measurements are stable
+    tooltip.style.maxWidth = `${Math.max(100, viewportWidth - edgePadding * 2)}px`;
 
-    // Adjust position if the tooltip exceeds the viewport
-    if (exceedsRight) {
-      tooltipLeft = (x || 0) - width - 10; // Move to the left of the mouse
-      newBorderRadius = "12px 0 12px 12px";
-      newBorderWidth = "3px";
-    }
-    if (exceedsBottom) {
-      tooltipTop = (y || 0) - height - 10; // Move above the mouse
-      newBorderRadius = "12px 12px 0 12px";
-      newBorderWidth = "3px";
-    }
-    if (exceedsLeft) {
-      tooltipLeft = (x || 0) + 10; // Move back to the right
-      newBorderRadius = "12px 12px 12px 0";
-      newBorderWidth = "3px";
-    }
-    if (exceedsTop) {
-      tooltipTop = (y || 0) + 10; // Move back below
-      newBorderRadius = "12px 12px 12px 0";
-      newBorderWidth = "3px";
+    const { width, height } = tooltip.getBoundingClientRect();
+
+    let tooltipLeft = x + offset;
+    let tooltipTop = y + offset;
+
+    // Smart horizontal positioning: prefer right, then left, then centered near cursor
+    const fitsRight = x + offset + width + edgePadding <= viewportWidth;
+    const fitsLeft = x - offset - width >= edgePadding;
+
+    if (!fitsRight && fitsLeft) {
+      tooltipLeft = x - width - offset;
+    } else if (!fitsRight && !fitsLeft) {
+      tooltipLeft = Math.max(edgePadding, Math.min(x - width / 2, viewportWidth - width - edgePadding));
     }
 
-    // If the tooltip is small, remove rounded corners
-    if (width < 100 || height < 100) {
-      newBorderRadius = "0";
+    // Smart vertical positioning: prefer below, then above, then centered vertically
+    const fitsBelow = y + offset + height + edgePadding <= viewportHeight;
+    const fitsAbove = y - offset - height >= edgePadding;
+
+    if (!fitsBelow && fitsAbove) {
+      tooltipTop = y - height - offset;
+    } else if (!fitsBelow && !fitsAbove) {
+      tooltipTop = Math.max(edgePadding, Math.min(y - height / 2, viewportHeight - height - edgePadding));
     }
 
-    // Update the tooltip's style
-    setStyle({
-      top: `${tooltipTop}px`,
-      left: `${tooltipLeft}px`,
-      borderRadius: newBorderRadius,
-      borderWidth: newBorderWidth,
-    });
-  }, [mousePosition, tooltipSize]);
+    // Final bounds check
+    tooltipLeft = Math.max(edgePadding, Math.min(tooltipLeft, viewportWidth - width - edgePadding));
+    tooltipTop = Math.max(edgePadding, Math.min(tooltipTop, viewportHeight - height - edgePadding));
+
+    // eslint-disable-next-line no-console
+    console.debug("Tooltip position calculated", { tooltipTop, tooltipLeft, width, height, mousePosition });
+    setPosition({ top: tooltipTop, left: tooltipLeft });
+  }, [mousePosition, children]);
 
   return (
     <motion.div
       ref={tooltipRef}
-      className="fixed z-10 backdrop-blur-md w-fit h-fit border-white/50 shadow-xl pointer-events-none"
+      className="fixed z-[100] bg-white/90 dark:bg-black/90 backdrop-blur-md w-fit h-fit border border-gray-200 dark:border-gray-700 shadow-xl pointer-events-none px-3 py-2"
       style={{
-        top: style.top,
-        left: style.left,
-        borderRadius: style.borderRadius,
-        borderWidth: style.borderWidth,
+        top: `${position.top}px`,
+        left: `${position.left}px`,
+        borderRadius: "6px",
+        borderWidth: "1px",
         borderStyle: "solid",
-        borderColor: "rgba(255, 255, 255, 0.5)",
+        // allow the tooltip to expand but keep it within viewport via inline maxWidth
+        maxWidth: `calc(100vw - 16px)`,
+        whiteSpace: "normal",
       }}
-      initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.2, ease: "easeInOut" }}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ duration: 0.15, ease: "easeOut" }}
     >
       {children}
     </motion.div>

@@ -17,9 +17,6 @@ export const defaultTheme: SchedulerTheme = {
     odd: "#f8fafc", // Slate 50
     hover: "#f1f5f9", // Slate 100
   },
-  grid: {
-    color: "#e2e8f0", // Slate 200
-  },
   header: {
     background: "#ffffff",
     text: "#0f172a", // Slate 900
@@ -29,5 +26,15 @@ export const defaultTheme: SchedulerTheme = {
     odd: "#0ea5e9", // Sky 500
     hover: "#2563eb", // Blue 600
     text: "#ffffff",
+    border: undefined, // Default behavior (usually inherited or white/transparent)
+  },
+  toolbar: {
+      icon: undefined,
+      background: undefined,
+      text: undefined
+  },
+  grid: {
+    color: "#e2e8f0", // Slate 200
+    currentDateLine: undefined
   },
 };

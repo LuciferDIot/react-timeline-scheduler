@@ -22,7 +22,7 @@ interface StylesState {
   setRowLableMaxWidth: (action: (prev: number) => number) => void;
   setAllStyles: (
     styles: SchedulerConfigStyles,
-    theme?: Partial<SchedulerTheme>
+    theme?: Partial<SchedulerTheme> | { mode?: "light" | "dark"; light?: Partial<SchedulerTheme>; dark?: Partial<SchedulerTheme> }
   ) => void;
   setCustomCellWidthPX: (customCellWidthPX: number) => void;
   setCustomCellHeightPX: (customCellHeightPX: number) => void;
@@ -45,8 +45,24 @@ export const useStylesStore = create<StylesState>((set) => ({
     set((state) => ({ rowLableMaxWidth: action(state.rowLableMaxWidth) })),
   setAllStyles: (
     styles: SchedulerConfigStyles,
-    theme?: Partial<SchedulerTheme>
-  ) =>
+    theme?: Partial<SchedulerTheme> | { mode?: "light" | "dark"; light?: Partial<SchedulerTheme>; dark?: Partial<SchedulerTheme> }
+  ) => {
+     let mergedTheme = defaultTheme;
+
+     if (theme) {
+        if ('mode' in theme || 'light' in theme || 'dark' in theme) {
+            // It's a SchedulerThemeConfig
+            const config = theme as { mode?: "light" | "dark"; light?: Partial<SchedulerTheme>; dark?: Partial<SchedulerTheme> };
+            const mode = config.mode || 'light';
+            const specificTheme = mode === 'dark' ? config.dark : config.light;
+            
+            mergedTheme = _.merge({}, defaultTheme, specificTheme);
+        } else {
+            // It's a standard Partial<SchedulerTheme>
+             mergedTheme = _.merge({}, defaultTheme, theme);
+        }
+     }
+
     set({
       customCellWidthPX:
         styles.customCellWidthPX ?? defaultStyles.customCellWidthPX,
@@ -56,8 +72,9 @@ export const useStylesStore = create<StylesState>((set) => ({
         styles.taskColorFormat || defaultStyles.taskColorFormat,
       dayColorHighlight:
         styles.dayColorHighlight || defaultStyles.dayColorHighlight,
-      theme: theme ? _.merge({}, defaultTheme, theme) : defaultTheme,
-    }),
+      theme: mergedTheme,
+    });
+  },
   setCustomCellWidthPX: (customCellWidthPX: number) =>
     set({ customCellWidthPX }),
   setCustomCellHeightPX: (customCellHeightPX: number) =>

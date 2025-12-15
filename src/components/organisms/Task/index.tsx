@@ -25,7 +25,7 @@ interface TaskProps {
 
 export const Task: React.FC<TaskProps> = React.memo(
   ({ task, span, rowIndex, borderColor }) => {
-    const { setTooltipVisible, setrightClickTask, defaultTooltipComponent } =
+    const { setTooltipVisible, setrightClickTask, defaultTooltipComponent, removeTooltip, setMouseCoordination } =
       useChildStore();
     const { lockOperations, onRowExpand, onRowShrink, onTaskClick, dragConfig } =
       useActionStore();
@@ -67,15 +67,21 @@ export const Task: React.FC<TaskProps> = React.memo(
     }, [task.extendedStyles]);
 
     const handleVisibleTooltip = useCallback(
-      (task: SchedulerTask, index?: StripIndex) => {
+      (task: SchedulerTask, e?: React.MouseEvent, index?: StripIndex) => {
         if (isDragging) return; // Disable tooltip during drag
+        if (e) {
+          setMouseCoordination({ x: e.clientX, y: e.clientY });
+        } else {
+          // Fallback: try to read last known mouse position from event-like sources
+          // (no-op here)
+        }
         setTooltipVisible(
           task.tooltipComponent
             ? task.tooltipComponent(task, index)
             : defaultTooltipComponent?.(task, index)
         );
       },
-      [defaultTooltipComponent, setTooltipVisible, isDragging]
+      [defaultTooltipComponent, setTooltipVisible, isDragging, setMouseCoordination]
     );
 
     const handleRightClick = (task: SchedulerTask, e: React.MouseEvent) => {
@@ -257,7 +263,7 @@ export const Task: React.FC<TaskProps> = React.memo(
           width: `${taskWidth}px`,
           height: "100%",
           position: "relative",
-          zIndex: isDragging ? 50 : 0,
+          zIndex: isDragging ? 50 : 10,
         }}
         className={isDragging ? "z-50" : ""}
       >
@@ -279,8 +285,13 @@ export const Task: React.FC<TaskProps> = React.memo(
             width: isDragging && dragProperties ? `${dragProperties.width}px` : "100%",
             backgroundColor:
               rowIndex % 2 === 0 ? theme.row.even : theme.row.odd,
+            borderColor: theme.task && theme.task.border !== undefined 
+                ? theme.task.border 
+                : borderColor,
           }}
           onContextMenu={(e) => handleRightClick(task, e)}
+          onMouseEnter={(e) => handleVisibleTooltip(task, e)}
+          onMouseLeave={removeTooltip}
           layout={!isDragging}
         >
           <TaskLabel label={task.label} addExtraLeft={labelLeftPercentage} />
@@ -299,8 +310,6 @@ export const Task: React.FC<TaskProps> = React.memo(
               />
             )}
             <TaskCells
-              task={task}
-              handleVisibleTooltip={handleVisibleTooltip}
               taskBackgroundColor={taskBackgroundColor || ""}
               extendedStyles={extendedStyles}
               dates={{

@@ -58,7 +58,7 @@ const Row: React.FC<RowProps> = React.memo(
              const effectiveStartStr = effectiveStart.format("YYYY-MM-DD");
              lookup.set(effectiveStartStr, task);
              
-             let current = effectiveStart.clone().add(1, 'days');
+             const current = effectiveStart.clone().add(1, 'days');
              const end = moment(task.endDate);
              
              while (current.isSameOrBefore(end)) {
@@ -136,12 +136,13 @@ const Row: React.FC<RowProps> = React.memo(
                 : taskRowIndex === (groupedTasks[line]?.length ?? 0) - 1
                 ? "border-b-[0.1px]"
                 : "border-y-0"
-              : "border"
+              : "border"  
           }`}
           style={{
             backgroundColor:
-              taskRowIndex % 2 === 0 ? theme.row.even : theme.row.odd,
+              rowIndex % 2 === 0 ? theme.row.even : theme.row.odd,
             color: theme.text.primary,
+            borderColor: theme.border,
           }}
           initial={{ width: 0 }}
           animate={{ width: rowLableMaxWidth }}
