@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight, Calendar, CheckCircle, Zap } from 'lucide-react';
 import { Timeline } from 'react-timeline-scheduler';
+import siteData from '../data/site-data.json';
 
 export const Hero = ({ onGetStarted }: { onGetStarted: () => void }) => {
   // Mini demo data
@@ -36,12 +37,12 @@ export const Hero = ({ onGetStarted }: { onGetStarted: () => void }) => {
              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
           </span>
-          v1.0.20 is now available
+          {siteData.hero.badgeText}
         </div>
         
         <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-white mb-6">
           The <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Modern</span><br />
-          React Timeline Scheduler
+          {siteData.hero.title.replace("Modern ", "")}
         </h1>
         
         <p className="max-w-2xl text-lg sm:text-xl text-gray-400 mb-10 leading-relaxed">

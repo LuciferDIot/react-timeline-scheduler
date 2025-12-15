@@ -40,9 +40,9 @@ export const HeaderIconButton: React.FC<IconButtonProps> = ({
       }`}
       style={{
         backgroundColor: isActive 
-          ? (theme.task.even) 
+          ? (theme.primary) 
           : (theme.toolbar?.background || "transparent"),
-        color: isActive ? theme.task.text : theme.toolbar?.text || theme.header.text || theme.text.primary,
+        color: isActive ? "#fff" : theme.toolbar?.text || theme.header.text || theme.text.primary,
         borderColor: isActive ? theme.border : (theme.toolbar?.background ? theme.border : "transparent")
       }}
       onMouseEnter={() =>

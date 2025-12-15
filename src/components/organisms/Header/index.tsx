@@ -80,8 +80,11 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   const cellCount = useMemo(
-    () => (scrollIntoToday && isCurrentDateInDates ? 2 : 1),
-    [isCurrentDateInDates, scrollIntoToday]
+    () => {
+       if (config?.disableToolbar) return 0;
+       return scrollIntoToday && isCurrentDateInDates ? 2 : 1;
+    },
+    [isCurrentDateInDates, scrollIntoToday, config?.disableToolbar]
   );
   const [linePosition, setLinePosition] = useState(0);
 
@@ -130,10 +133,9 @@ export const Header: React.FC<HeaderProps> = ({
   }, [customCellWidthPX]);
 
   return (
-    <div className="z-[70] sticky top-0 left-0 flex flex-col w-fit h-fit backdrop-blur-3xl mb-2">
-      {!config?.disableToolbar && (
-        <div className="flex w-full h-fit gap-2">
-          <motion.div
+    <div className="z-[70] sticky top-0 left-0 flex flex-col w-fit h-fit mb-2">
+      <div className="flex w-full h-fit gap-2">
+        <motion.div
             ref={labelRef}
             className={`z-[80] sticky left-0 top-0 min-w-32 md:min-w-48 text-sm
           font-medium text-left border border-b-0 p-2 ${borderColor}`}
@@ -148,31 +150,32 @@ export const Header: React.FC<HeaderProps> = ({
           >
             {topic}
           </motion.div>
-          <div className="flex">
-            {Object.entries(groupedDates).map(([month, monthDates], index) => {
-              const monthCellWidth =
-                customCellWidthPX *
-                (monthDates.length -
-                  (index === Object.keys(groupedDates).length - 1
-                    ? cellCount
-                    : 0));
+        <div className="flex">
+          {Object.entries(groupedDates).map(([month, monthDates], index) => {
+            const monthCellWidth =
+              customCellWidthPX *
+              (monthDates.length -
+                (index === Object.keys(groupedDates).length - 1
+                  ? cellCount
+                  : 0));
 
-              return (
-                monthCellWidth > 0 && (
-                  <MonthHeader
-                    key={month}
-                    borderColor={borderColor}
-                    month={month}
-                    monthCellWidth={monthCellWidth}
-                  />
-                )
-              );
-            })}
+            return (
+              monthCellWidth > 0 && (
+                <MonthHeader
+                  key={month}
+                  borderColor={borderColor}
+                  month={month}
+                  monthCellWidth={monthCellWidth}
+                />
+              )
+            );
+          })}
 
-            {/* lock icons */}
+          {/* lock icons */}
+          {!config?.disableToolbar && (
             <div
-              className="sticky top-0 right-0 flex justify-center items-center 
-            text-left text-xs"
+              className={`sticky top-0 right-0 flex justify-center items-center 
+            text-left text-xs`}
               style={{ width: `${cellCount * customCellWidthPX}px` }}
             >
               {scrollIntoToday && isCurrentDateInDates && (
@@ -192,24 +195,20 @@ export const Header: React.FC<HeaderProps> = ({
                 tooltipText={`${lockOperations ? "Unlock" : "Lock"} Operations`}
               />
             </div>
-          </div>
+          )}
         </div>
-      )}
+      </div>
 
       <div className="flex gap-2">
         <div
-          ref={!config?.disableToolbar ? null : labelRef}
           className={`z-[4] sticky left-0 min-w-32 md:min-w-48 text-sm font-medium 
           text-left border border-t-0 p-2 ${borderColor} flex items-center justify-start`}
-          style={{ 
-            backgroundColor: theme.header.background, 
+          style={{
+            backgroundColor: theme.header.background,
             borderColor: theme.border,
             color: theme.header.text,
-            width: rowLableMaxWidth
-          }}
-        >
-           {config?.disableToolbar ? topic : ""}
-        </div>
+            width: rowLableMaxWidth,
+          }}/>
         <div className="flex">
           {dates.map((date) => {
             const bgColor = daybgColor?.daybgColorHighlight[date];

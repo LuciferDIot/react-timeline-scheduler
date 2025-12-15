@@ -1,13 +1,11 @@
 import { motion } from "framer-motion";
 import React from "react";
-import { SchedulerTask, StripIndex } from "../../../../types";
 import { calculateDatesPercentage } from "../../../../util/date.util";
 import { ExtendedCell } from "../ExtendedCell";
 import { FirstEmptyCell } from "../FirstEmptyCell";
 import { TaskStrip } from "../TaskStrip";
 
 type Props = {
-  task: SchedulerTask;
   taskBackgroundColor: string;
   extendedStyles: {
     backgroundColor: string;
@@ -17,17 +15,13 @@ type Props = {
     endDate: Date;
     prevEndDate?: Date;
   };
-
-  handleVisibleTooltip: (task: SchedulerTask, index?: StripIndex) => void;
 };
 
 export const TaskCells = React.memo(
   ({
-    task,
     taskBackgroundColor,
     extendedStyles,
     dates: { startDate, endDate, prevEndDate },
-    handleVisibleTooltip,
   }: Props) => {
     const startPercentage = calculateDatesPercentage(startDate);
     const midPercentage = prevEndDate
@@ -46,24 +40,20 @@ export const TaskCells = React.memo(
         <FirstEmptyCell index={0} startPercentage={startPercentage} />
         <TaskStrip
           index={0}
-          task={task}
           startDate={startDate}
           endDate={endDate}
           prevEndDate={prevEndDate}
           endPercentage={midPercentage ? midPercentage : endPercentage}
           startPercentage={100 - startPercentage}
           taskBackgroundColor={taskBackgroundColor}
-          handleVisibleTooltip={handleVisibleTooltip}
         />
         {midPercentage && prevEndDate && (
           <ExtendedCell
-            task={task}
             endDate={endDate}
             prevEndDate={prevEndDate}
             midPercentage={100 - midPercentage}
             endPercentage={endPercentage}
             extendedStyles={extendedStyles}
-            handleVisibleTooltip={handleVisibleTooltip}
           />
         )}
       </motion.div>

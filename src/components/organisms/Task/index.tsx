@@ -25,7 +25,7 @@ interface TaskProps {
 
 export const Task: React.FC<TaskProps> = React.memo(
   ({ task, span, rowIndex, borderColor }) => {
-    const { setTooltipVisible, setrightClickTask, defaultTooltipComponent } =
+    const { setTooltipVisible, setrightClickTask, defaultTooltipComponent, removeTooltip } =
       useChildStore();
     const { lockOperations, onRowExpand, onRowShrink, onTaskClick, dragConfig } =
       useActionStore();
@@ -257,7 +257,7 @@ export const Task: React.FC<TaskProps> = React.memo(
           width: `${taskWidth}px`,
           height: "100%",
           position: "relative",
-          zIndex: isDragging ? 50 : 0,
+          zIndex: isDragging ? 50 : 10,
         }}
         className={isDragging ? "z-50" : ""}
       >
@@ -284,6 +284,8 @@ export const Task: React.FC<TaskProps> = React.memo(
                 : borderColor,
           }}
           onContextMenu={(e) => handleRightClick(task, e)}
+          onMouseEnter={() => handleVisibleTooltip(task)}
+          onMouseLeave={removeTooltip}
           layout={!isDragging}
         >
           <TaskLabel label={task.label} addExtraLeft={labelLeftPercentage} />
@@ -302,8 +304,6 @@ export const Task: React.FC<TaskProps> = React.memo(
               />
             )}
             <TaskCells
-              task={task}
-              handleVisibleTooltip={handleVisibleTooltip}
               taskBackgroundColor={taskBackgroundColor || ""}
               extendedStyles={extendedStyles}
               dates={{

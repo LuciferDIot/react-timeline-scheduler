@@ -136,11 +136,11 @@ const Row: React.FC<RowProps> = React.memo(
                 : taskRowIndex === (groupedTasks[line]?.length ?? 0) - 1
                 ? "border-b-[0.1px]"
                 : "border-y-0"
-              : "border"
+              : "border"  
           }`}
           style={{
             backgroundColor:
-              taskRowIndex % 2 === 0 ? theme.row.even : theme.row.odd,
+              rowIndex % 2 === 0 ? theme.row.even : theme.row.odd,
             color: theme.text.primary,
             borderColor: theme.border,
           }}

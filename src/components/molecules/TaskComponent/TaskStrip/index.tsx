@@ -1,35 +1,27 @@
 import { motion } from "framer-motion";
 import moment from "moment";
 import { useMemo } from "react";
-import { useChildStore, useStylesStore } from "../../../../stores";
-import { SchedulerTask, StripIndex } from "../../../../types";
+import { useStylesStore } from "../../../../stores";
 
 type TaskStripType = {
   index: number;
-  task: SchedulerTask;
   startPercentage: number;
   endPercentage: number;
   startDate: Date;
   endDate: Date;
   prevEndDate?: Date;
   taskBackgroundColor: string;
-
-  handleVisibleTooltip: (task: SchedulerTask, index?: StripIndex) => void;
 };
 
 export const TaskStrip = ({
   index,
-  task,
   endPercentage,
   startPercentage,
   startDate,
   endDate,
   prevEndDate,
   taskBackgroundColor,
-
-  handleVisibleTooltip,
 }: TaskStripType) => {
-  const { removeTooltip } = useChildStore();
   const { customCellWidthPX } = useStylesStore();
   const cellsToEndFromStart = useMemo(
     () =>
@@ -58,8 +50,6 @@ export const TaskStrip = ({
         width: `${width}px`,
         backgroundColor: taskBackgroundColor,
       }}
-      onMouseEnter={() => handleVisibleTooltip(task, StripIndex.One)}
-      onMouseLeave={removeTooltip}
     />
   );
 };

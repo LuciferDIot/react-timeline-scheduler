@@ -25,6 +25,12 @@ const basicTasks: SchedulerTask[] = [
         groupId: "g1",
         startDate: generateDates(0, 5).start,
         endDate: generateDates(0, 5).end,
+        tooltipComponent: (task) => (
+            <div style={{ padding: "8px", background: "#333", color: "white", borderRadius: "4px" }}>
+                <strong>{task.label}</strong>
+                <div>Custom Tooltip Node</div>
+            </div>
+        )
     },
     {
         id: "t2",
@@ -70,7 +76,15 @@ const colorfulTasks: SchedulerTask[] = [
         groupId: "s1",
         startDate: generateDates(8, 2).start,
         endDate: generateDates(8, 2).end,
-        variant: "error"
+        variant: "error",
+        // Demo custom tooltip
+        tooltipComponent: (task) => (
+             <div className="p-2 bg-white text-black rounded shadow-lg border border-gray-200">
+                 <p className="font-bold">{task.label}</p>
+                 <p className="text-xs text-gray-500">Custom Tooltip Demo</p>
+                 <p className="text-xs text-blue-500">{task.startDate.toLocaleDateString()}</p>
+             </div>
+        )
     }
 ];
 

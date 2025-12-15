@@ -101,7 +101,7 @@ export const Timeline: React.FC<TimelineProps> = React.memo(
       setOffsetDays,
       setConfig,
     } = useDataStore();
-    const { setAllStyles, theme: currentTheme } = useStylesStore();
+    const { setAllStyles } = useStylesStore();
 
     const {
       mouseCoordination,
@@ -134,7 +134,9 @@ export const Timeline: React.FC<TimelineProps> = React.memo(
     }, [dragConfig, animationConfig]);
 
     useEffect(() => {
-      tooltipComponent && setDefaultTooltipComponent(tooltipComponent);
+      if (tooltipComponent) {
+        setDefaultTooltipComponent(tooltipComponent);
+      }
     }, [setDefaultTooltipComponent, tooltipComponent]);
 
     useEffect(() => {
@@ -243,7 +245,7 @@ export const Timeline: React.FC<TimelineProps> = React.memo(
                   {Object.keys(groupedTasks || [])
                     .sort((a, b) => a.localeCompare(b))
                     .map((line) => (
-                      <div className="pb-2" style={{ backgroundColor: currentTheme.background.secondary }} key={line}>
+                      <div className="pb-2" key={line}>
                         {groupedTasks[line]?.map((row, taskRowIndex) => (
                           <Row
                             key={`${line}-${taskRowIndex}`}

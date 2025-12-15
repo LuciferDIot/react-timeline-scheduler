@@ -87,14 +87,13 @@ export const Tooltip: React.FC<TooltipProps> = ({
   return (
     <motion.div
       ref={tooltipRef}
-      className="fixed z-10 backdrop-blur-md w-fit h-fit border-white/50 shadow-xl pointer-events-none"
+      className="fixed z-[100] bg-white/90 dark:bg-black/90 backdrop-blur-md w-fit h-fit border border-gray-200 dark:border-gray-700 shadow-xl pointer-events-none"
       style={{
         top: style.top,
         left: style.left,
         borderRadius: style.borderRadius,
         borderWidth: style.borderWidth,
         borderStyle: "solid",
-        borderColor: "rgba(255, 255, 255, 0.5)",
       }}
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
