@@ -20,7 +20,7 @@ export const HeaderIconButton: React.FC<IconButtonProps> = ({
   tooltipText,
   borderColor,
 }) => {
-  const { setTooltipVisible } = useChildStore();
+  const { setTooltipVisible, setMouseCoordination } = useChildStore();
   const { theme } = useStylesStore();
 
   const Icon =
@@ -45,9 +45,10 @@ export const HeaderIconButton: React.FC<IconButtonProps> = ({
         color: isActive ? "#fff" : theme.toolbar?.text || theme.header.text || theme.text.primary,
         borderColor: isActive ? theme.border : (theme.toolbar?.background ? theme.border : "transparent")
       }}
-      onMouseEnter={() =>
-        setTooltipVisible(<HeaderTooltip text={tooltipText} />)
-      }
+      onMouseEnter={(e) => {
+        setMouseCoordination({ x: (e as React.MouseEvent).clientX, y: (e as React.MouseEvent).clientY });
+        setTooltipVisible(<HeaderTooltip text={tooltipText} />);
+      }}
       onMouseLeave={() => setTooltipVisible(null)}
     >
       <Icon size={16} className="mx-auto hover:scale-110" />

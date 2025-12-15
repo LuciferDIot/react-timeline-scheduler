@@ -154,10 +154,21 @@ export const Timeline: React.FC<TimelineProps> = React.memo(
     }, [startOffsetDays, endOffsetDays, setOffsetDays]);
 
     const handleMouseMove = (e: React.MouseEvent) => {
-      if (tooltipVisible) {
-        setMouseCoordination({ x: e.clientX, y: e.clientY });
-      }
+      setMouseCoordination({ x: e.clientX, y: e.clientY });
     };
+
+    // When a tooltip is visible, also track global mouse movements so positioning
+    // stays correct even if the cursor leaves the main container.
+    React.useEffect(() => {
+      if (!tooltipVisible) return;
+
+      const handler = (ev: MouseEvent) => {
+        setMouseCoordination({ x: ev.clientX, y: ev.clientY });
+      };
+
+      window.addEventListener("mousemove", handler);
+      return () => window.removeEventListener("mousemove", handler);
+    }, [tooltipVisible, setMouseCoordination]);
 
     useEffect(() => {
       setError(undefined);

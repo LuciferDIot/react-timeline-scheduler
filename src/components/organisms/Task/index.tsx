@@ -25,7 +25,7 @@ interface TaskProps {
 
 export const Task: React.FC<TaskProps> = React.memo(
   ({ task, span, rowIndex, borderColor }) => {
-    const { setTooltipVisible, setrightClickTask, defaultTooltipComponent, removeTooltip } =
+    const { setTooltipVisible, setrightClickTask, defaultTooltipComponent, removeTooltip, setMouseCoordination } =
       useChildStore();
     const { lockOperations, onRowExpand, onRowShrink, onTaskClick, dragConfig } =
       useActionStore();
@@ -67,15 +67,21 @@ export const Task: React.FC<TaskProps> = React.memo(
     }, [task.extendedStyles]);
 
     const handleVisibleTooltip = useCallback(
-      (task: SchedulerTask, index?: StripIndex) => {
+      (task: SchedulerTask, e?: React.MouseEvent, index?: StripIndex) => {
         if (isDragging) return; // Disable tooltip during drag
+        if (e) {
+          setMouseCoordination({ x: e.clientX, y: e.clientY });
+        } else {
+          // Fallback: try to read last known mouse position from event-like sources
+          // (no-op here)
+        }
         setTooltipVisible(
           task.tooltipComponent
             ? task.tooltipComponent(task, index)
             : defaultTooltipComponent?.(task, index)
         );
       },
-      [defaultTooltipComponent, setTooltipVisible, isDragging]
+      [defaultTooltipComponent, setTooltipVisible, isDragging, setMouseCoordination]
     );
 
     const handleRightClick = (task: SchedulerTask, e: React.MouseEvent) => {
@@ -284,7 +290,7 @@ export const Task: React.FC<TaskProps> = React.memo(
                 : borderColor,
           }}
           onContextMenu={(e) => handleRightClick(task, e)}
-          onMouseEnter={() => handleVisibleTooltip(task)}
+          onMouseEnter={(e) => handleVisibleTooltip(task, e)}
           onMouseLeave={removeTooltip}
           layout={!isDragging}
         >
