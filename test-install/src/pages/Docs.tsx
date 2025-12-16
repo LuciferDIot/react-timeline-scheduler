@@ -267,9 +267,16 @@ export const Docs = () => {
                 </tr>
                  <tr className="hover:bg-white/5 transition-colors">
                   <td className="px-6 py-4 font-mono text-blue-400">buttons</td>
-                  <td className="px-6 py-4 font-mono text-purple-400">{`{ lock: { locked, unlocked } }`}</td>
+                  <td className="px-6 py-4 font-mono text-purple-400">{`{ lock: {...}, today: {...} }`}</td>
                   <td className="px-6 py-4">
-                    Styles for specific tool/toggle buttons. Each state accepts {`{ background, color, border }`}.
+                    {`Styles for buttons. 'lock' and 'today' each accept { locked/active, unlocked/inactive } states with { background, color, border }.`}
+                  </td>
+                </tr>
+                 <tr className="hover:bg-white/5 transition-colors">
+                  <td className="px-6 py-4 font-mono text-blue-400">scrollbar</td>
+                  <td className="px-6 py-4 font-mono text-purple-400">{`{ thumb, thumbHover, track }`}</td>
+                  <td className="px-6 py-4">
+                    Custom colors for the timeline scrollbar.
                   </td>
                 </tr>
               </tbody>

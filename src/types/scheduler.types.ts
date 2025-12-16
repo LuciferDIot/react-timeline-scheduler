@@ -145,6 +145,15 @@ export interface SchedulerTheme {
       locked?: ButtonStyle;
       unlocked?: ButtonStyle;
     };
+    today?: {
+        active?: ButtonStyle;
+        inactive?: ButtonStyle;
+    };
+  };
+  scrollbar?: {
+      thumb?: string;
+      thumbHover?: string;
+      track?: string;
   };
 }
 

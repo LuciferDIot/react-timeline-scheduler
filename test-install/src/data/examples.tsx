@@ -222,8 +222,17 @@ export const examples: ExampleConfig[] = [
                          background: "#6366f1",
                          color: "#FFFFFF",
                          border: "transparent"
-                     }
+                     },
+                 },
+                 today: {
+                    active: { background: "#6366f1", color: "#ffffff", border: "transparent" },
+                    inactive: { background: "transparent", color: "#94A3B8", border: "transparent" }
                  }
+             },
+             tooltip: {
+                 background: "#1F2937",
+                 text: "#F3F4F6",
+                 border: "#374151"
              }
         }
     },

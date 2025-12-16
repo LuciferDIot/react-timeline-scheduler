@@ -1,8 +1,32 @@
 import { useState, useMemo } from "react";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import { Timeline } from "react-timeline-scheduler";
+import type { SchedulerTask } from "react-timeline-scheduler";
 import { examples, basicTasks, darkTasks, colorfulTasks } from "../data/examples";
 import { Check, ChevronRight } from "lucide-react";
+
+// Simple custom tooltip for the examples
+const CustomTooltip = (task: SchedulerTask) => {
+  return (
+    <div className="min-w-[200px]">
+      <div className="font-semibold mb-1">
+        {task.label}
+      </div>
+      <div className="text-xs opacity-75 mb-2">
+        {task.groupLabel}
+      </div>
+      <div className="flex items-center gap-2 text-xs">
+        <div className="px-2 py-0.5 rounded bg-blue-100/50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-mono">
+          {task.startDate.toLocaleDateString()}
+        </div>
+        <span className="opacity-50">→</span>
+        <div className="px-2 py-0.5 rounded bg-blue-100/50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-mono">
+          {task.endDate.toLocaleDateString()}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const Examples = () => {
   const [activeExampleId, setActiveExampleId] = useState(examples[0].id);
@@ -106,6 +130,7 @@ export const Examples = () => {
               {/* We remount Timeline when example changes to force full re-render with new config */}
               <Timeline
                 key={`${activeExample.id}-${customMode}-${disableToolbar}`}
+                tooltipComponent={CustomTooltip}
                 config={{
                   label: activeExample.title,
                   data: activeExample.tasks,

@@ -101,7 +101,7 @@ export const Timeline: React.FC<TimelineProps> = React.memo(
       setOffsetDays,
       setConfig,
     } = useDataStore();
-    const { setAllStyles } = useStylesStore();
+    const { setAllStyles, theme: storeTheme } = useStylesStore();
 
     const {
       mouseCoordination,
@@ -240,11 +240,32 @@ export const Timeline: React.FC<TimelineProps> = React.memo(
             <>
               <div
                 ref={containerRef}
+                style={{
+                  scrollbarColor: `${storeTheme.scrollbar?.thumb || "rgba(0,0,0,0.2)"} ${storeTheme.scrollbar?.track || "transparent"}`,
+                  scrollbarWidth: "thin",
+                }}
                 className={`relative w-full h-full
-          scrollbar-track-white dark:scrollbar-track-black scrollbar-thumb-black/20
           scrollbar-thin overflow-x-scroll horizontal-scroll ${className || ""}`}
                 onMouseMove={handleMouseMove}
               >
+                  {storeTheme.scrollbar && (
+                      <style>
+                          {`
+                              .horizontal-scroll::-webkit-scrollbar-track {
+                                  background: ${storeTheme.scrollbar.track || "transparent"};
+                              }
+                              .horizontal-scroll::-webkit-scrollbar-thumb {
+                                  background-color: ${storeTheme.scrollbar.thumb || "rgba(0,0,0,0.2)"};
+                                  border-radius: 20px;
+                                  border: 3px solid transparent;
+                                  background-clip: content-box;
+                              }
+                              .horizontal-scroll::-webkit-scrollbar-thumb:hover {
+                                  background-color: ${storeTheme.scrollbar.thumbHover || storeTheme.scrollbar.thumb || "rgba(0,0,0,0.3)"};
+                              }
+                          `}
+                      </style>
+                  )}
                 <div className="w-fit text-sm">
                   <Header
                     dates={dates}
