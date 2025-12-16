@@ -2,29 +2,11 @@ import React from 'react';
 import { ArrowRight, Calendar, CheckCircle, Zap } from 'lucide-react';
 import { Timeline } from 'react-timeline-scheduler';
 import siteData from '../data/site-data.json';
+import { examples } from '../data/examples';
 
 export const Hero = ({ onGetStarted }: { onGetStarted: () => void }) => {
-  // Mini demo data
-  const demoData = [
-    {
-        id: "task-1",
-        label: "Research",
-        groupLabel: "Product",
-        groupId: "prod",
-        startDate: new Date(new Date().setDate(new Date().getDate() - 2)),
-        endDate: new Date(new Date().setDate(new Date().getDate() + 2)),
-        variant: "primary"
-    },
-    {
-        id: "task-2",
-        label: "Design",
-        groupLabel: "Design",
-        groupId: "design",
-        startDate: new Date(new Date().setDate(new Date().getDate())),
-        endDate: new Date(new Date().setDate(new Date().getDate() + 4)),
-        variant: "secondary"
-    }
-  ];
+  // Use the Basic Usage demo data from examples
+  const heroExample = examples.find(ex => ex.id === "basic") || examples[0];
 
   return (
     <div className="relative overflow-hidden bg-[#030712] pt-16 sm:pt-24 lg:pt-32 pb-20">
@@ -87,14 +69,14 @@ export const Hero = ({ onGetStarted }: { onGetStarted: () => void }) => {
             />
         </div>
 
-        {/* Live Demo Preview */}
+        {/* Live Demo Preview with separate dataset */}
         <div className="w-full max-w-6xl rounded-xl border border-white/10 bg-[#111827]/50 backdrop-blur-sm p-4 shadow-2xl relative group">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-xl pointer-events-none group-hover:opacity-75 transition-opacity" />
             <div className="w-full rounded-lg overflow-hidden border border-white/5 bg-[#030712]">
                 <Timeline 
                     config={{
-                        label: "Live Demo",
-                        data: demoData,
+                        label: "Project Timeline - Live Demo",
+                        data: heroExample.tasks,
                         theme: {
                             primary: "#6366f1",
                             background: { primary: "#0B0E14", secondary: "#151921" },

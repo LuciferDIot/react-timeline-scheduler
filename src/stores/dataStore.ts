@@ -68,8 +68,6 @@ export const useDataStore = create<DataState>((set) => ({
         state.endOffsetDays
       );
 
-      if (state.schedulerData.isFirstInit || tasks.length === 0) return state;
-
       return {
         schedulerData: {
           tasks: tasks,

@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import { Timeline } from "react-timeline-scheduler";
-import { examples } from "../data/examples";
+import { examples, basicTasks, darkTasks, colorfulTasks } from "../data/examples";
 import { Check, ChevronRight } from "lucide-react";
 
 export const Examples = () => {
@@ -10,8 +10,14 @@ export const Examples = () => {
   const [disableToolbar, setDisableToolbar] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   
-  const activeExample =
-    examples.find((ex) => ex.id === activeExampleId) || examples[0];
+  const activeExample = useMemo(() => {
+    // Explicitly load correct dataset array to prevent lookup failures
+    if (activeExampleId === "colorful") return { ...examples.find(ex => ex.id === "colorful")!, tasks: colorfulTasks };
+    if (activeExampleId === "basic") return { ...examples.find(ex => ex.id === "basic")!, tasks: basicTasks };
+    if (activeExampleId === "dark-mode") return { ...examples.find(ex => ex.id === "dark-mode")!, tasks: darkTasks };
+    
+    return examples.find((ex) => ex.id === activeExampleId) || examples[0];
+  }, [activeExampleId]);
 
   return (
     <div className={`flex ${isDesktop ? 'flex-row' : 'flex-col'} h-[calc(100vh-64px)] overflow-hidden`}>
@@ -48,6 +54,7 @@ export const Examples = () => {
       {/* Main Preview Area */}
       <div className="flex-grow flex flex-col min-w-0 bg-[#030712] overflow-y-auto">
         <div className="p-6 border-b border-white/10 flex items-center gap-2">
+
           <span className="text-gray-500">Examples</span>
           <ChevronRight size={16} className="text-gray-600" />
           <span className="text-white font-medium">{activeExample.title}</span>
@@ -124,7 +131,9 @@ export const Examples = () => {
               {JSON.stringify(
                 {
                   label: activeExample.title,
-                  data: "[...tasks]",
+                  data: activeExample.tasks.length > 5 
+                    ? [...activeExample.tasks.slice(0, 3), `... ${activeExample.tasks.length - 3} more items`]
+                    : activeExample.tasks,
                   theme: activeExample.theme || "default",
                   ...activeExample.customConfig,
                 },
