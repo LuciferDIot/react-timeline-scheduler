@@ -14,15 +14,15 @@ export interface ExampleConfig {
 const generateDates = (offset: number, days: number) => {
     const start = new Date();
     start.setDate(start.getDate() + offset);
-    // Random start hour between 8am and 11am
-    const startHour = Math.floor(Math.random() * (11 - 8 + 1)) + 8;
+    // Random start hour (00:00 - 11:00) - AM
+    const startHour = Math.floor(Math.random() * 12);
     const startMinute = Math.floor(Math.random() * 60);
     start.setHours(startHour, startMinute, 0, 0); 
     
     const end = new Date(start);
     end.setDate(end.getDate() + days); 
-    // Random end hour between 1pm (13) and 6pm (18)
-    const endHour = Math.floor(Math.random() * (18 - 13 + 1)) + 13;
+    // Random end hour (13:00 - 23:00) - PM
+    const endHour = Math.floor(Math.random() * (23 - 13 + 1)) + 13;
     const endMinute = Math.floor(Math.random() * 60);
     end.setHours(endHour, endMinute, 0, 0); 
     
