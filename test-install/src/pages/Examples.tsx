@@ -11,9 +11,9 @@ export const Examples = () => {
   const activeExample = examples.find(ex => ex.id === activeExampleId) || examples[0];
 
   return (
-    <div className="flex min-h-[calc(100vh-64px)] bg-[#030712]">
+    <div className="flex max-sm:flex-col min-h-[calc(100vh-64px)] bg-[#030712]">
       {/* Sidebar - Fixed width */}
-      <aside className="w-64 flex-shrink-0 bg-[#0f1117] border-r border-white/10 flex flex-col">
+      <aside className="max-sm:w-full w-64 flex-shrink-0 bg-[#0f1117] border-r border-white/10 flex flex-col">
         <div className="p-4 border-b border-white/10">
           <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Examples</h2>
         </div>
