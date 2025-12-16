@@ -103,7 +103,10 @@ export const Hero = ({ onGetStarted }: { onGetStarted: () => void }) => {
                             grid: { color: "#1E293B", currentDateLine: "#6366f1" },
                             header: { background: "#0F172A", text: "#F1F5F9" },
                             border: "#1E293B",
-                            task: { even: "#3B82F6", odd: "#2563EB", hover: "#1D4ED8", text: "#FFFFFF", border: "transparent", removed: "#ef4444", removedBackground: "#fee2e2" }
+                            task: {
+                              even: "#3B82F6", odd: "#2563EB", hover: "#1D4ED8", text: "#FFFFFF", border: "transparent",
+                            },
+                            resize: { handleBackground: "rgba(255, 255, 255, 0.2)", handleHoverBackground: "#6366f1" }
                         }
                     }}
                 />
