@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import React, { useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Coordination } from "../../../types";
 import { useStylesStore } from "../../../stores";
 
@@ -71,10 +72,10 @@ export const Tooltip: React.FC<TooltipProps> = ({
     setPosition({ top: tooltipTop, left: tooltipLeft });
   }, [mousePosition, children]);
 
-  return (
+  return createPortal(
     <motion.div
       ref={tooltipRef}
-      className="fixed z-[100] backdrop-blur-md w-fit h-fit pointer-events-none px-3 py-2"
+      className="fixed z-[9999] backdrop-blur-md w-fit h-fit pointer-events-none px-3 py-2"
       style={{
         top: `${position.top}px`,
         left: `${position.left}px`,
@@ -95,6 +96,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
       transition={{ duration: 0.15, ease: "easeOut" }}
     >
       {children}
-    </motion.div>
+    </motion.div>,
+    document.body
   );
 };

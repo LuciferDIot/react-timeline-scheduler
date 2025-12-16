@@ -1,8 +1,32 @@
 import { useState, useMemo } from "react";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 import { Timeline } from "react-timeline-scheduler";
+import type { SchedulerTask } from "react-timeline-scheduler";
 import { examples, basicTasks, darkTasks, colorfulTasks } from "../data/examples";
 import { Check, ChevronRight } from "lucide-react";
+
+// Simple custom tooltip for the examples
+const CustomTooltip = (task: SchedulerTask) => {
+  return (
+    <div className="min-w-[200px]">
+      <div className="font-semibold mb-1">
+        {task.label}
+      </div>
+      <div className="text-xs opacity-75 mb-2">
+        {task.groupLabel}
+      </div>
+      <div className="flex items-center gap-2 text-xs">
+        <div className="px-2 py-0.5 rounded bg-blue-100/50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-mono">
+          {task.startDate.toLocaleDateString()}
+        </div>
+        <span className="opacity-50">→</span>
+        <div className="px-2 py-0.5 rounded bg-blue-100/50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-mono">
+          {task.endDate.toLocaleDateString()}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const Examples = () => {
   const [activeExampleId, setActiveExampleId] = useState(examples[0].id);
@@ -106,6 +130,7 @@ export const Examples = () => {
               {/* We remount Timeline when example changes to force full re-render with new config */}
               <Timeline
                 key={`${activeExample.id}-${customMode}-${disableToolbar}`}
+                tooltipComponent={CustomTooltip}
                 config={{
                   label: activeExample.title,
                   data: activeExample.tasks,
@@ -124,22 +149,30 @@ export const Examples = () => {
         {/* Source Code Snippet (Optional - could be collapsible) */}
         <div className="p-6 pt-0">
           <div className="rounded-lg bg-[#0d1117] border border-white/10 overflow-hidden">
-            <div className="px-4 py-2 bg-white/5 border-b border-white/5 text-xs text-gray-500 font-mono">
-              config object
+            {/* Component Usage Snippet */}
+            <div className="px-4 py-2 bg-white/5 border-b border-white/5 text-xs text-gray-500 font-mono flex justify-between items-center">
+              <span>Component Usage</span>
+              <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded text-gray-400">Read-only Configuration</span>
             </div>
-            <pre className="p-4 text-xs font-mono text-gray-400 overflow-x-auto">
-              {JSON.stringify(
-                {
-                  label: activeExample.title,
-                  data: activeExample.tasks.length > 5 
-                    ? [...activeExample.tasks.slice(0, 3), `... ${activeExample.tasks.length - 3} more items`]
-                    : activeExample.tasks,
-                  theme: activeExample.theme || "default",
-                  ...activeExample.customConfig,
-                },
-                null,
-                2
-              )}
+            <pre className="p-4 text-xs font-mono text-gray-400 overflow-x-auto whitespace-pre">
+{`<Timeline
+  tooltipComponent={CustomTooltip}
+  config={{
+    label: "${activeExample.title}",
+    disableToolbar: ${disableToolbar},
+    theme: ${activeExampleId === "theme-switching" 
+      ? `{\n      mode: "${customMode}",\n      ...${JSON.stringify(activeExample.theme, null, 2).replace(/^{/, "").replace(/}$/, "").trim()}\n    }`
+      : JSON.stringify(activeExample.theme || "default", null, 2).replace(/\n/g, "\n    ")},
+    data: [
+${activeExample.tasks.slice(0, 4).map(t => {
+      const json = JSON.stringify(t, null, 6); // Use deep indent
+      // Fix indentation for the block
+      return json.split('\n').map((line, i) => (i === 0 ? "      " : "      ") + line).join('\n');
+    }).join(",\n")}
+      // ... +${activeExample.tasks.length - 4} more tasks
+    ]
+  }}
+/>`}
             </pre>
           </div>
         </div>

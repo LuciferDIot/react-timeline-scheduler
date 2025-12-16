@@ -10,11 +10,22 @@ export interface ExampleConfig {
   customConfig?: Partial<SchedulerConfig>;
 }
 
+// Helper to generate dates with RANDOM times for realistic simulation
 const generateDates = (offset: number, days: number) => {
     const start = new Date();
     start.setDate(start.getDate() + offset);
+    // Random start hour (00:00 - 11:00) - AM
+    const startHour = Math.floor(Math.random() * 12);
+    const startMinute = Math.floor(Math.random() * 60);
+    start.setHours(startHour, startMinute, 0, 0); 
+    
     const end = new Date(start);
-    end.setDate(end.getDate() + days);
+    end.setDate(end.getDate() + days); 
+    // Random end hour (13:00 - 23:00) - PM
+    const endHour = Math.floor(Math.random() * (23 - 13 + 1)) + 13;
+    const endMinute = Math.floor(Math.random() * 60);
+    end.setHours(endHour, endMinute, 0, 0); 
+    
     return { start, end };
 };
 
@@ -222,8 +233,17 @@ export const examples: ExampleConfig[] = [
                          background: "#6366f1",
                          color: "#FFFFFF",
                          border: "transparent"
-                     }
+                     },
+                 },
+                 today: {
+                    active: { background: "#6366f1", color: "#ffffff", border: "transparent" },
+                    inactive: { background: "transparent", color: "#94A3B8", border: "transparent" }
                  }
+             },
+             tooltip: {
+                 background: "#1F2937",
+                 text: "#F3F4F6",
+                 border: "#374151"
              }
         }
     },
