@@ -15,7 +15,7 @@ export const AnimatedButton = ({
 }: AnimatedButtonProps) => {
   const { theme } = useStylesStore();
   
-  const defaultBgColor = theme.background.primary;
+
   const defaultOpacity = "0.3";
   
   return (

@@ -48,7 +48,7 @@ export const useStylesStore = create<StylesState>((set) => ({
     set((state) => ({ rowLableMaxWidth: action(state.rowLableMaxWidth) })),
   
   setThemeMode: (mode: "light" | "dark") => {
-    set((state) => {
+    set(() => {
       const baseTheme = mode === "dark" ? darkTheme : lightTheme;
       return {
         themeMode: mode,
