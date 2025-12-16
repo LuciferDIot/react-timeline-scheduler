@@ -24,6 +24,8 @@ export interface SchedulerTask {
   variant?: string;
   progress?: number;
   colorKey?: string;
+  bgColor?: string;
+  borderColor?: string;
   discontinue?: {
     startDate: Date;
     endDate: Date;

@@ -46,6 +46,7 @@ export const Task: React.FC<TaskProps> = React.memo(
     );
 
     const taskBackgroundColor = useMemo(() => {
+      if (task.bgColor) return task.bgColor;
       return taskColorFormat &&
         task.colorKey &&
         taskColorFormat[task.colorKey]
@@ -53,7 +54,7 @@ export const Task: React.FC<TaskProps> = React.memo(
         : rowIndex % 2 === 0
         ? theme.task.even
         : theme.task.odd;
-    }, [taskColorFormat, task.colorKey, rowIndex, theme]);
+    }, [taskColorFormat, task.colorKey, rowIndex, theme, task.bgColor]);
 
     const extendedStyles = useMemo(() => {
       return {
@@ -285,7 +286,9 @@ export const Task: React.FC<TaskProps> = React.memo(
             width: isDragging && dragProperties ? `${dragProperties.width}px` : "100%",
             backgroundColor:
               rowIndex % 2 === 0 ? theme.row.even : theme.row.odd,
-            borderColor: theme.task && theme.task.border !== undefined 
+            borderColor: task.borderColor 
+                ? task.borderColor 
+                : theme.task && theme.task.border !== undefined 
                 ? theme.task.border 
                 : borderColor,
           }}
