@@ -29,7 +29,7 @@ const CustomTooltip = (task: SchedulerTask) => {
 };
 
 export const Examples = () => {
-  const [activeExampleId, setActiveExampleId] = useState(examples[0].id);
+  const [activeExampleId, setActiveExampleId] = useState(examples[1].id);
   const [customMode, setCustomMode] = useState<"light" | "dark">("light");
   const [disableToolbar, setDisableToolbar] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
