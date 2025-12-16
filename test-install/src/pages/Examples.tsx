@@ -149,22 +149,30 @@ export const Examples = () => {
         {/* Source Code Snippet (Optional - could be collapsible) */}
         <div className="p-6 pt-0">
           <div className="rounded-lg bg-[#0d1117] border border-white/10 overflow-hidden">
-            <div className="px-4 py-2 bg-white/5 border-b border-white/5 text-xs text-gray-500 font-mono">
-              config object
+            {/* Component Usage Snippet */}
+            <div className="px-4 py-2 bg-white/5 border-b border-white/5 text-xs text-gray-500 font-mono flex justify-between items-center">
+              <span>Component Usage</span>
+              <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded text-gray-400">Read-only Configuration</span>
             </div>
-            <pre className="p-4 text-xs font-mono text-gray-400 overflow-x-auto">
-              {JSON.stringify(
-                {
-                  label: activeExample.title,
-                  data: activeExample.tasks.length > 5 
-                    ? [...activeExample.tasks.slice(0, 3), `... ${activeExample.tasks.length - 3} more items`]
-                    : activeExample.tasks,
-                  theme: activeExample.theme || "default",
-                  ...activeExample.customConfig,
-                },
-                null,
-                2
-              )}
+            <pre className="p-4 text-xs font-mono text-gray-400 overflow-x-auto whitespace-pre">
+{`<Timeline
+  tooltipComponent={CustomTooltip}
+  config={{
+    label: "${activeExample.title}",
+    disableToolbar: ${disableToolbar},
+    theme: ${activeExampleId === "theme-switching" 
+      ? `{\n      mode: "${customMode}",\n      ...${JSON.stringify(activeExample.theme, null, 2).replace(/^{/, "").replace(/}$/, "").trim()}\n    }`
+      : JSON.stringify(activeExample.theme || "default", null, 2).replace(/\n/g, "\n    ")},
+    data: [
+${activeExample.tasks.slice(0, 4).map(t => {
+      const json = JSON.stringify(t, null, 6); // Use deep indent
+      // Fix indentation for the block
+      return json.split('\n').map((line, i) => (i === 0 ? "      " : "      ") + line).join('\n');
+    }).join(",\n")}
+      // ... +${activeExample.tasks.length - 4} more tasks
+    ]
+  }}
+/>`}
             </pre>
           </div>
         </div>

@@ -286,6 +286,59 @@ export const Docs = () => {
       )
     },
     {
+      id: 'tooltips',
+      active: true,
+      title: 'Tooltips',
+      content: (
+        <div className="bg-[#111827] rounded-xl border border-white/10 p-6 mb-6">
+             <p className="text-gray-400 mb-4">
+                The library supports fully custom tooltips. You can control the content by passing a component to the `tooltipComponent` prop, 
+                and control the styling of the default wrapper via the theme.
+             </p>
+
+             <h3 className="text-lg font-medium text-white mb-3">1. Custom Content</h3>
+             <p className="text-gray-400 mb-4 text-sm">
+                Pass a functional component to `tooltipComponent` on the `Timeline`. This component receives the hovered `task` as a prop.
+             </p>
+             <div className="bg-black/30 rounded-lg p-4 font-mono text-sm text-gray-300 mb-6 border border-white/5">
+                <div className="text-blue-400 mb-2">// Definition</div>
+                <div className="mb-4">
+{`const CustomTooltip = (task: SchedulerTask) => {
+  return (
+    <div>
+      <b>{task.label}</b>
+      <p>{task.startDate.toDateString()}</p>
+    </div>
+  );
+};`}
+                </div>
+                <div className="text-blue-400 mb-2">// Usage</div>
+                <div>
+{`<Timeline
+  tooltipComponent={CustomTooltip}
+  config={{ ... }}
+/>`}
+                </div>
+             </div>
+
+             <h3 className="text-lg font-medium text-white mb-3">2. Theme Customization</h3>
+             <p className="text-gray-400 mb-4 text-sm">
+                You can style the default tooltip container (background, text color, border) using the `theme.tooltip` object. 
+                This is especially useful for Dark Mode.
+             </p>
+             <div className="bg-black/30 rounded-lg p-4 font-mono text-sm text-gray-300 border border-white/5">
+{`const theme = {
+  tooltip: {
+    background: "#1F2937", // Dark gray
+    text: "#F3F4F6",       // Light text
+    border: "#374151"      // Border color
+  }
+};`}
+             </div>
+          </div>
+      )
+    },
+    {
       id: 'timeline-props',
       active: true,
       title: 'Timeline Props',
@@ -497,16 +550,6 @@ export const Docs = () => {
           </div>
         </div>
       )
-    },
-    {
-      id: 'tooltip-section',
-      active: true,
-      title: 'Tooltip',
-       content: (
-        <div className="overflow-hidden rounded-xl border border-white/10 shadow-2xl bg-[#030712] p-4 text-sm text-gray-300">
-          <p className="mb-3 text-gray-400">By default, a simple tooltip is shown. You can return custom JSX for tooltips via `tooltipComponent` in the main config (global) or on specific tasks (override).</p>
-        </div>
-      )
     }
   ];
 
@@ -524,7 +567,10 @@ export const Docs = () => {
         {visibleSections.map((section, index) => section.active &&(
           <section key={section.id} id={section.id} className="mb-16 scroll-mt-24">
             <h2 className="text-2xl font-semibold text-white mb-4 flex items-center gap-2">
-              <span className="text-blue-500">{(index + 1).toString().padStart(2, '0')}.</span> {section.title}
+              <span className="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center text-sm font-bold">
+                {index + 1}
+              </span> 
+              {section.title}
             </h2>
             {section.content}
           </section>

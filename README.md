@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/bundlephobia/minzip/react-timeline-scheduler?style=flat-square" alt="bundle size" />
 </div>
 
-A modern, responsive, and interactive timeline scheduler component for React applications. Visualize tasks and events on a horizontal timeline with drag-and-drop functionality.
+A modern, responsive, and fully customizable timeline scheduler component for React applications. Perfect for project management, resource planning, event scheduling, and more.
 
 **Live Demo:** [Try it here](https://luciferdiot.github.io/react-timeline-scheduler/)  
 **Author:** [Pasindu Geevinda](https://www.pasindugeevinda.com)
@@ -16,10 +16,11 @@ A modern, responsive, and interactive timeline scheduler component for React app
 
 - 📅 **Interactive Timeline**: Drag to move and resize tasks
 - 🎯 **Responsive Design**: Works on all screen sizes
-- 🎨 **Customizable**: Easy theming and styling options
-- ⚡ **Performance Optimized**: Virtualized rendering for large datasets
+- 🎨 **Fully Themeable**: Complete light/dark theme support with customizable colors (Scrollbars, Buttons, Tooltips, etc.)
+- ⚡ **Performance Optimized**: Optimized rendering for large datasets
 - ⌨️ **Accessible**: Keyboard navigation and screen reader support
 - 📱 **Touch Support**: Works on mobile and tablet devices
+- 🔧 **Configurable**: Extensive customization options including Custom Tooltips
 
 ## 📦 Installation
 
@@ -33,207 +34,240 @@ pnpm add react-timeline-scheduler
 
 ## 🚀 Quick Start
 
+### Basic Timeline
+
 ```jsx
-import React from "react";
 import { Timeline } from "react-timeline-scheduler";
-import "react-timeline-scheduler/dist/style.css";
+import "react-timeline-scheduler/dist/react-timeline-scheduler.css";
 
-const App = () => {
-  const tasks = [
-    {
-      id: "1",
-      title: "Project Planning",
-      start: new Date(2024, 0, 1),
-      end: new Date(2024, 0, 5),
-      rowId: "team-a",
-      color: "#3b82f6"
-    },
-    {
-      id: "2",
-      title: "Development",
-      start: new Date(2024, 0, 6),
-      end: new Date(2024, 0, 15),
-      rowId: "team-b",
-      color: "#10b981"
-    }
-  ];
+const data = [
+  {
+    id: "1",
+    label: "Task 1",
+    groupLabel: "Group A",
+    groupId: "group-1",
+    startDate: new Date(2024, 0, 1),
+    endDate: new Date(2024, 0, 5),
+  },
+  {
+    id: "2",
+    label: "Task 2",
+    groupLabel: "Group B",
+    groupId: "group-2",
+    startDate: new Date(2024, 0, 6),
+    endDate: new Date(2024, 0, 10),
+  },
+];
 
+export function MyTimeline() {
   return (
-    <div style={{ height: "600px" }}>
-      <Timeline
-        config={{
-          data: tasks,
-          startDate: new Date(2024, 0, 1),
-          endDate: new Date(2024, 0, 31),
-          rows: ["team-a", "team-b"]
-        }}
-        onTaskClick={(task) => console.log("Task clicked:", task)}
-        onTaskChange={(updatedTask) => console.log("Task updated:", updatedTask)}
-      />
-    </div>
+    <Timeline
+      config={{
+        label: "Project Timeline",
+        data: data,
+      }}
+    />
   );
-};
+}
+```
 
-export default App;
+### With Custom Theme
+
+```jsx
+<Timeline
+  config={{
+    label: "Project Timeline",
+    data: data,
+    theme: {
+      primary: "#3b82f6",
+      background: { primary: "#ffffff", secondary: "#f8fafc" },
+      text: { primary: "#1e293b", secondary: "#64748b" },
+      // See documentation for complete theme options
+    },
+  }}
+/>
+```
+
+### Dark Mode
+
+```jsx
+import { darkTheme } from "react-timeline-scheduler/dist";
+
+<Timeline
+  config={{
+    label: "Project Timeline",
+    data: data,
+    theme: {
+      mode: "dark",
+      dark: darkTheme,
+    },
+  }}
+/>;
 ```
 
 ## 📖 Documentation
 
-### Basic Props
-
-| Prop | Type | Description | Required |
-|------|------|-------------|----------|
-| `config` | Object | Configuration object | Yes |
-| `onTaskClick` | Function | Callback when task is clicked | No |
-| `onTaskChange` | Function | Callback when task is modified | No |
-| `className` | String | Additional CSS class | No |
-
 ### Configuration Object
 
-```javascript
-const config = {
+```typescript
+interface SchedulerConfig {
   // Required
-  data: [], // Array of task objects
-  startDate: new Date(), // Timeline start date
-  endDate: new Date(), // Timeline end date
-  
+  label: string; // Timeline title/label
+  data: SchedulerTask[]; // Array of tasks
+
   // Optional
-  rows: [], // Array of row IDs
-  zoom: 1, // Zoom level (0.5 to 3)
-  theme: {
-    primary: "#3b82f6",
-    secondary: "#6b7280",
-    background: "#ffffff"
-  },
-  readOnly: false, // Disable editing
-  showToolbar: true // Show/hide toolbar
-};
-```
-
-### Task Object Structure
-
-```javascript
-{
-  id: "unique-id",
-  title: "Task Name",
-  start: new Date(), // Start date
-  end: new Date(), // End date
-  rowId: "row-1", // Row identifier
-  color: "#3b82f6", // Custom color
-  progress: 50, // Progress percentage (0-100)
-  data: {} // Additional custom data
+  startOffsetDays?: number; // Days to show before first task
+  endOffsetDays?: number; // Days to show after last task
+  resources?: string[]; // Resource/group identifiers
+  styles?: SchedulerConfigStyles; // Style configuration
+  theme?: SchedulerTheme | SchedulerThemeConfig; // Theme colors
+  dragConfig?: DragConfig; // Drag and drop settings
+  disableToolbar?: boolean; // Hide toolbar
+  animationConfig?: AnimationConfig; // Animation settings
 }
 ```
 
-## 🎨 Customization
+### Task Object
 
-### Custom Styling
+```typescript
+interface SchedulerTask {
+  id: string; // Unique identifier
+  label: string; // Task name
+  groupLabel: string; // Group/row name
+  groupId: string; // Group identifier
+  startDate: Date; // Start date
+  endDate: Date; // End date
+
+  // Optional
+  variant?: string; // Task variant
+  progress?: number; // Progress percentage (0-100)
+  colorKey?: string; // Custom color key
+  discontinue?: {
+    // Discontinuous period
+    startDate: Date;
+    endDate: Date;
+  };
+  extendedStyles?: CSSProperties; // Custom inline styles
+  // NOTE: tooltipComponent is passed to the Timeline prop, not inside the Task object directly for the config.
+}
+```
+
+### Theme Configuration
+
+The scheduler includes built-in light and dark themes and supports full customization. See the [official documentation](https://luciferdiot.github.io/react-timeline-scheduler/docs) for comprehensive theme details.
+
+```typescript
+interface SchedulerTheme {
+  primary: string;                  // Primary color
+  secondary: string;                // Secondary color
+
+  text: {
+    primary: string;                // Primary text
+    secondary: string;              // Secondary text
+  };
+
+  background: {
+    primary: string;                // Main background
+    secondary: string;              // Secondary background
+  };
+
+  border: string;                   // Border color
+
+  row: {
+    even: string;                   // Even row background
+    odd: string;                    // Odd row background
+    hover: string;                  // Hover state
+  };
+
+  grid: {
+    color: string;                  // Grid lines
+    currentDateLine?: string;       // Today indicator
+  };
+
+  header: {
+    background: string;
+    text: string;
+  };
+
+  task: {
+    even: string;
+    odd: string;
+    hover: string;
+    text: string;
+    border?: string;
+  };
+
+  toolbar?: {
+    icon?: string;
+    background?: string;
+    text?: string;
+  };
+
+  progressBar?: {
+    background?: string;
+  };
+
+  // Customization for tooltips and buttons
+  tooltip?: {
+    background?: string;
+    text?: string;
+    border?: string;
+  };
+
+  buttons?: {
+      lock?: { ... },
+      today?: { ... }
+  };
+
+  resize?: {
+    handleBackground?: string;
+    handleHoverBackground?: string;
+  };
+
+  scrollbar?: {
+      thumb?: string;
+      thumbHover?: string;
+      track?: string;
+  };
+
+  interactive?: {
+    focus?: string;
+  };
+}
+```
+
+## 🔧 Advanced Usage
+
+### Custom Task Tooltip
+
+You can provide a `tooltipComponent` prop to the `Timeline` to customize the content of the tooltip.
 
 ```jsx
-import "./custom-styles.css";
+const CustomTooltip = (task) => (
+  <div className="custom-tooltip">
+    <strong>{task.label}</strong>
+    <p>{task.startDate.toLocaleDateString()}</p>
+  </div>
+);
+
+// ...
 
 <Timeline
-  config={config}
-  className="custom-timeline"
+    config={...}
+    tooltipComponent={CustomTooltip}
 />
 ```
 
-### Custom Task Renderer
+## ♿ Accessibility
 
-```jsx
-<Timeline
-  config={{
-    ...config,
-    renderTask: (task, props) => (
-      <div className="custom-task">
-        <span>{task.title}</span>
-        <span>{task.progress}%</span>
-      </div>
-    )
-  }}
-/>
-```
-
-## 🔧 API Reference
-
-### Timeline Methods
-
-| Method | Description |
-|--------|-------------|
-| `zoomIn()` | Increase zoom level |
-| `zoomOut()` | Decrease zoom level |
-| `zoomToFit()` | Zoom to fit all tasks |
-| `scrollToToday()` | Scroll to current date |
-| `getVisibleRange()` | Get currently visible date range |
-
-### Events
-
-| Event | Description | Callback Parameters |
-|-------|-------------|---------------------|
-| `onTaskClick` | Task clicked | `task` object |
-| `onTaskChange` | Task moved/resized | Updated `task` object |
-| `onTaskCreate` | New task created | New `task` object |
-| `onTaskDelete` | Task deleted | `taskId` |
-| `onZoomChange` | Zoom level changed | `zoomLevel` |
-| `onDateRangeChange` | Visible date range changed | `{ start, end }` |
-
-## 📱 Examples
-
-### Project Management Timeline
-```jsx
-<Timeline
-  config={{
-    data: projectTasks,
-    startDate: projectStart,
-    endDate: projectDeadline,
-    rows: departments,
-    theme: {
-      primary: "#8b5cf6",
-      row: { even: "#f8fafc", odd: "#ffffff" }
-    }
-  }}
-/>
-```
-
-### Resource Scheduling
-```jsx
-<Timeline
-  config={{
-    data: resourceAllocations,
-    startDate: new Date(),
-    endDate: addMonths(new Date(), 3),
-    rows: resources,
-    readOnly: true // View-only mode
-  }}
-/>
-```
-
-## 🚨 Common Issues
-
-### "Tasks not appearing"
-- Ensure dates are valid Date objects
-- Check that `rowId` matches rows in configuration
-- Verify tasks fall within the visible date range
-
-### "Drag and drop not working"
-- Ensure `readOnly` is not set to `true`
-- Check callback functions are properly defined
-- Verify no conflicting CSS styles
-
-### "Performance issues with many tasks"
-- Use virtual scrolling for 1000+ tasks
-- Implement pagination or lazy loading
-- Optimize task objects (avoid unnecessary properties)
+- Keyboard navigation support
+- ARIA labels for screen readers
+- High contrast mode support
+- Focus indicators on interactive elements
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Contributions are welcome! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
 ## 📄 License
 
@@ -241,9 +275,6 @@ MIT © [Pasindu Geevinda](https://www.pasindugeevinda.com)
 
 ## 🔗 Links
 
-- [GitHub Repository](https://github.com/luciferdiot/react-timeline-scheduler)
-- [Live Demo](https://luciferdiot.github.io/react-timeline-scheduler/)
-- [NPM Package](https://www.npmjs.com/package/react-timeline-scheduler)
 - [Author Website](https://www.pasindugeevinda.com)
 - [Report Bug](https://github.com/luciferdiot/react-timeline-scheduler/issues)
-```
+- [Feature Request](https://github.com/luciferdiot/react-timeline-scheduler/issues)
