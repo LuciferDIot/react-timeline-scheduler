@@ -1,30 +1,34 @@
-import React from 'react';
 import { ArrowRight, Calendar, CheckCircle, Zap } from 'lucide-react';
 import { Timeline } from 'react-timeline-scheduler';
+import type { SchedulerTask } from 'react-timeline-scheduler';
 import siteData from '../data/site-data.json';
+import { examples } from '../data/examples';
+
+const CustomTooltip = (task: SchedulerTask) => {
+  return (
+    <div className="min-w-[200px]">
+      <div className="font-semibold mb-1">
+        {task.label}
+      </div>
+      <div className="text-xs opacity-75 mb-2">
+        {task.groupLabel}
+      </div>
+      <div className="flex items-center gap-2 text-xs">
+        <div className="px-2 py-0.5 rounded bg-blue-100/50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-mono">
+          {task.startDate.toLocaleDateString()}
+        </div>
+        <span className="opacity-50">→</span>
+        <div className="px-2 py-0.5 rounded bg-blue-100/50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-mono">
+          {task.endDate.toLocaleDateString()}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const Hero = ({ onGetStarted }: { onGetStarted: () => void }) => {
-  // Mini demo data
-  const demoData = [
-    {
-        id: "task-1",
-        label: "Research",
-        groupLabel: "Product",
-        groupId: "prod",
-        startDate: new Date(new Date().setDate(new Date().getDate() - 2)),
-        endDate: new Date(new Date().setDate(new Date().getDate() + 2)),
-        variant: "primary"
-    },
-    {
-        id: "task-2",
-        label: "Design",
-        groupLabel: "Design",
-        groupId: "design",
-        startDate: new Date(new Date().setDate(new Date().getDate())),
-        endDate: new Date(new Date().setDate(new Date().getDate() + 4)),
-        variant: "secondary"
-    }
-  ];
+  // Use the Basic Usage demo data from examples
+  const heroExample = examples.find(ex => ex.id === "basic") || examples[0];
 
   return (
     <div className="relative overflow-hidden bg-[#030712] pt-16 sm:pt-24 lg:pt-32 pb-20">
@@ -87,14 +91,15 @@ export const Hero = ({ onGetStarted }: { onGetStarted: () => void }) => {
             />
         </div>
 
-        {/* Live Demo Preview */}
+        {/* Live Demo Preview with separate dataset */}
         <div className="w-full max-w-6xl rounded-xl border border-white/10 bg-[#111827]/50 backdrop-blur-sm p-4 shadow-2xl relative group">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-xl pointer-events-none group-hover:opacity-75 transition-opacity" />
             <div className="w-full rounded-lg overflow-hidden border border-white/5 bg-[#030712]">
                 <Timeline 
+                    tooltipComponent={CustomTooltip}
                     config={{
                         label: "Live Demo",
-                        data: demoData,
+                        data: heroExample.tasks,
                         theme: {
                             primary: "#6366f1",
                             background: { primary: "#0B0E14", secondary: "#151921" },
@@ -106,7 +111,26 @@ export const Hero = ({ onGetStarted }: { onGetStarted: () => void }) => {
                             task: {
                               even: "#3B82F6", odd: "#2563EB", hover: "#1D4ED8", text: "#FFFFFF", border: "transparent",
                             },
-                            resize: { handleBackground: "rgba(255, 255, 255, 0.2)", handleHoverBackground: "#6366f1" }
+                            resize: { handleBackground: "rgba(255, 255, 255, 0.2)", handleHoverBackground: "#6366f1" },
+                            buttons: {
+                              lock: {
+                                unlocked: {
+                                    background: "transparent",
+                                    color: "#94A3B8", // secondary text color
+                                    border: "transparent"
+                                },
+                                locked: {
+                                    background: "#6366f1",
+                                    color: "#FFFFFF",
+                                    border: "transparent"
+                                }
+                            }
+                          },
+                          tooltip: {
+                              background: "#1F2937",
+                              text: "#F3F4F6",
+                              border: "#374151"
+                          }
                         }
                     }}
                 />

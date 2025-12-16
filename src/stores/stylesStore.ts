@@ -23,7 +23,13 @@ interface StylesState {
   setRowLableMaxWidth: (action: (prev: number) => number) => void;
   setAllStyles: (
     styles: SchedulerConfigStyles,
-    theme?: Partial<SchedulerTheme> | { mode?: "light" | "dark"; light?: Partial<SchedulerTheme>; dark?: Partial<SchedulerTheme> }
+    theme?:
+      | Partial<SchedulerTheme>
+      | {
+          mode?: "light" | "dark";
+          light?: Partial<SchedulerTheme>;
+          dark?: Partial<SchedulerTheme>;
+        }
   ) => void;
   setThemeMode: (mode: "light" | "dark") => void;
   setCustomCellWidthPX: (customCellWidthPX: number) => void;
@@ -46,7 +52,7 @@ export const useStylesStore = create<StylesState>((set) => ({
 
   setRowLableMaxWidth: (action) =>
     set((state) => ({ rowLableMaxWidth: action(state.rowLableMaxWidth) })),
-  
+
   setThemeMode: (mode: "light" | "dark") => {
     set(() => {
       const baseTheme = mode === "dark" ? darkTheme : lightTheme;
@@ -59,7 +65,13 @@ export const useStylesStore = create<StylesState>((set) => ({
 
   setAllStyles: (
     styles: SchedulerConfigStyles,
-    theme?: Partial<SchedulerTheme> | { mode?: "light" | "dark"; light?: Partial<SchedulerTheme>; dark?: Partial<SchedulerTheme> }
+    theme?:
+      | Partial<SchedulerTheme>
+      | {
+          mode?: "light" | "dark";
+          light?: Partial<SchedulerTheme>;
+          dark?: Partial<SchedulerTheme>;
+        }
   ) => {
     let mergedTheme = defaultTheme;
     let detectedMode: "light" | "dark" = "light";
@@ -92,25 +104,24 @@ export const useStylesStore = create<StylesState>((set) => ({
         styles.customCellWidthPX ?? defaultStyles.customCellWidthPX,
       customCellHeightPX:
         styles.customCellHeightPX || defaultStyles.customCellHeightPX,
-      taskColorFormat:
-        styles.taskColorFormat || defaultStyles.taskColorFormat,
+      taskColorFormat: styles.taskColorFormat || defaultStyles.taskColorFormat,
       dayColorHighlight:
         styles.dayColorHighlight || defaultStyles.dayColorHighlight,
       theme: mergedTheme,
       themeMode: detectedMode,
     });
   },
-  
+
   setCustomCellWidthPX: (customCellWidthPX: number) =>
     set({ customCellWidthPX }),
-  
+
   setCustomCellHeightPX: (customCellHeightPX: number) =>
     set({ customCellHeightPX }),
-  
+
   setTaskColorFormat: (
     taskColorFormat: SchedulerConfigStyles["taskColorFormat"]
   ) => set({ taskColorFormat }),
-  
+
   setDayColorHighlight: (
     dayColorHighlight: SchedulerConfigStyles["dayColorHighlight"]
   ) => set({ dayColorHighlight }),

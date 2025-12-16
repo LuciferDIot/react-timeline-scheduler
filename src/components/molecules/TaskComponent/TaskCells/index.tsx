@@ -8,7 +8,12 @@ import { TaskStrip } from "../TaskStrip";
 type Props = {
   taskBackgroundColor: string;
   extendedStyles: {
-    backgroundColor: string;
+    backgroundColor?: string;
+    borderColor?: string;
+  };
+  stripExtendedStyles?: {
+      backgroundColor?: string;
+      borderColor?: string;
   };
   dates: {
     startDate: Date;
@@ -21,6 +26,7 @@ export const TaskCells = React.memo(
   ({
     taskBackgroundColor,
     extendedStyles,
+    stripExtendedStyles,
     dates: { startDate, endDate, prevEndDate },
   }: Props) => {
     const startPercentage = calculateDatesPercentage(startDate);
@@ -46,6 +52,7 @@ export const TaskCells = React.memo(
           endPercentage={midPercentage ? midPercentage : endPercentage}
           startPercentage={100 - startPercentage}
           taskBackgroundColor={taskBackgroundColor}
+          extendedStyles={stripExtendedStyles}
         />
         {midPercentage && prevEndDate && (
           <ExtendedCell

@@ -37,6 +37,7 @@ export const Task: React.FC<TaskProps> = React.memo(
       left: number;
       direction: "left" | "right";
     } | null>(null);
+    const [isHovered, setIsHovered] = React.useState(false);
     const virtualDeltaRef = useRef(0);
 
 
@@ -46,6 +47,7 @@ export const Task: React.FC<TaskProps> = React.memo(
     );
 
     const taskBackgroundColor = useMemo(() => {
+      if (task.bgColor) return task.bgColor;
       return taskColorFormat &&
         task.colorKey &&
         taskColorFormat[task.colorKey]
@@ -53,9 +55,9 @@ export const Task: React.FC<TaskProps> = React.memo(
         : rowIndex % 2 === 0
         ? theme.task.even
         : theme.task.odd;
-    }, [taskColorFormat, task.colorKey, rowIndex, theme]);
+    }, [taskColorFormat, task.colorKey, rowIndex, theme, task.bgColor]);
 
-    const extendedStyles = useMemo(() => {
+    const extendedCellStyles = useMemo(() => {
       return {
         borderColor: task.extendedStyles?.borderColor
           ? task.extendedStyles.borderColor
@@ -64,6 +66,16 @@ export const Task: React.FC<TaskProps> = React.memo(
           ? task.extendedStyles.backgroundColor
           : `${TaskColors.REMOVED_TASK}20`,
       };
+    }, [task.extendedStyles]);
+
+    const stripExtendedStyles = useMemo(() => {
+       if (task.extendedStyles?.backgroundColor || task.extendedStyles?.borderColor) {
+          // If the user explicitly provided some extended styles, we might want to apply them to the strip too if desired.
+          // However, for standard tasks in Basic/Dark mode, task.extendedStyles is undefined.
+          // This ensures we return undefined here, preventing the gray override.
+          return task.extendedStyles;
+       }
+       return undefined;
     }, [task.extendedStyles]);
 
     const handleVisibleTooltip = useCallback(
@@ -285,13 +297,21 @@ export const Task: React.FC<TaskProps> = React.memo(
             width: isDragging && dragProperties ? `${dragProperties.width}px` : "100%",
             backgroundColor:
               rowIndex % 2 === 0 ? theme.row.even : theme.row.odd,
-            borderColor: theme.task && theme.task.border !== undefined 
+            borderColor: task.borderColor 
+                ? task.borderColor 
+                : theme.task && theme.task.border !== undefined 
                 ? theme.task.border 
                 : borderColor,
           }}
           onContextMenu={(e) => handleRightClick(task, e)}
-          onMouseEnter={(e) => handleVisibleTooltip(task, e)}
-          onMouseLeave={removeTooltip}
+          onMouseEnter={(e) => {
+            setIsHovered(true);
+            handleVisibleTooltip(task, e);
+          }}
+          onMouseLeave={() => {
+            setIsHovered(false);
+            removeTooltip();
+          }}
           layout={!isDragging}
         >
           <TaskLabel label={task.label} addExtraLeft={labelLeftPercentage} />
@@ -311,7 +331,8 @@ export const Task: React.FC<TaskProps> = React.memo(
             )}
             <TaskCells
               taskBackgroundColor={taskBackgroundColor || ""}
-              extendedStyles={extendedStyles}
+              extendedStyles={extendedCellStyles}
+              stripExtendedStyles={stripExtendedStyles}
               dates={{
                 startDate: task.startDate,
                 endDate: task.endDate,
@@ -321,11 +342,11 @@ export const Task: React.FC<TaskProps> = React.memo(
           </motion.div>
 
           {/* Resize Handles */}
-          {!lockOperations && (
+          {!lockOperations && isHovered && (
             <>
                 {dragConfig.enableLeftResize && (
                   <div
-                    className="absolute left-0 top-0 bottom-0 w-4 cursor-col-resize z-50 transition-colors touch-none"
+                    className="absolute left-0 top-0 bottom-0 w-4 cursor-col-resize z-50 transition-all duration-200 touch-none opacity-0 group-hover:opacity-100"
                     style={{ 
                       left: "-8px",
                       backgroundColor: theme.resize?.handleBackground || "transparent",
@@ -341,7 +362,7 @@ export const Task: React.FC<TaskProps> = React.memo(
                 )}
                 {dragConfig.enableRightResize && (
                   <div
-                    className="absolute right-0 top-0 bottom-0 w-4 cursor-col-resize z-50 transition-colors touch-none"
+                    className="absolute right-0 top-0 bottom-0 w-4 cursor-col-resize z-50 transition-all duration-200 touch-none opacity-0 group-hover:opacity-100"
                     style={{ 
                       right: "-8px",
                       backgroundColor: theme.resize?.handleBackground || "transparent",
