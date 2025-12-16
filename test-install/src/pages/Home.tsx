@@ -1,15 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Hero } from '../components/Hero';
 import { Code, Layers, MousePointer2 } from 'lucide-react';
 
-interface HomeProps {
-  onNavigate: (page: 'home' | 'examples' | 'docs') => void;
-}
+export const Home: React.FC = () => {
+  const navigate = useNavigate();
 
-export const Home: React.FC<HomeProps> = ({ onNavigate }) => {
   return (
     <div>
-      <Hero onGetStarted={() => onNavigate('examples')} />
+      <Hero onGetStarted={() => navigate('/examples')} />
       
       {/* Quick Start Section */}
       <section className="py-20 bg-[#030712]">

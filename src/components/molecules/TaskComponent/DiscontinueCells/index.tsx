@@ -11,7 +11,7 @@ type Props = {
 };
 
 const DiscontinueCells = ({ endDate, startDate, stripStartDate }: Props) => {
-  const { customCellWidthPX } = useStylesStore();
+  const { customCellWidthPX, theme } = useStylesStore();
   const startPercentage = calculateDatesPercentage(startDate);
   const endPercentage = calculateDatesPercentage(endDate);
 
@@ -39,6 +39,9 @@ const DiscontinueCells = ({ endDate, startDate, stripStartDate }: Props) => {
     <div className="absolute top-0 right-0 w-full h-full flex z-[2] pointer-events-none cursor-none">
       <motion.div
         className="h-full border border-dashed border-x-0"
+        style={{
+          borderColor: theme.border,
+        }}
         animate={{
           width: `${cellsToDisStartDate}px`,
         }}
@@ -54,8 +57,13 @@ const DiscontinueCells = ({ endDate, startDate, stripStartDate }: Props) => {
           alt="image"
           className="absolute inset-0 w-full h-full object-cover mix-blend-luminosity"
         />
-        <div className="absolute inset-0 bg-black opacity-20"></div>{" "}
-        {/* Dark background */}
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundColor: theme.background.primary,
+            opacity: 0.3,
+          }}
+        ></div>
       </motion.div>
     </div>
   );

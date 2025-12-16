@@ -125,7 +125,16 @@ const Row: React.FC<RowProps> = React.memo(
     return (
       <div
         key={line}
-        className="flex flex-row gap-2 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors duration-200"
+        className="flex flex-row gap-2 transition-colors duration-200"
+        style={{
+          backgroundColor: "transparent",
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLDivElement).style.backgroundColor = theme.row.hover;
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLDivElement).style.backgroundColor = "transparent";
+        }}
       >
         <motion.div
           ref={labelRef}

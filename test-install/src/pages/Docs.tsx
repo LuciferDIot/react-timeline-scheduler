@@ -63,6 +63,18 @@ export const Docs = () => {
                   <td className="px-6 py-4"><Badge color="gray">No</Badge></td>
                   <td className="px-6 py-4">If true, displays a loading skeleton instead of the timeline.</td>
                 </tr>
+                <tr className="hover:bg-white/5 transition-colors">
+                  <td className="px-6 py-4 font-mono text-blue-400">onRowExpand</td>
+                  <td className="px-6 py-4 font-mono text-purple-400">function</td>
+                  <td className="px-6 py-4"><Badge color="gray">No</Badge></td>
+                  <td className="px-6 py-4">Async callback when a task duration increases. See <a href="#api-callbacks-events" className="text-blue-400 hover:underline">API & Callbacks</a>.</td>
+                </tr>
+                <tr className="hover:bg-white/5 transition-colors">
+                  <td className="px-6 py-4 font-mono text-blue-400">onRowShrink</td>
+                  <td className="px-6 py-4 font-mono text-purple-400">function</td>
+                  <td className="px-6 py-4"><Badge color="gray">No</Badge></td>
+                  <td className="px-6 py-4">Async callback when a task duration decreases. See <a href="#api-callbacks-events" className="text-blue-400 hover:underline">API & Callbacks</a>.</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -402,14 +414,117 @@ export const Docs = () => {
       active: true,
       title: 'API, Callbacks & Events',
       content: (
-        <div className="overflow-hidden rounded-xl border border-white/10 shadow-2xl bg-[#030712] p-4 text-sm text-gray-300">
-          <ul className="list-disc list-inside text-gray-400">
-            <li><strong>onTaskClick(task)</strong> — fired when a task body is clicked.</li>
-            <li><strong>onRowExpand(groupLabel, groupId, updatedTask)</strong> — called after an expand operation.</li>
-            <li><strong>onRowShrink(groupLabel, groupId, updatedTask)</strong> — called after a shrink operation.</li>
-            <li><strong>tooltipComponent</strong> — global tooltip renderer provided on `Timeline` config.</li>
-            <li><strong>per-task `tooltipComponent`</strong> — override tooltip per task.</li>
-          </ul>
+
+        <div className="space-y-8">
+          <p className="text-gray-400">
+            The Timeline component exposes several callbacks to handle user interactions and state changes. These are critical for syncing changes back to your backend (e.g., when a task is resized).
+          </p>
+
+          <div className="space-y-6">
+            <div className="bg-[#111827] rounded-xl border border-white/10 overflow-hidden">
+              <div className="px-6 py-4 border-b border-white/10 bg-[#0f1117] flex items-center justify-between">
+                <code className="text-blue-400 font-bold">onRowExpand</code>
+                <span className="text-xs text-gray-500 font-mono">Async Prop</span>
+              </div>
+              <div className="p-6 space-y-4">
+                <p className="text-gray-300 text-sm">
+                  Called when a task's duration is <strong>increased</strong> (start date moved earlier or end date moved later) via the resize handles.
+                </p>
+                <div className="bg-black/30 rounded-lg p-4 font-mono text-xs text-gray-400 border border-white/5">
+                  (groupLabel: string, groupId: string, task: SchedulerTask) =&gt; Promise&lt;void&gt;
+                </div>
+                <div>
+                  <h4 className="text-white text-sm font-medium mb-3">Parameters</h4>
+                  <ul className="space-y-3">
+                    <li className="flex gap-4">
+                      <code className="text-purple-400 text-xs mt-1 shrink-0">groupLabel</code>
+                      <span className="text-gray-400 text-sm">The label of the row/group where the task resides (e.g., "Project A").</span>
+                    </li>
+                    <li className="flex gap-4">
+                      <code className="text-purple-400 text-xs mt-1 shrink-0">groupId</code>
+                      <span className="text-gray-400 text-sm">The unique ID of the row/group.</span>
+                    </li>
+                    <li className="flex gap-4">
+                      <code className="text-purple-400 text-xs mt-1 shrink-0">task</code>
+                      <span className="text-gray-400 text-sm">The <strong>updated</strong> task object containing the new <code>startDate</code> and <code>endDate</code>. Use this to update your state/DB.</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[#111827] rounded-xl border border-white/10 overflow-hidden">
+              <div className="px-6 py-4 border-b border-white/10 bg-[#0f1117] flex items-center justify-between">
+                <code className="text-blue-400 font-bold">onRowShrink</code>
+                <span className="text-xs text-gray-500 font-mono">Async Prop</span>
+              </div>
+              <div className="p-6 space-y-4">
+                <p className="text-gray-300 text-sm">
+                  Called when a task's duration is <strong>decreased</strong> (start date moved later or end date moved earlier) via the resize handles.
+                </p>
+                <div className="bg-black/30 rounded-lg p-4 font-mono text-xs text-gray-400 border border-white/5">
+                  (groupLabel: string, groupId: string, task: SchedulerTask) =&gt; Promise&lt;void&gt;
+                </div>
+                <div>
+                  <h4 className="text-white text-sm font-medium mb-3">Parameters</h4>
+                  <ul className="space-y-3">
+                    <li className="flex gap-4">
+                      <code className="text-purple-400 text-xs mt-1 shrink-0">groupLabel</code>
+                      <span className="text-gray-400 text-sm">The label of the row/group where the task resides.</span>
+                    </li>
+                    <li className="flex gap-4">
+                      <code className="text-purple-400 text-xs mt-1 shrink-0">groupId</code>
+                      <span className="text-gray-400 text-sm">The unique ID of the row/group.</span>
+                    </li>
+                    <li className="flex gap-4">
+                      <code className="text-purple-400 text-xs mt-1 shrink-0">task</code>
+                      <span className="text-gray-400 text-sm">The <strong>updated</strong> task object with the new condensed date range.</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[#111827] rounded-xl border border-white/10 overflow-hidden">
+              <div className="px-6 py-4 border-b border-white/10 bg-[#0f1117] flex items-center justify-between">
+                <code className="text-blue-400 font-bold">onTaskClick</code>
+                <span className="text-xs text-gray-500 font-mono">Prop</span>
+              </div>
+              <div className="p-6 space-y-4">
+                <p className="text-gray-300 text-sm">
+                  Fired when a user clicks on the body of a task bar. Useful for opening a detailed view or modal.
+                </p>
+                <div className="bg-black/30 rounded-lg p-4 font-mono text-xs text-gray-400 border border-white/5">
+                  (task: SchedulerTask) =&gt; void
+                </div>
+                <div>
+                  <h4 className="text-white text-sm font-medium mb-3">Parameters</h4>
+                  <ul className="space-y-3">
+                    <li className="flex gap-4">
+                      <code className="text-purple-400 text-xs mt-1 shrink-0">task</code>
+                      <span className="text-gray-400 text-sm">The task object that was clicked.</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[#111827] rounded-xl border border-white/10 overflow-hidden">
+              <div className="px-6 py-4 border-b border-white/10 bg-[#0f1117] flex items-center justify-between">
+                <code className="text-blue-400 font-bold">onRowLabelClick</code>
+                <span className="text-xs text-gray-500 font-mono">Prop</span>
+              </div>
+              <div className="p-6 space-y-4">
+                <p className="text-gray-300 text-sm">
+                  Fired when a user clicks on the text label of a row (the resource name on the left).
+                </p>
+                <div className="bg-black/30 rounded-lg p-4 font-mono text-xs text-gray-400 border border-white/5">
+                  (groupLabel: string) =&gt; void
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
       )
     },

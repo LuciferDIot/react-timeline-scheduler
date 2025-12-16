@@ -117,6 +117,21 @@ export interface SchedulerTheme {
     background?: string;
     text?: string;
   };
+  progressBar?: {
+    background?: string;
+  };
+  tooltip?: {
+    background?: string;
+    text?: string;
+    border?: string;
+  };
+  resize?: {
+    handleBackground?: string;
+    handleHoverBackground?: string;
+  };
+  interactive?: {
+    focus?: string;
+  };
 }
 
 export interface SchedulerConfigStyles {
