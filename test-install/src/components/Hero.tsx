@@ -75,7 +75,7 @@ export const Hero = ({ onGetStarted }: { onGetStarted: () => void }) => {
             <div className="w-full rounded-lg overflow-hidden border border-white/5 bg-[#030712]">
                 <Timeline 
                     config={{
-                        label: "Project Timeline - Live Demo",
+                        label: "Live Demo",
                         data: heroExample.tasks,
                         theme: {
                             primary: "#6366f1",
@@ -88,7 +88,21 @@ export const Hero = ({ onGetStarted }: { onGetStarted: () => void }) => {
                             task: {
                               even: "#3B82F6", odd: "#2563EB", hover: "#1D4ED8", text: "#FFFFFF", border: "transparent",
                             },
-                            resize: { handleBackground: "rgba(255, 255, 255, 0.2)", handleHoverBackground: "#6366f1" }
+                            resize: { handleBackground: "rgba(255, 255, 255, 0.2)", handleHoverBackground: "#6366f1" },
+                            buttons: {
+                              lock: {
+                                unlocked: {
+                                    background: "transparent",
+                                    color: "#94A3B8", // secondary text color
+                                    border: "transparent"
+                                },
+                                locked: {
+                                    background: "#6366f1",
+                                    color: "#FFFFFF",
+                                    border: "transparent"
+                                }
+                            }
+                          }
                         }
                     }}
                 />

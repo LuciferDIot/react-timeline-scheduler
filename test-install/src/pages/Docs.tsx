@@ -265,6 +265,13 @@ export const Docs = () => {
                   <td className="px-6 py-4 font-mono text-purple-400">{`{ handleBackground, handleHoverBackground }`}</td>
                   <td className="px-6 py-4">Styles for the drag handles on tasks.</td>
                 </tr>
+                 <tr className="hover:bg-white/5 transition-colors">
+                  <td className="px-6 py-4 font-mono text-blue-400">buttons</td>
+                  <td className="px-6 py-4 font-mono text-purple-400">{`{ lock: { locked, unlocked } }`}</td>
+                  <td className="px-6 py-4">
+                    Styles for specific tool/toggle buttons. Each state accepts {`{ background, color, border }`}.
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>

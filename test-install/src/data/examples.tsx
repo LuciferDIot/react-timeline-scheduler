@@ -210,7 +210,21 @@ export const examples: ExampleConfig[] = [
              grid: { color: "#1E293B", currentDateLine: "#6366f1" },
              header: { background: "#0F172A", text: "#F1F5F9" },
              border: "#1E293B",
-             task: { even: "#3B82F6", odd: "#2563EB", hover: "#1D4ED8", text: "#FFFFFF", border: "transparent" }
+             task: { even: "#3B82F6", odd: "#2563EB", hover: "#1D4ED8", text: "#FFFFFF", border: "transparent" },
+             buttons: {
+                 lock: {
+                     unlocked: {
+                         background: "transparent",
+                         color: "#94A3B8", // secondary text color
+                         border: "transparent"
+                     },
+                     locked: {
+                         background: "#6366f1",
+                         color: "#FFFFFF",
+                         border: "transparent"
+                     }
+                 }
+             }
         }
     },
     {
@@ -220,6 +234,12 @@ export const examples: ExampleConfig[] = [
         tasks: colorfulTasks,
         theme: {
             primary: "#6366f1",
+            buttons: {
+                lock: {
+                    locked: { background: "#ec4899", color: "#ffffff", border: "#db2777" }, // Pink
+                    unlocked: { background: "#fdf2f8", color: "#db2777", border: "#fbcfe8" } // Light pink
+                }
+            }
         }
     }
 ];
