@@ -9,7 +9,8 @@ type Props = {
   midPercentage: number;
   endPercentage: number;
   extendedStyles: {
-    backgroundColor: string;
+    backgroundColor?: string;
+    borderColor?: string;
   };
 };
 
@@ -38,9 +39,9 @@ function ExtendedCell({
   return (
     <motion.div
       className="h-full border border-dashed border-l-0"
+      style={extendedStyles}
       animate={{
         width: `${width}px`,
-        ...extendedStyles,
       }}
     />
   );

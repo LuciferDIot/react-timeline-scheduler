@@ -24,6 +24,8 @@ export interface SchedulerTask {
   variant?: string;
   progress?: number;
   colorKey?: string;
+  bgColor?: string;
+  borderColor?: string;
   discontinue?: {
     startDate: Date;
     endDate: Date;
@@ -79,6 +81,12 @@ export interface AnimationConfig {
     ease?: string | number[];
   };
 }
+  
+export interface ButtonStyle {
+  background?: string;
+  color?: string;
+  border?: string;
+}
 
 export interface SchedulerTheme {
   primary: string;
@@ -131,6 +139,12 @@ export interface SchedulerTheme {
   };
   interactive?: {
     focus?: string;
+  };
+  buttons?: {
+    lock?: {
+      locked?: ButtonStyle;
+      unlocked?: ButtonStyle;
+    };
   };
 }
 

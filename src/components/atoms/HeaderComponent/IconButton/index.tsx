@@ -37,11 +37,15 @@ export const HeaderIconButton: React.FC<IconButtonProps> = ({
       onClick={onClick}
       className={`w-full h-full flex justify-center items-center focus:outline-none border p-2 ${borderColor}`}
       style={{
-        backgroundColor: isActive 
-          ? (theme.primary) 
-          : (theme.toolbar?.background || "transparent"),
-        color: isActive ? theme.task.text : theme.toolbar?.text || theme.header.text || theme.text.primary,
-        borderColor: isActive ? theme.border : (theme.toolbar?.background ? theme.border : "transparent")
+        backgroundColor: isActive
+          ? theme.buttons?.lock?.locked?.background || theme.primary
+          : theme.buttons?.lock?.unlocked?.background || theme.toolbar?.background || "transparent",
+        color: isActive
+          ? theme.buttons?.lock?.locked?.color || theme.task.text
+          : theme.buttons?.lock?.unlocked?.color || theme.toolbar?.text || theme.header.text || theme.text.primary,
+        borderColor: isActive
+          ? theme.buttons?.lock?.locked?.border || theme.border
+          : theme.buttons?.lock?.unlocked?.border || (theme.toolbar?.background ? theme.border : "transparent"),
       }}
       onMouseEnter={(e) => {
         setMouseCoordination({ x: (e as React.MouseEvent).clientX, y: (e as React.MouseEvent).clientY });

@@ -11,6 +11,10 @@ type TaskStripType = {
   endDate: Date;
   prevEndDate?: Date;
   taskBackgroundColor: string;
+  extendedStyles?: {
+    backgroundColor?: string;
+    borderColor?: string;
+  };
 };
 
 export const TaskStrip = ({
@@ -21,6 +25,7 @@ export const TaskStrip = ({
   endDate,
   prevEndDate,
   taskBackgroundColor,
+  extendedStyles,
 }: TaskStripType) => {
   const { customCellWidthPX } = useStylesStore();
   const cellsToEndFromStart = useMemo(
@@ -48,8 +53,9 @@ export const TaskStrip = ({
       className="relative h-full flex"
       animate={{
         width: `${width}px`,
-        backgroundColor: taskBackgroundColor,
+        backgroundColor: extendedStyles?.backgroundColor || taskBackgroundColor,
       }}
+      style={extendedStyles}
     />
   );
 };

@@ -14,10 +14,10 @@ export const AnimatedButton = ({
   className,
 }: AnimatedButtonProps) => {
   const { theme } = useStylesStore();
-  
+
 
   const defaultOpacity = "0.3";
-  
+
   return (
     <motion.button
       className={
@@ -29,7 +29,9 @@ export const AnimatedButton = ({
         !className
           ? {
               backgroundColor: `rgba(${
-                theme.background.primary === "#ffffff" ? "200, 200, 200" : "100, 100, 100"
+                theme.background.primary === "#ffffff"
+                  ? "200, 200, 200"
+                  : "100, 100, 100"
               }, ${defaultOpacity})`,
             }
           : undefined
