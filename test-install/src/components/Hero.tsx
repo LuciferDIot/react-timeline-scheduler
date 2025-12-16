@@ -90,7 +90,7 @@ export const Hero = ({ onGetStarted }: { onGetStarted: () => void }) => {
         {/* Live Demo Preview */}
         <div className="w-full max-w-6xl rounded-xl border border-white/10 bg-[#111827]/50 backdrop-blur-sm p-4 shadow-2xl relative group">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-xl pointer-events-none group-hover:opacity-75 transition-opacity" />
-            <div className="h-[400px] w-full rounded-lg overflow-hidden border border-white/5 bg-[#030712]">
+            <div className="w-full rounded-lg overflow-hidden border border-white/5 bg-[#030712]">
                 <Timeline 
                     config={{
                         label: "Live Demo",

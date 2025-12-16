@@ -11,13 +11,13 @@ export const Examples = () => {
   const activeExample = examples.find(ex => ex.id === activeExampleId) || examples[0];
 
   return (
-    <div className="flex h-[calc(100vh-64px)] overflow-hidden bg-[#030712]">
+    <div className="flex min-h-[calc(100vh-64px)] bg-[#030712]">
       {/* Sidebar - Fixed width */}
       <aside className="w-64 flex-shrink-0 bg-[#0f1117] border-r border-white/10 flex flex-col">
         <div className="p-4 border-b border-white/10">
           <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider">Examples</h2>
         </div>
-        <div className="overflow-y-auto flex-grow p-2 space-y-1">
+        <div className="flex-grow p-2 space-y-1">
           {examples.map((ex) => (
             <button
               key={ex.id}
@@ -48,7 +48,7 @@ export const Examples = () => {
         </div>
 
         {/* Content Scrollable Area */}
-        <div className="flex-grow overflow-y-auto p-6">
+        <div className="flex-grow p-6">
             
             {/* Example Description */}
             <div className="mb-6">
@@ -97,7 +97,7 @@ export const Examples = () => {
 
             {/* Timeline Preview */}
             <div className="mb-8 rounded-xl border border-white/10 bg-[#0b0d13] overflow-hidden shadow-2xl">
-                 <div className="h-[400px] relative">
+                 <div className="relative">
                      <Timeline
                         key={`${activeExample.id}-${customMode}-${disableToolbar}`}
                         config={{
