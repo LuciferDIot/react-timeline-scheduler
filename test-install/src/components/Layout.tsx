@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useMediaQuery } from "../hooks/useMediaQuery";
+import { IconLinks } from "./IconLink";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -86,17 +87,11 @@ export const Layout: React.FC<LayoutProps> = ({
                   isActive={currentPage === "docs"}
                   onClick={() => handleNavClick("docs")}
                 />
-                <a
-                  href="https://github.com/LuciferDIot"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-white px-3 py-2 rounded-md transition-colors"
-                >
-                  GitHub
-                </a>
+                <IconLinks borderSide="Right" />
               </div>
             ) : (
               <div className="flex">
+                <IconLinks borderSide="Left" />
                 <button
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                   className="bg-gray-900 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800 focus:outline-none"
@@ -159,6 +154,7 @@ export const Layout: React.FC<LayoutProps> = ({
                   isActive={currentPage === "docs"}
                   onClick={() => handleNavClick("docs")}
                 />
+                
               </div>
             </div>
           </div>
@@ -204,3 +200,4 @@ export const Layout: React.FC<LayoutProps> = ({
     </div>
   );
 };
+
