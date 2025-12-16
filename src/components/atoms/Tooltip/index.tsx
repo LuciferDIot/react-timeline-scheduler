@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import React, { useLayoutEffect, useRef, useState } from "react";
 import { Coordination } from "../../../types";
+import { useStylesStore } from "../../../stores";
 
 interface TooltipProps {
   children: React.ReactNode;
@@ -13,6 +14,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
 }) => {
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
+  const { theme } = useStylesStore();
 
   // Debug helpers (can be removed later)
   React.useEffect(() => {
@@ -72,13 +74,17 @@ export const Tooltip: React.FC<TooltipProps> = ({
   return (
     <motion.div
       ref={tooltipRef}
-      className="fixed z-[100] bg-white/90 dark:bg-black/90 backdrop-blur-md w-fit h-fit border border-gray-200 dark:border-gray-700 shadow-xl pointer-events-none px-3 py-2"
+      className="fixed z-[100] backdrop-blur-md w-fit h-fit pointer-events-none px-3 py-2"
       style={{
         top: `${position.top}px`,
         left: `${position.left}px`,
+        backgroundColor: theme.tooltip?.background || "#ffffff",
+        color: theme.tooltip?.text || "#000000",
+        borderColor: theme.tooltip?.border || "#e0e0e0",
         borderRadius: "6px",
         borderWidth: "1px",
         borderStyle: "solid",
+        boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
         // allow the tooltip to expand but keep it within viewport via inline maxWidth
         maxWidth: `calc(100vw - 16px)`,
         whiteSpace: "normal",

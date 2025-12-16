@@ -90,16 +90,20 @@ export const Hero = ({ onGetStarted }: { onGetStarted: () => void }) => {
         {/* Live Demo Preview */}
         <div className="w-full max-w-6xl rounded-xl border border-white/10 bg-[#111827]/50 backdrop-blur-sm p-4 shadow-2xl relative group">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5 rounded-xl pointer-events-none group-hover:opacity-75 transition-opacity" />
-            <div className="h-[400px] w-full rounded-lg overflow-hidden border border-white/5 bg-[#030712]">
+            <div className="w-full rounded-lg overflow-hidden border border-white/5 bg-[#030712]">
                 <Timeline 
                     config={{
                         label: "Live Demo",
                         data: demoData,
                         theme: {
-                            primary: "#3b82f6",
-                            background: { primary: "#030712", secondary: "#111827" },
-                            text: { primary: "#f9fafb", secondary: "#9ca3af" },
-                            row: { even: "#030712", odd: "#111827", hover: "#1f2937" }
+                            primary: "#6366f1",
+                            background: { primary: "#0B0E14", secondary: "#151921" },
+                            text: { primary: "#E2E8F0", secondary: "#94A3B8" },
+                            row: { even: "#0B0E14", odd: "#151921", hover: "#1E293B" },
+                            grid: { color: "#1E293B", currentDateLine: "#6366f1" },
+                            header: { background: "#0F172A", text: "#F1F5F9" },
+                            border: "#1E293B",
+                            task: { even: "#3B82F6", odd: "#2563EB", hover: "#1D4ED8", text: "#FFFFFF", border: "transparent", removed: "#ef4444", removedBackground: "#fee2e2" }
                         }
                     }}
                 />

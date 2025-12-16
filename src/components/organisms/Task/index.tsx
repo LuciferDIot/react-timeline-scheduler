@@ -325,16 +325,34 @@ export const Task: React.FC<TaskProps> = React.memo(
             <>
                 {dragConfig.enableLeftResize && (
                   <div
-                    className="absolute left-0 top-0 bottom-0 w-4 cursor-col-resize z-50 hover:bg-black/10 transition-colors touch-none"
-                    style={{ left: "-8px" }}
+                    className="absolute left-0 top-0 bottom-0 w-4 cursor-col-resize z-50 transition-colors touch-none"
+                    style={{ 
+                      left: "-8px",
+                      backgroundColor: theme.resize?.handleBackground || "transparent",
+                    }}
                     onMouseDown={(e) => handleMouseDown(e, "left")}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLDivElement).style.backgroundColor = theme.resize?.handleHoverBackground || "rgba(0, 0, 0, 0.2)";
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLDivElement).style.backgroundColor = theme.resize?.handleBackground || "transparent";
+                    }}
                   />
                 )}
                 {dragConfig.enableRightResize && (
                   <div
-                    className="absolute right-0 top-0 bottom-0 w-4 cursor-col-resize z-50 hover:bg-black/10 transition-colors touch-none"
-                    style={{ right: "-8px" }}
+                    className="absolute right-0 top-0 bottom-0 w-4 cursor-col-resize z-50 transition-colors touch-none"
+                    style={{ 
+                      right: "-8px",
+                      backgroundColor: theme.resize?.handleBackground || "transparent",
+                    }}
                     onMouseDown={(e) => handleMouseDown(e, "right")}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLDivElement).style.backgroundColor = theme.resize?.handleHoverBackground || "rgba(0, 0, 0, 0.2)";
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLDivElement).style.backgroundColor = theme.resize?.handleBackground || "transparent";
+                    }}
                   />
                 )}
             </>

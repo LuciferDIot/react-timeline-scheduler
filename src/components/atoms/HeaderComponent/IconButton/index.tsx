@@ -35,14 +35,12 @@ export const HeaderIconButton: React.FC<IconButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      className={`w-full h-full flex justify-center items-center focus:outline-none border p-2 ${borderColor} ${
-        isActive && "text-white"
-      }`}
+      className={`w-full h-full flex justify-center items-center focus:outline-none border p-2 ${borderColor}`}
       style={{
         backgroundColor: isActive 
           ? (theme.primary) 
           : (theme.toolbar?.background || "transparent"),
-        color: isActive ? "#fff" : theme.toolbar?.text || theme.header.text || theme.text.primary,
+        color: isActive ? theme.task.text : theme.toolbar?.text || theme.header.text || theme.text.primary,
         borderColor: isActive ? theme.border : (theme.toolbar?.background ? theme.border : "transparent")
       }}
       onMouseEnter={(e) => {
