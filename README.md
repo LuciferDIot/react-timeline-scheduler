@@ -12,6 +12,10 @@ A modern, responsive, and fully customizable timeline scheduler component for Re
 **Live Demo:** [Try it here](https://luciferdiot.github.io/react-timeline-scheduler/)  
 **Author:** [Pasindu Geevinda](https://www.pasindugeevinda.com)
 
+## 🎬 Demo
+
+![React Timeline Scheduler Demo](https://raw.githubusercontent.com/LuciferDIot/react-timeline-scheduler/main/public/timeline.gif)
+
 ## ✨ Features
 
 - 📅 **Interactive Timeline**: Drag to move and resize tasks
