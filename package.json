@@ -22,6 +22,25 @@
   "files": [
     "dist"
   ],
+  "keywords": [
+    "react",
+    "react-component",
+    "scheduler",
+    "timeline",
+    "calendar",
+    "gantt",
+    "gantt-chart",
+    "planner",
+    "task-management",
+    "resource-planning",
+    "drag-and-drop",
+    "dnd",
+    "resizable",
+    "typescript",
+    "responsive",
+    "customizable",
+    "ui-component"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
