@@ -14,7 +14,7 @@ A modern, responsive, and fully customizable timeline scheduler component for Re
 
 ## 🎬 Demo
 
-![React Timeline Scheduler Demo](https://raw.githubusercontent.com/LuciferDIot/react-timeline-scheduler/main/public/timeline.gif)
+![React Timeline Scheduler Demo](https://raw.githubusercontent.com/LuciferDIot/react-timeline-scheduler/master/public/timeline.gif)
 
 ## ✨ Features
 
