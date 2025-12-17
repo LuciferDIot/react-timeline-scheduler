@@ -1,13 +1,13 @@
 {
     "package": {
         "name": "react-timeline-scheduler",
-        "latestVersion": "1.1.13",
+        "latestVersion": "1.1.14",
         "lastUpdated": "2024-12-17",
         "downloads": "5k+",
         "stars": "1.2k"
     },
     "hero": {
-        "badgeText": "v1.1.13 is now available",
+        "badgeText": "v1.1.14 is now available",
         "title": "Modern React Timeline Scheduler"
     }
 }
