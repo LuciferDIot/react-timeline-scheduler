@@ -39,3 +39,4 @@ describe("Codebase line count enforcement", () => {
     ).toEqual([]);
   });
 });
+

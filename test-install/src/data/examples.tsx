@@ -1,4 +1,4 @@
-import type { SchedulerConfig, SchedulerTask, SchedulerTheme } from "../../../dist";
+import type { SchedulerConfig, SchedulerTask, SchedulerTheme } from "react-timeline-scheduler";
 
 
 export interface ExampleConfig {

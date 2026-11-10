@@ -11,3 +11,4 @@ export function formatDateToCustomString(dateString: string): string {
 export const getMonthName = (date: Date): string => {
   return date.toLocaleString("default", { month: "long" });
 };
+

@@ -53,3 +53,4 @@ export const darkTheme: SchedulerTheme = {
     focus: "#60a5fa",
   },
 };
+

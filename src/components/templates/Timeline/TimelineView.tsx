@@ -67,3 +67,4 @@ export const TimelineView: React.FC<TimelineViewProps> = ({
 };
 
 TimelineView.displayName = "TimelineView";
+

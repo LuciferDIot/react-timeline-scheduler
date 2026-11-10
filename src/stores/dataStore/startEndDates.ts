@@ -29,3 +29,4 @@ export const startEndDates = (
     end: addDays(maxEnd, Math.abs(endOffsetDays) + 2),
   };
 };
+

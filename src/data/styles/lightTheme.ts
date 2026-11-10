@@ -53,3 +53,4 @@ export const lightTheme: SchedulerTheme = {
     focus: "#3b82f6",
   },
 };
+

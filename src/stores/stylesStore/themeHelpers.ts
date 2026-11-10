@@ -33,3 +33,4 @@ export function resolveMergedTheme(
 
   return { mergedTheme, detectedMode };
 }
+

@@ -43,3 +43,4 @@ export const TimelineError: React.FC<TimelineErrorProps> = ({
 };
 
 TimelineError.displayName = "TimelineError";
+

@@ -36,3 +36,4 @@ export function useRowLayout(row: SchedulerTask[], dates: string[]) {
 
   return { taskMap };
 }
+

@@ -74,3 +74,4 @@ export interface SchedulerThemeConfig {
   light?: Partial<SchedulerTheme>;
   dark?: Partial<SchedulerTheme>;
 }
+

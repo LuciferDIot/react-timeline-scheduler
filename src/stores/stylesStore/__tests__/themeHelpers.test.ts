@@ -17,3 +17,4 @@ describe("resolveMergedTheme", () => {
     expect(mergedTheme.primary).toBe("#ff0000");
   });
 });
+

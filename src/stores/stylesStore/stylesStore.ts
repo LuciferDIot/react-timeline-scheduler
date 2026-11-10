@@ -78,3 +78,4 @@ export const useStylesStore = create<StylesState>((set) => ({
   setTaskColorFormat: (taskColorFormat) => set({ taskColorFormat }),
   setDayColorHighlight: (dayColorHighlight) => set({ dayColorHighlight }),
 }));
+

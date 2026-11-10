@@ -55,3 +55,4 @@ export const calculateDatesPercentage = (start: Date): number => {
   const percentage = (elapsedDuration / totalDuration) * 100;
   return Math.min(100, Math.max(0, percentage));
 };
+

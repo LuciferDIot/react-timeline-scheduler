@@ -37,3 +37,4 @@ describe("startEndDates helper", () => {
     expect(end.getDate()).toBe(22);
   });
 });
+

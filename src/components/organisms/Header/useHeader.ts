@@ -70,3 +70,4 @@ export function useHeader(dates: string[], scrollIntoToday?: boolean, daybgColor
     lockOperations, setLockOperations, customCellWidthPX, rowLabelMaxWidth, borderColor, theme, config,
   };
 }
+
