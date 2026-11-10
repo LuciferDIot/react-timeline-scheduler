@@ -8,7 +8,7 @@
 ## Project Purpose
 
 **npm package**: `react-timeline-scheduler`
-**Current version**: `1.2.0`
+**Current version**: `1.2.1`
 **License**: MIT
 
 A responsive, customizable Gantt-style timeline scheduler component for React 18/19.
@@ -157,10 +157,10 @@ flowchart TD
 
 ## Known Bugs & Pitfalls
 
-- **`setSchedulerData` bug (FIXED v1.2.0)**: Previously passed old `state.schedulerData.tasks` to `startEndDates`. Now correctly passes the new `tasks` argument.
-- **`startEndDates` offsets (FIXED v1.2.0)**: Previously hardcoded 2-day offset, ignoring `startOffsetDays`/`endOffsetDays` params. Fixed to `addDays(minStart, -Math.abs(startOffsetDays) - 2)`.
-- **`rowLabelMaxWidth` typo (FIXED v1.2.0)**: Was `rowLableMaxWidth` throughout. All references updated.
-- **`setRightClickTask` casing (FIXED v1.2.0)**: Was `setrightClickTask`. All call sites updated.
+- **`setSchedulerData` bug (FIXED v1.2.1)**: Previously passed old `state.schedulerData.tasks` to `startEndDates`. Now correctly passes the new `tasks` argument.
+- **`startEndDates` offsets (FIXED v1.2.1)**: Previously hardcoded 2-day offset, ignoring `startOffsetDays`/`endOffsetDays` params. Fixed to `addDays(minStart, -Math.abs(startOffsetDays) - 2)`.
+- **`rowLabelMaxWidth` typo (FIXED v1.2.1)**: Was `rowLableMaxWidth` throughout. All references updated.
+- **`setRightClickTask` casing (FIXED v1.2.1)**: Was `setrightClickTask`. All call sites updated.
 - **Re-render issue**: `handleMouseMove` in Timeline was recreated every render. Now wrapped in `useCallback`.
 - **Double sort**: `Object.keys(groupedTasks).sort(...)` was called twice per render. Now uses `sortedKeys` useMemo.
 - **Virtual scrolling**: Not implemented. Add a TODO when row count exceeds ~200. Known perf cliff.
