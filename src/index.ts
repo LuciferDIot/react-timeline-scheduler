@@ -8,7 +8,7 @@ export type {
     ContextMenuType,
     DragConfig, SchedulerConfig,
     SchedulerConfigStyles, SchedulerTask,
-    SchedulerTheme,
+    SchedulerTheme, SchedulerThemeConfig,
     TableDateRange
 } from "./types";
 

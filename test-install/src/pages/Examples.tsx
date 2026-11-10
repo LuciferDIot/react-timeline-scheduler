@@ -39,6 +39,7 @@ export const Examples = () => {
     if (activeExampleId === "colorful") return { ...examples.find(ex => ex.id === "colorful")!, tasks: colorfulTasks };
     if (activeExampleId === "basic") return { ...examples.find(ex => ex.id === "basic")!, tasks: basicTasks };
     if (activeExampleId === "dark-mode") return { ...examples.find(ex => ex.id === "dark-mode")!, tasks: darkTasks };
+    if (activeExampleId === "theme-switching") return { ...examples.find(ex => ex.id === "theme-switching")!, tasks: basicTasks };
     
     return examples.find((ex) => ex.id === activeExampleId) || examples[0];
   }, [activeExampleId]);
@@ -161,7 +162,7 @@ export const Examples = () => {
     label: "${activeExample.title}",
     disableToolbar: ${disableToolbar},
     theme: ${activeExampleId === "theme-switching" 
-      ? `{\n      mode: "${customMode}",\n      ...${JSON.stringify(activeExample.theme, null, 2).replace(/^{/, "").replace(/}$/, "").trim()}\n    }`
+      ? `{\n      mode: "${customMode}",\n      ...${JSON.stringify(activeExample.theme || {}, null, 2).replace(/^{/, "").replace(/}$/, "").trim()}\n    }`
       : JSON.stringify(activeExample.theme || "default", null, 2).replace(/\n/g, "\n    ")},
     data: [
 ${activeExample.tasks.slice(0, 4).map(t => {

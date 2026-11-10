@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import moment from "moment";
+import { differenceInDays, endOfDay, startOfDay } from "date-fns";
 import { useMemo } from "react";
 import { useStylesStore } from "../../../../stores";
 
@@ -24,9 +24,10 @@ function ExtendedCell({
   const { customCellWidthPX } = useStylesStore();
   const cellsToEndFromMid = useMemo(
     () =>
-      moment(endDate)
-        .startOf("day")
-        .diff(moment(prevEndDate).endOf("day"), "days"),
+      differenceInDays(
+        startOfDay(new Date(endDate)),
+        endOfDay(new Date(prevEndDate))
+      ),
     [endDate, prevEndDate]
   );
 

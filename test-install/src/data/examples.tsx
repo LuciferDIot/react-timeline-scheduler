@@ -1,4 +1,4 @@
-import type { SchedulerConfig, SchedulerTask, SchedulerTheme } from "../../../dist";
+import type { SchedulerConfig, SchedulerTask, SchedulerTheme } from "react-timeline-scheduler";
 
 
 export interface ExampleConfig {
@@ -260,6 +260,15 @@ export const examples: ExampleConfig[] = [
                     unlocked: { background: "#fdf2f8", color: "#db2777", border: "#fbcfe8" } // Light pink
                 }
             }
+        }
+    },
+    {
+        id: "theme-switching",
+        title: "Theme Switching",
+        description: "Toggle seamlessly between light and dark modes in real time.",
+        tasks: basicTasks,
+        theme: {
+            primary: "#6366f1"
         }
     }
 ];

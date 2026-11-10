@@ -1,4 +1,4 @@
-import moment from "moment";
+import { differenceInDays, isBefore, startOfDay } from "date-fns";
 import { useMemo } from "react";
 import { useStylesStore } from "../../../../../stores";
 import { SchedulerTask, StripIndex } from "../../../../../types";
@@ -19,19 +19,14 @@ export const TaskActionButtons = ({
   handleExpand,
 }: ActionButtons) => {
   const { customCellWidthPX } = useStylesStore();
-  const left = useMemo(
-    () =>
-      (task.prevEndDate && moment(task.prevEndDate).isBefore(task.endDate)
-        ? moment(task.prevEndDate).diff(
-            moment(task.startDate).startOf("days"),
-            "days"
-          )
-        : moment(task.endDate).diff(
-            moment(task.startDate).startOf("days"),
-            "days"
-          )) * customCellWidthPX,
-    [customCellWidthPX, task.endDate, task.prevEndDate, task.startDate]
-  );
+  const left = useMemo(() => {
+    const start = startOfDay(new Date(task.startDate));
+    const target =
+      task.prevEndDate && isBefore(new Date(task.prevEndDate), new Date(task.endDate))
+        ? new Date(task.prevEndDate)
+        : new Date(task.endDate);
+    return differenceInDays(target, start) * customCellWidthPX;
+  }, [customCellWidthPX, task.endDate, task.prevEndDate, task.startDate]);
 
   return (
     <ContainerAnimation
