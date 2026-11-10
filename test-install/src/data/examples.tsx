@@ -261,5 +261,14 @@ export const examples: ExampleConfig[] = [
                 }
             }
         }
+    },
+    {
+        id: "theme-switching",
+        title: "Theme Switching",
+        description: "Toggle seamlessly between light and dark modes in real time.",
+        tasks: basicTasks,
+        theme: {
+            primary: "#6366f1"
+        }
     }
 ];

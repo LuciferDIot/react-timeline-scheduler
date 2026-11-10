@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Integrated framer-motion `<MotionConfig reducedMotion="user">` for OS-level reduced motion support.
 
 ### UX & Customizability
+- Enhanced theme resolution to support seamless mode switching (`light` / `dark`), top-level theme config overrides, and proper styling propagation.
+- Fixed task strip background priority so custom `bgColor` and `taskColorFormat` are preserved with distinct `extendedStyles`.
+- Added `disableToolbar` direct prop and ensured container backgrounds inherit theme canvas tokens.
 - Added animated skeleton loading UI (`animate-pulse`).
 - Added styled error state card with warning indicator.
 - Added subtle placeholder for empty rows.

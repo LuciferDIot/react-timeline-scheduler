@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { defaultStyles, defaultTheme, lightTheme, darkTheme } from "../../data";
-import { SchedulerConfigStyles, SchedulerTheme } from "../../types";
+import { SchedulerConfigStyles, SchedulerTheme, SchedulerThemeConfig } from "../../types";
 import { resolveMergedTheme } from "./themeHelpers";
 
 export interface StylesState {
@@ -19,13 +19,7 @@ export interface StylesState {
   setRowLableMaxWidth: (action: (prev: number) => number) => void;
   setAllStyles: (
     styles: SchedulerConfigStyles,
-    theme?:
-      | Partial<SchedulerTheme>
-      | {
-          mode?: "light" | "dark";
-          light?: Partial<SchedulerTheme>;
-          dark?: Partial<SchedulerTheme>;
-        }
+    theme?: Partial<SchedulerTheme> | SchedulerThemeConfig
   ) => void;
   setThemeMode: (mode: "light" | "dark") => void;
   setCustomCellWidthPX: (customCellWidthPX: number) => void;
@@ -63,13 +57,26 @@ export const useStylesStore = create<StylesState>((set) => ({
 
   setAllStyles: (styles, theme) => {
     const { mergedTheme, detectedMode } = resolveMergedTheme(theme);
-    set({
-      customCellWidthPX: styles.customCellWidthPX ?? defaultStyles.customCellWidthPX,
-      customCellHeightPX: styles.customCellHeightPX || defaultStyles.customCellHeightPX,
-      taskColorFormat: styles.taskColorFormat || defaultStyles.taskColorFormat,
-      dayColorHighlight: styles.dayColorHighlight || defaultStyles.dayColorHighlight,
-      theme: mergedTheme,
-      themeMode: detectedMode,
+    set((state) => {
+      const w = styles.customCellWidthPX ?? defaultStyles.customCellWidthPX;
+      const h = styles.customCellHeightPX || defaultStyles.customCellHeightPX;
+      const themeUnchanged = JSON.stringify(state.theme) === JSON.stringify(mergedTheme);
+      if (
+        state.customCellWidthPX === w &&
+        state.customCellHeightPX === h &&
+        state.themeMode === detectedMode &&
+        themeUnchanged
+      ) {
+        return state;
+      }
+      return {
+        customCellWidthPX: w,
+        customCellHeightPX: h,
+        taskColorFormat: styles.taskColorFormat || defaultStyles.taskColorFormat,
+        dayColorHighlight: styles.dayColorHighlight || defaultStyles.dayColorHighlight,
+        theme: themeUnchanged ? state.theme : mergedTheme,
+        themeMode: detectedMode,
+      };
     });
   },
 

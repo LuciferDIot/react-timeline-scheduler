@@ -42,13 +42,14 @@ export const TaskBody: React.FC<TaskBodyProps> = ({
     <div style={{ width: `${taskWidth}px`, height: "100%", position: "relative", zIndex: isDragging ? 50 : 10 }}>
       <motion.div
         id={task.id} role="button" tabIndex={0} aria-label={dateLabel}
-        className={`relative group flex w-full h-full p-0.5 text-white font-bold text-sm min-h-10 border text-center text-nowrap ${borderColor} ${lockOperations ? "cursor-default" : "cursor-pointer"}`}
+        className={`relative group flex w-full h-full p-0.5 font-bold text-sm min-h-10 border text-center text-nowrap ${borderColor} ${lockOperations ? "cursor-default" : "cursor-pointer"}`}
         style={{
           position: isDragging ? "absolute" : "relative",
           left: isDragging && dragProperties ? `${dragProperties.left}px` : 0,
           width: isDragging && dragProperties ? `${dragProperties.width}px` : "100%",
           backgroundColor: rowIndex % 2 === 0 ? theme.row.even : theme.row.odd,
-          borderColor: task.borderColor || theme.task?.border || borderColor,
+          borderColor: task.borderColor || theme.task?.border || theme.border,
+          color: theme.task?.text || "#ffffff",
         }}
         onContextMenu={onContextMenu} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") onTaskClick?.(task); }}

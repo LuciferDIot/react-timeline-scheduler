@@ -45,9 +45,12 @@ export const TaskStrip = ({
       className="relative h-full flex"
       animate={{
         width: `${width}px`,
-        backgroundColor: extendedStyles?.backgroundColor || taskBackgroundColor,
+        backgroundColor: taskBackgroundColor,
       }}
-      style={extendedStyles}
+      style={{
+        ...extendedStyles,
+        backgroundColor: taskBackgroundColor,
+      }}
     />
   );
 };

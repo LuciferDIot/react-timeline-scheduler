@@ -2,7 +2,7 @@ import { AnimatePresence, MotionConfig } from "framer-motion";
 import React, { useEffect } from "react";
 import { defaultStyles } from "../../../data/styles";
 import { useActionStore } from "../../../stores";
-import { AnimationConfig, ContextMenuType, DragConfig, SchedulerConfig, SchedulerConfigStyles, SchedulerTask, SchedulerTheme, StripIndex } from "../../../types";
+import { AnimationConfig, ContextMenuType, DragConfig, SchedulerConfig, SchedulerConfigStyles, SchedulerTask, SchedulerTheme, SchedulerThemeConfig, StripIndex } from "../../../types";
 import { TimelineError } from "./TimelineError";
 import { TimelineView } from "./TimelineView";
 import { useTimeline } from "./useTimeline";
@@ -15,9 +15,10 @@ export interface TimelineProps {
   endOffsetDays?: number;
   resources?: string[];
   styles?: SchedulerConfigStyles;
-  theme?: Partial<SchedulerTheme>;
+  theme?: Partial<SchedulerTheme> | SchedulerThemeConfig;
   dragConfig?: DragConfig;
   animationConfig?: AnimationConfig;
+  disableToolbar?: boolean;
   scrollIntoToday?: boolean;
   loading?: boolean;
   loadingComponent?: React.ReactNode;
@@ -36,6 +37,7 @@ export const Timeline: React.FC<TimelineProps> = React.memo((props) => {
   const { setAll, setDragConfig, setAnimationConfig } = useActionStore();
   const label = props.label ?? props.config?.label ?? "Timeline";
   const styles = props.styles ?? props.config?.styles ?? defaultStyles;
+  const theme = props.theme ?? props.config?.theme;
   const dragConfig = props.dragConfig ?? props.config?.dragConfig;
   const animationConfig = props.animationConfig ?? props.config?.animationConfig;
 
@@ -48,7 +50,7 @@ export const Timeline: React.FC<TimelineProps> = React.memo((props) => {
     if (animationConfig) setAnimationConfig(animationConfig);
   }, [dragConfig, animationConfig, setDragConfig, setAnimationConfig]);
 
-  const timeline = useTimeline(props);
+  const timeline = useTimeline({ ...props, styles, theme });
 
   return (
     <MotionConfig reducedMotion="user">

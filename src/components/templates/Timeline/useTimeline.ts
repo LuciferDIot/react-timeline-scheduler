@@ -2,17 +2,19 @@ import { addDays, differenceInDays, format, isAfter, isValid } from "date-fns";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { defaultStyles } from "../../../data/styles";
 import { useChildStore, useDataStore, useStylesStore } from "../../../stores";
-import { SchedulerConfig, SchedulerConfigStyles, SchedulerTask, SchedulerTheme, StripIndex } from "../../../types";
+import { SchedulerConfig, SchedulerConfigStyles, SchedulerTask, SchedulerTheme, SchedulerThemeConfig, StripIndex } from "../../../types";
 import { generateGroupedTasks } from "../../../util/common.util";
 
 interface UseTimelineParams {
   config?: SchedulerConfig;
+  label?: string;
   data?: SchedulerTask[];
   startOffsetDays?: number;
   endOffsetDays?: number;
   resources?: string[];
   styles?: SchedulerConfigStyles;
-  theme?: Partial<SchedulerTheme>;
+  theme?: Partial<SchedulerTheme> | SchedulerThemeConfig;
+  disableToolbar?: boolean;
   tooltipComponent?: (task: SchedulerTask, index?: StripIndex) => React.ReactNode;
 }
 
@@ -23,14 +25,25 @@ export function useTimeline(params: UseTimelineParams) {
   const { setAllStyles, theme: storeTheme } = useStylesStore();
   const { mouseCoordination, rightClickTask, tooltipVisible, setDefaultTooltipComponent, setMouseCoordination, removeRightClickTask } = useChildStore();
 
-  useEffect(() => { if (params.config) setConfig(params.config); }, [params.config, setConfig]);
-  useEffect(() => { if (params.tooltipComponent) setDefaultTooltipComponent(params.tooltipComponent); }, [params.tooltipComponent, setDefaultTooltipComponent]);
-  useEffect(() => { setAllStyles(params.styles || defaultStyles, params.theme); }, [params.styles, params.theme, setAllStyles]);
+  const effectiveStyles = params.styles ?? params.config?.styles ?? defaultStyles;
+  const effectiveTheme = params.theme ?? params.config?.theme;
+  const resources = params.resources ?? params.config?.resources;
 
-  const tasksData = useMemo(
-    () => params.data ?? params.config?.data ?? [],
-    [params.data, params.config?.data]
-  );
+  useEffect(() => {
+    if (params.config || params.disableToolbar !== undefined) {
+      setConfig({
+        label: params.label ?? params.config?.label ?? "Timeline",
+        data: params.data ?? params.config?.data ?? [],
+        ...params.config,
+        disableToolbar: params.disableToolbar ?? params.config?.disableToolbar,
+      });
+    }
+  }, [params.config, params.disableToolbar, params.label, params.data, setConfig]);
+
+  useEffect(() => { if (params.tooltipComponent) setDefaultTooltipComponent(params.tooltipComponent); }, [params.tooltipComponent, setDefaultTooltipComponent]);
+  useEffect(() => { setAllStyles(effectiveStyles, effectiveTheme); }, [effectiveStyles, effectiveTheme, setAllStyles]);
+
+  const tasksData = useMemo(() => params.data ?? params.config?.data ?? [], [params.data, params.config?.data]);
   useEffect(() => {
     const isSameLength = tasksData.length === schedulerData.tasks.length;
     const isSame = isSameLength && tasksData.every((t, i) => t.id === schedulerData.tasks[i]?.id && t.startDate === schedulerData.tasks[i]?.startDate && t.endDate === schedulerData.tasks[i]?.endDate);
@@ -58,13 +71,13 @@ export function useTimeline(params: UseTimelineParams) {
   const groupedTasks = useMemo(() => {
     try {
       const grouped = generateGroupedTasks(schedulerData.tasks);
-      params.resources?.forEach((cat) => { if (!grouped[cat]) grouped[cat] = [[]]; });
+      resources?.forEach((cat) => { if (!grouped[cat]) grouped[cat] = [[]]; });
       return grouped;
     } catch {
       setError("Failed to group tasks.");
       return {};
     }
-  }, [schedulerData.tasks, params.resources]);
+  }, [schedulerData.tasks, resources]);
 
   const sortedKeys = useMemo(() => Object.keys(groupedTasks).sort((a, b) => a.localeCompare(b)), [groupedTasks]);
 

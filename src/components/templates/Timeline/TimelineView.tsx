@@ -33,13 +33,21 @@ export const TimelineView: React.FC<TimelineViewProps> = ({
         role="region"
         aria-label={label}
         style={{
+          backgroundColor: storeTheme.background?.primary || "transparent",
+          color: storeTheme.text?.primary || "inherit",
           scrollbarColor: `${storeTheme.scrollbar?.thumb || "rgba(0,0,0,0.2)"} ${storeTheme.scrollbar?.track || "transparent"}`,
           scrollbarWidth: "thin",
         }}
         className={`relative w-full h-full scrollbar-thin overflow-x-scroll horizontal-scroll ${className || ""}`}
         onMouseMove={handleMouseMove}
       >
-        <div className="w-fit text-sm">
+        <div
+          className="w-fit text-sm min-w-full"
+          style={{
+            backgroundColor: storeTheme.background?.primary || "transparent",
+            color: storeTheme.text?.primary || "inherit",
+          }}
+        >
           <Header dates={dates} topic={label} daybgColorHighlight={styles.dayColorHighlight} containerRef={containerRef} scrollIntoToday={scrollIntoToday} />
           {sortedKeys.map((line) => (
             <div className="pb-2" key={line}>

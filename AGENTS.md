@@ -193,9 +193,10 @@ interface TimelineProps {
   endOffsetDays?: number;        // Days after last task (default: 0)
   resources?: string[];          // Force-show empty resource rows
   styles?: SchedulerConfigStyles;
-  theme?: Partial<SchedulerTheme>;
+  theme?: Partial<SchedulerTheme> | SchedulerThemeConfig;
   dragConfig?: DragConfig;
   animationConfig?: AnimationConfig;
+  disableToolbar?: boolean;      // Disable toolbar buttons (default: false)
   scrollIntoToday?: boolean;
   loading?: boolean;
   loadingComponent?: React.ReactNode;  // Custom loading UI
