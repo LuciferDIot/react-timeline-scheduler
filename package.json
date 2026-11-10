@@ -1,7 +1,11 @@
 {
   "name": "react-timeline-scheduler",
   "private": false,
-  "version": "1.1.14",
+  "version": "1.2.0",
+  "sideEffects": [
+    "*.css",
+    "**/*.css"
+  ],
   "type": "module",
   "description": "A responsive and customizable timeline scheduler component for React.",
   "author": "LuciferDIot",
@@ -50,15 +54,24 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui"
   },
+  "overrides": {
+    "flatted": ">=3.4.2",
+    "@isaacs/brace-expansion": ">=5.0.1",
+    "brace-expansion": ">=2.1.7",
+    "source-map-js": ">=1.2.2",
+    "picomatch": ">=4.0.4",
+    "rollup": ">=4.59.0",
+    "postcss": ">=8.5.23",
+    "vitest": "^4.1.0"
+  },
   "peerDependencies": {
     "react": "^18.3.1 || ^19.0.0",
     "react-dom": "^18.3.1 || ^19.0.0",
     "tailwindcss": "^4.0.1"
   },
   "dependencies": {
+    "date-fns": "^3.6.0",
     "framer-motion": "^12.0.6",
-    "lodash": "^4.17.21",
-    "moment": "^2.30.1",
     "react-icons": "^5.4.0",
     "zustand": "^5.0.3"
   },
@@ -70,13 +83,12 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
-    "@types/lodash": "^4.17.16",
     "@types/node": "^25.0.1",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react-swc": "^3.7.2",
-    "@vitest/coverage-v8": "^4.0.15",
-    "@vitest/ui": "^4.0.15",
+    "@vitest/coverage-v8": "^4.1.0",
+    "@vitest/ui": "^4.1.0",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.18",
@@ -84,8 +96,8 @@
     "jsdom": "^27.3.0",
     "typescript": "~5.6.3",
     "typescript-eslint": "^8.22.0",
-    "vite": "^6.0.11",
+    "vite": "^6.4.4",
     "vite-plugin-dts": "^4.5.4",
-    "vitest": "^4.0.15"
+    "vitest": "^4.1.0"
   }
 }

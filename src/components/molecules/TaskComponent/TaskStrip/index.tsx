@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import moment from "moment";
+import { differenceInDays, endOfDay, startOfDay } from "date-fns";
 import { useMemo } from "react";
 import { useStylesStore } from "../../../../stores";
 
@@ -28,20 +28,12 @@ export const TaskStrip = ({
   extendedStyles,
 }: TaskStripType) => {
   const { customCellWidthPX } = useStylesStore();
-  const cellsToEndFromStart = useMemo(
-    () =>
-      prevEndDate
-        ? moment(prevEndDate)
-            .startOf("day")
-            .diff(moment(startDate).endOf("day"), "days")
-        : moment(endDate)
-            .startOf("day")
-            .diff(moment(startDate).endOf("day"), "days"),
-    [endDate, prevEndDate, startDate]
-  );
+  const cellsToEndFromStart = useMemo(() => {
+    const target = prevEndDate ? new Date(prevEndDate) : new Date(endDate);
+    return differenceInDays(startOfDay(target), endOfDay(new Date(startDate)));
+  }, [endDate, prevEndDate, startDate]);
 
   const endCellWidth = customCellWidthPX * (endPercentage / 100);
-
   const startCellWidth = customCellWidthPX * (startPercentage / 100);
 
   const width =

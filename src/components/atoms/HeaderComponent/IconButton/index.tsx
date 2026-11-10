@@ -35,6 +35,8 @@ export const HeaderIconButton: React.FC<IconButtonProps> = ({
   return (
     <button
       onClick={onClick}
+      aria-label={tooltipText}
+      aria-pressed={isActive}
       className={`w-full h-full flex justify-center items-center focus:outline-none border p-2 ${borderColor}`}
       style={{
         backgroundColor:

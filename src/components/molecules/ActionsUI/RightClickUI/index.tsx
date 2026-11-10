@@ -44,6 +44,7 @@ const RightClickUIRow = ({
   icon,
   label,
   onAction,
+  onClick,
   task,
   isLast,
 }: RightClickUIRowType) => {
@@ -56,7 +57,7 @@ const RightClickUIRow = ({
         className="flex justify-center items-center gap-4 text-nowrap p-3 hover:scale-110 cursor-pointer transition-transform"
         style={{ color: theme.text.primary }}
         onClick={() => {
-          onAction(task);
+          (onAction || onClick)?.(task);
           removeRightClickTask();
         }}
       >

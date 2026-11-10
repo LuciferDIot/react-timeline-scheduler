@@ -1,29 +1,11 @@
-import { AnimatePresence } from "framer-motion";
-import _ from "lodash";
-import moment from "moment";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, MotionConfig } from "framer-motion";
+import React, { useEffect } from "react";
 import { defaultStyles } from "../../../data/styles";
-import {
-    useActionStore,
-    useChildStore,
-    useDataStore,
-    useStylesStore,
-} from "../../../stores";
-import {
-    AnimationConfig,
-    ContextMenuType,
-    DragConfig,
-    SchedulerConfig,
-    SchedulerConfigStyles,
-    SchedulerTask,
-    SchedulerTheme,
-    StripIndex,
-} from "../../../types";
-import { generateGroupedTasks } from "../../../util/common.util";
-import { ContextMenu, Tooltip } from "../../atoms";
-import { RightClickUI } from "../../molecules";
-import { Header } from "../../organisms/Header";
-import { Row } from "../../organisms/Row";
+import { useActionStore } from "../../../stores";
+import { AnimationConfig, ContextMenuType, DragConfig, SchedulerConfig, SchedulerConfigStyles, SchedulerTask, SchedulerTheme, StripIndex } from "../../../types";
+import { TimelineError } from "./TimelineError";
+import { TimelineView } from "./TimelineView";
+import { useTimeline } from "./useTimeline";
 
 export interface TimelineProps {
   config?: SchedulerConfig;
@@ -38,293 +20,51 @@ export interface TimelineProps {
   animationConfig?: AnimationConfig;
   scrollIntoToday?: boolean;
   loading?: boolean;
+  loadingComponent?: React.ReactNode;
+  errorComponent?: React.ReactNode;
+  emptyComponent?: React.ReactNode;
   rightClickOptions?: ContextMenuType[];
   onTaskClick?: (task: SchedulerTask) => void;
-  onRowExpand?: (
-    groupLabel: string,
-    groupId: string,
-    task: SchedulerTask
-  ) => Promise<void>;
-  onRowShrink?: (
-    groupLabel: string,
-    groupId: string,
-    task: SchedulerTask
-  ) => Promise<void>;
+  onRowExpand?: (groupLabel: string, groupId: string, task: SchedulerTask) => Promise<void>;
+  onRowShrink?: (groupLabel: string, groupId: string, task: SchedulerTask) => Promise<void>;
   onRowLabelClick?: (groupLabel: string) => void;
-  tooltipComponent?: (
-    task: SchedulerTask,
-    index?: StripIndex
-  ) => React.ReactNode;
+  tooltipComponent?: (task: SchedulerTask, index?: StripIndex) => React.ReactNode;
   className?: string;
 }
 
-export const Timeline: React.FC<TimelineProps> = React.memo(
-  ({
-    config,
-    label: propLabel,
-    data: propData,
-    startOffsetDays: propStartOffsetDays,
-    endOffsetDays: propEndOffsetDays,
-    resources: propResources,
-    styles: propStyles,
-    theme: propTheme,
-    dragConfig: propDragConfig,
-    animationConfig: propAnimationConfig,
-    rightClickOptions,
-    scrollIntoToday,
-    tooltipComponent,
-    onRowExpand,
-    onRowShrink,
-    onTaskClick,
-    onRowLabelClick,
-    loading,
-    className,
-  }) => {
-    // Merge config and props with defaults
-    const label = propLabel ?? config?.label ?? "Timeline";
-    const data = propData ?? config?.data ?? [];
-    const startOffsetDays = propStartOffsetDays ?? config?.startOffsetDays ?? 0;
-    const endOffsetDays = propEndOffsetDays ?? config?.endOffsetDays ?? 0;
-    const resources = propResources ?? config?.resources;
-    const styles = propStyles ?? config?.styles ?? defaultStyles;
-    const theme = propTheme ?? config?.theme;
-    const dragConfig = propDragConfig ?? config?.dragConfig;
-    const animationConfig = propAnimationConfig ?? config?.animationConfig;
-    const containerRef = useRef<HTMLDivElement>(null);
-    const [error, setError] = useState<string | undefined>();
+export const Timeline: React.FC<TimelineProps> = React.memo((props) => {
+  const { setAll, setDragConfig, setAnimationConfig } = useActionStore();
+  const label = props.label ?? props.config?.label ?? "Timeline";
+  const styles = props.styles ?? props.config?.styles ?? defaultStyles;
+  const dragConfig = props.dragConfig ?? props.config?.dragConfig;
+  const animationConfig = props.animationConfig ?? props.config?.animationConfig;
 
-    const {
-      tableEndDate,
-      tableStartDate,
-      schedulerData,
-      setSchedulerData,
-      setOffsetDays,
-      setConfig,
-    } = useDataStore();
-    const { setAllStyles, theme: storeTheme } = useStylesStore();
+  useEffect(() => {
+    setAll({ onTaskClick: props.onTaskClick, onRowExpand: props.onRowExpand, onRowShrink: props.onRowShrink, onRowLabelClick: props.onRowLabelClick });
+  }, [props.onTaskClick, props.onRowExpand, props.onRowShrink, props.onRowLabelClick, setAll]);
 
-    const {
-      mouseCoordination,
-      rightClickTask,
-      tooltipVisible,
-      setDefaultTooltipComponent,
-      setMouseCoordination,
-      removeRightClickTask,
-    } = useChildStore();
+  useEffect(() => {
+    if (dragConfig) setDragConfig(dragConfig);
+    if (animationConfig) setAnimationConfig(animationConfig);
+  }, [dragConfig, animationConfig, setDragConfig, setAnimationConfig]);
 
-    const { setAll } = useActionStore();
+  const timeline = useTimeline(props);
 
-    useEffect(() => {
-        if(config) {
-            setConfig(config);
-        }
-    }, [config, setConfig]);
+  return (
+    <MotionConfig reducedMotion="user">
+      <AnimatePresence mode="sync">
+        {props.loading || timeline.error ? (
+          <TimelineError loading={props.loading} error={timeline.error} loadingComponent={props.loadingComponent} errorComponent={props.errorComponent} />
+        ) : (
+          <TimelineView
+            timeline={timeline} label={label} styles={styles}
+            scrollIntoToday={props.scrollIntoToday} className={props.className}
+            rightClickOptions={props.rightClickOptions} emptyComponent={props.emptyComponent}
+          />
+        )}
+      </AnimatePresence>
+    </MotionConfig>
+  );
+});
 
-    useEffect(() => {
-      setAll({ onTaskClick, onRowExpand, onRowShrink, onRowLabelClick });
-    }, [onTaskClick, onRowExpand, onRowShrink, onRowLabelClick, setAll]);
-
-    useEffect(() => {
-      if (dragConfig) {
-        useActionStore.getState().setDragConfig(dragConfig);
-      }
-      if (animationConfig) {
-        useActionStore.getState().setAnimationConfig(animationConfig);
-      }
-    }, [dragConfig, animationConfig]);
-
-    useEffect(() => {
-      if (tooltipComponent) {
-        setDefaultTooltipComponent(tooltipComponent);
-      }
-    }, [setDefaultTooltipComponent, tooltipComponent]);
-
-    useEffect(() => {
-      setAllStyles(styles, theme);
-    }, [setAllStyles, styles, theme]);
-
-    useEffect(() => {
-      if (!_.isEqual(data, schedulerData.tasks)) {
-        setSchedulerData(data);
-      }
-    }, [data, schedulerData.tasks, setSchedulerData]);
-
-    useEffect(() => {
-      setOffsetDays(startOffsetDays, endOffsetDays);
-    }, [startOffsetDays, endOffsetDays, setOffsetDays]);
-
-    const handleMouseMove = (e: React.MouseEvent) => {
-      setMouseCoordination({ x: e.clientX, y: e.clientY });
-    };
-
-    // When a tooltip is visible, also track global mouse movements so positioning
-    // stays correct even if the cursor leaves the main container.
-    React.useEffect(() => {
-      if (!tooltipVisible) return;
-
-      const handler = (ev: MouseEvent) => {
-        setMouseCoordination({ x: ev.clientX, y: ev.clientY });
-      };
-
-      window.addEventListener("mousemove", handler);
-      return () => window.removeEventListener("mousemove", handler);
-    }, [tooltipVisible, setMouseCoordination]);
-
-    useEffect(() => {
-      setError(undefined);
-      schedulerData.tasks.forEach((task) => {
-        if (!moment(task.startDate).isValid()) {
-          console.error(`Invalid startDate in task ${task.id}`, task.startDate);
-          setError(`Invalid startDate in task ${task.id}`);
-        }
-        if (!moment(task.endDate).isValid()) {
-          console.error(`Invalid endDate in task ${task.id}`, task.endDate);
-          setError(`Invalid endDate in task ${task.id}`);
-        }
-        if (moment(task.startDate).isAfter(moment(task.endDate))) {
-          setError(`Task ${task.id} has an invalid date range`);
-        }
-      });
-    }, [schedulerData]);
-
-    const mandatoryFieldsAvailable = useMemo(() => {
-      return schedulerData.tasks.every(
-        (task) =>
-          moment(task.startDate).isValid() &&
-          moment(task.endDate).isValid() &&
-          moment(task.startDate).isSameOrBefore(moment(task.endDate))
-      );
-    }, [schedulerData]);
-
-    const groupedTasks = useMemo(() => {
-      try {
-        const grouped = generateGroupedTasks(schedulerData.tasks);
-        resources?.forEach((category: string) => {
-          if (!grouped[category]) {
-            grouped[category] = [[]];
-          }
-        });
-        return grouped;
-      } catch (err) {
-        console.error("Error while grouping tasks:", err);
-        setError("Failed to group tasks. Check data format.");
-        return {};
-      }
-    }, [schedulerData, resources]);
-
-    const dates = useMemo(() => {
-      if (!tableStartDate || !tableEndDate) return [];
-
-      const start = moment(tableStartDate);
-      const end = moment(tableEndDate);
-
-      return Array.from({ length: end.diff(start, "days") + 1 }).map(
-        (_, index) => start.clone().add(index, "days").format("YYYY-MM-DD")
-      );
-    }, [tableStartDate, tableEndDate]);
-
-    try {
-      if (!dates) setError("Failed to generate dates.");
-
-      return (
-        <AnimatePresence mode="sync" presenceAffectsLayout>
-          {loading || !mandatoryFieldsAvailable ? (
-            <div className="w-full h-full flex justify-center items-center p-4">
-              {loading ? "Loading..." : "Error: Mandatory fields are missing."}
-            </div>
-          ) : error ? (
-            <div className="w-full h-full flex justify-center items-center p-4">
-              {error}
-            </div>
-          ) : (
-            <>
-              <div
-                ref={containerRef}
-                style={{
-                  scrollbarColor: `${storeTheme.scrollbar?.thumb || "rgba(0,0,0,0.2)"} ${storeTheme.scrollbar?.track || "transparent"}`,
-                  scrollbarWidth: "thin",
-                }}
-                className={`relative w-full h-full
-          scrollbar-thin overflow-x-scroll horizontal-scroll ${className || ""}`}
-                onMouseMove={handleMouseMove}
-              >
-                  {storeTheme.scrollbar && (
-                      <style>
-                          {`
-                              .horizontal-scroll::-webkit-scrollbar-track {
-                                  background: ${storeTheme.scrollbar.track || "transparent"};
-                              }
-                              .horizontal-scroll::-webkit-scrollbar-thumb {
-                                  background-color: ${storeTheme.scrollbar.thumb || "rgba(0,0,0,0.2)"};
-                                  border-radius: 20px;
-                                  border: 3px solid transparent;
-                                  background-clip: content-box;
-                              }
-                              .horizontal-scroll::-webkit-scrollbar-thumb:hover {
-                                  background-color: ${storeTheme.scrollbar.thumbHover || storeTheme.scrollbar.thumb || "rgba(0,0,0,0.3)"};
-                              }
-                          `}
-                      </style>
-                  )}
-                <div className="w-fit text-sm">
-                  <Header
-                    dates={dates}
-                    topic={label}
-                    daybgColorHighlight={styles.dayColorHighlight}
-                    containerRef={containerRef}
-                    scrollIntoToday={scrollIntoToday}
-                  />
-                  {Object.keys(groupedTasks || [])
-                    .sort((a, b) => a.localeCompare(b))
-                    .map((line) => (
-                      <div className="pb-2" key={line}>
-                        {groupedTasks[line]?.map((row, taskRowIndex) => (
-                          <Row
-                            key={`${line}-${taskRowIndex}`}
-                            groupLabel={line}
-                            row={row}
-                            dates={dates}
-                            rowIndex={Object.keys(groupedTasks)
-                              .sort((a, b) => a.localeCompare(b))
-                              .flatMap((resource) => groupedTasks[resource])
-                              .findIndex((r) => r === row)}
-                            groupedTasks={groupedTasks}
-                            taskRowIndex={taskRowIndex}
-                          />
-                        ))}
-                      </div>
-                    ))}
-                </div>
-              </div>
-              {tooltipVisible && !rightClickTask && (
-                <Tooltip mousePosition={mouseCoordination}>
-                  {tooltipVisible}
-                </Tooltip>
-              )}
-              {rightClickTask && rightClickOptions && (
-                <ContextMenu
-                  mousePosition={mouseCoordination}
-                  onClose={() => removeRightClickTask()}
-                >
-                  <RightClickUI
-                    task={rightClickTask}
-                    rightClickOptions={rightClickOptions}
-                  />
-                </ContextMenu>
-              )}
-            </>
-          )}
-        </AnimatePresence>
-      );
-    } catch (error) {
-      console.error("Error in TimelineScheduler:", error);
-      return (
-        <div className="w-full h-full flex justify-center items-center p-4">
-          {error instanceof Error
-            ? error.message
-            : "An unexpected error occurred."}
-        </div>
-      );
-    }
-  }
-);
+Timeline.displayName = "Timeline";
