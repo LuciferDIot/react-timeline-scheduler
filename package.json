@@ -50,6 +50,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "prepublishOnly": "npm run build && npm run test",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui"
