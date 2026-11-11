@@ -10,6 +10,14 @@
   "description": "A responsive and customizable timeline scheduler component for React.",
   "author": "LuciferDIot",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LuciferDIot/react-timeline-scheduler.git"
+  },
+  "bugs": {
+    "url": "https://github.com/LuciferDIot/react-timeline-scheduler/issues"
+  },
+  "homepage": "https://github.com/LuciferDIot/react-timeline-scheduler#readme",
   "main": "./dist/react-timeline-scheduler.umd.cjs",
   "module": "./dist/react-timeline-scheduler.js",
   "types": "./dist/index.d.ts",
@@ -59,7 +67,9 @@
   "overrides": {
     "flatted": ">=3.4.2",
     "@isaacs/brace-expansion": ">=5.0.1",
-    "brace-expansion": ">=2.1.7",
+    "minimatch": {
+      "brace-expansion": "^1.1.13"
+    },
     "source-map-js": ">=1.2.2",
     "picomatch": ">=4.0.4",
     "rollup": ">=4.59.0",
